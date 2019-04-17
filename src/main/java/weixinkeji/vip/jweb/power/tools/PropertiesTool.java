@@ -18,15 +18,15 @@ public class PropertiesTool {
 	 * 
 	 * @param map
 	 *            Map实例 要求必须有key。 value的值由此方法填充(根据属性文件对应的key-value)
-	 * @param propertiesFilePath
-	 *            属性文件的路径
+	 * @param filepath
+	 *            属性文件的物理路径
 	 */
-	void loadPropertiesToMapByMyKey(Map<String, String> map, File file) {
+	void loadPropertiesToMap(Map<String, String> map, String filepath) {
 		Properties pt = new Properties();// 实例一个专门处理属性文件的 对象
 		InputStream is = null;
 		try {
 			// 定义一个输入流。用处：加载我们的配置文件
-			is = new FileInputStream(file);
+			is = new FileInputStream(filepath);
 			// 把操作输入流的对象，传给 pt的load方法。
 			// 它会自动把文件属性文件 加载到内存，并解析成key-value 存放到Map实例中
 			pt.load(is);
@@ -52,7 +52,15 @@ public class PropertiesTool {
 			}
 		}
 	}
-
+	/**
+	 * 
+	 * 加载属性文件的 key,value 到用户的Map实例中
+	 * 
+	 * @param map
+	 *            Map实例 要求必须有key。 value的值由此方法填充(根据属性文件对应的key-value)
+	 * @param file
+	 *            属性文件的路径
+	 */
 	void loadPropertiesToMap(Map<String, String> map, File file) {
 		Properties pt = new Properties();// 实例一个专门处理属性文件的 对象
 		InputStream is = null;
@@ -81,6 +89,14 @@ public class PropertiesTool {
 		}
 	}
 
+	/**
+	 * 
+	 * 加载属性文件的 key,value 到用户的Map实例中
+	 * 
+	 * @param file 属性文件的路径
+	 * 
+	 * @return Map
+	 */
 	Map<String, String> loadPropertiesToMap(File file) {
 		Properties pt = new Properties();// 实例一个专门处理属性文件的 对象
 		InputStream is = null;

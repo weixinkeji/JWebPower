@@ -28,8 +28,8 @@ public class RequestURLVO {
 	/**
 	 * RequestURLVO
 	 * 
-	 * @param paramPath
-	 * @param paramSuffix
+	 * @param paramPath 项目的上下文contextPath
+	 * @param paramSuffix 请求路径的后缀 
 	 */
 	public RequestURLVO(String paramPath, String[] paramSuffix) {
 		this.contextPath = null == paramPath ? "" : paramPath.trim();
@@ -47,6 +47,11 @@ public class RequestURLVO {
 		this.contextPathLength = this.contextPath.length();
 	}
 
+	/**
+	 * 处理请求路径，返回符合框架使用的请求路径
+	 * @param url 请求路径
+	 * @return String
+	 */
 	public String formatRequestURL(final String url) {
 		switch (i) {
 		case 0: {// /请求路径 形式时，i=0
@@ -102,15 +107,4 @@ public class RequestURLVO {
 		}
 		}
 	}
-
-	public static void main(String args[]) {
-		String paramPath = "/项目名";// "/HelloServlet";
-		String[] paramSuffix1 = new String[] { ".json", ".xml", ".xml2" };
-		String[] paramSuffix2 = null;
-		RequestURLVO vo = new RequestURLVO(paramPath, paramSuffix1);
-		String url = paramPath + "/abcdefg.json";
-		String rs = vo.formatRequestURL(url);
-		System.out.println(rs);
-	}
-
 }

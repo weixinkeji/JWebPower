@@ -12,7 +12,6 @@ public interface IStaticResourcesURLExpresstion {
 	 * <p>
 	 * 默认值是 "/static/"
 	 * 
-	 * @param root String
 	 */
 	default String setStaticResourcesRoot() {
 		return "/static/";
@@ -39,7 +38,7 @@ public interface IStaticResourcesURLExpresstion {
 	 * 
 	 * <p>
 	 * 
-	 * @param set
+	 * @param set 存放表达式字符的Set集合
 	 */
 	public void setRequestURL_Public(Set<String> set);
 
@@ -62,7 +61,7 @@ public interface IStaticResourcesURLExpresstion {
 	 * 路径选择器的手段2：regex:正则表达式 [[会员等级]]<br>
 	 * 其中，会员等级 可以省略不写
 	 * 
-	 * @param set
+	 * @param set 存放表达式字符的Set集合
 	 */
 	public void setRequestURL_Session(Set<String> set);
 
@@ -85,14 +84,14 @@ public interface IStaticResourcesURLExpresstion {
 	 * 路径选择器的手段2：regex:正则表达式 [[编号]]<br>
 	 * 其中，会员等级 可以省略不写
 	 * 
-	 * @param set
+	 * @param set 存放表达式字符的Set集合
 	 */
 	public void setRequestURL_Identifiter(Set<String> set);
 
 	/**
 	 * 对特定静态资源的路径（目前只支持前缀的方法），进行监控。当请求访问的是以此为前缀路径的url时，执行我们的监听方法
 	 * 
-	 * @param list List<URLListen>
+	 * @param list List集合
 	 */
 	default void addURLListen(List<URLListenModelVO> list) {
 

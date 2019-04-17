@@ -14,6 +14,12 @@ public interface IControllerURLPowerEvent {
 
 	/**
 	 * 进入控制区时，自动调用执行的方法。必定执行。
+	 * 
+	 * @param req        HttpServletRequest
+	 * @param resp       HttpServletResponse
+	 * @param requestURL String 用户请求的资源路径
+	 * 
+	 * @return boolean 默认true放行
 	 */
 	default boolean jWebPower_start(HttpServletRequest req, HttpServletResponse resp, final String requestURL) {
 		return true;

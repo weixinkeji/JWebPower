@@ -6,10 +6,8 @@ public class DefaultStaticResourcesURLExpresstion implements IStaticResourcesURL
 
 	/**
 	 * 静态资源的根
-	 * <p>
+	 * <br>
 	 * 默认值是 "/static/"
-	 * 
-	 * @param root String
 	 */
 	public String setStaticResourcesRoot() {
 		return "/static/";
