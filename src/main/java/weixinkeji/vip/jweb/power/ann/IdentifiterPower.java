@@ -14,7 +14,7 @@ public @interface IdentifiterPower {
 	/**
 	 * 权限代码
 	 * 
-	 * @return
+	 * @return String[]
 	 */
 	public String[] value();
 }

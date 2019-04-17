@@ -15,7 +15,7 @@ public interface IControllerURLPowerEvent {
 	/**
 	 * 进入控制区时，自动调用执行的方法。必定执行。
 	 */
-	default boolean doJWebPower_start(HttpServletRequest req, HttpServletResponse resp, final String requestURL) {
+	default boolean jWebPower_start(HttpServletRequest req, HttpServletResponse resp, final String requestURL) {
 		return true;
 	}
 

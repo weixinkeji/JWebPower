@@ -10,10 +10,10 @@ public interface IJWebPowerUserInterface {
 	/**
 	 * 获取【会员等级】、【权限编号】的用户接口
 	 * 
-	 * @param req
-	 * @param resp
-	 * @param requestURL
-	 * @return
+	 * @param req	基于Servlet的HttpServletRequest
+	 * @param resp	基于Servlet的HttpServletResponse
+	 * @param requestURL 用户请求路径
+	 * @return SessionCodeAndIdentifiterCodeVO  存储临时 值。返回多值* 封装
 	 */
 	SessionCodeAndIdentifiterCodeVO getUserPowerCode(HttpServletRequest req, HttpServletResponse resp,
 			final String requestURL);

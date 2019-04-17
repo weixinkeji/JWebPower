@@ -13,7 +13,7 @@ public class DefaultControllerURLPowerEvent implements IControllerURLPowerEvent 
 	 * 进入控制区时，自动调用执行的方法。必定执行。
 	 */
 	@Override
-	public boolean doJWebPower_start(HttpServletRequest req, HttpServletResponse resp, String requestURL) {
+	public boolean jWebPower_start(HttpServletRequest req, HttpServletResponse resp, String requestURL) {
 		System.out.println(" 进入controller控制区，自动执行此方法。" + requestURL);
 		return true;
 	}

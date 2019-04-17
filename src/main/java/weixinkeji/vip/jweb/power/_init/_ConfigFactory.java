@@ -49,7 +49,7 @@ final public class _ConfigFactory {
 	/**
 	 * 外部系统接口
 	 * 
-	 * @return
+	 * @return ISystemInterfaceConfig
 	 */
 	private ISystemInterfaceConfig loadISystemInterfaceConfig() {
 		return findObject(ISystemInterfaceConfig.class, new DefaultSystemInterfaceConfig());
@@ -58,7 +58,7 @@ final public class _ConfigFactory {
 	/**
 	 * 系统路径处理工具
 	 * 
-	 * @param contextPath
+	 * @param contextPath 项目上下文路径
 	 * @return RequestURLVO
 	 */
 	public RequestURLVO getRequestURLVO(String contextPath) {
@@ -77,7 +77,7 @@ final public class _ConfigFactory {
 	/**
 	 * web入口 url事件
 	 * 
-	 * @return
+	 * @return IControllerURLPowerEvent
 	 */
 	public IControllerURLPowerEvent find_controllerURLPowerEvent() {
 		return findObject(IControllerURLPowerEvent.class, new DefaultControllerURLPowerEvent());
@@ -90,7 +90,7 @@ final public class _ConfigFactory {
 	 * 
 	 * @param yourClass 你要找的类型
 	 * @param obj       用户指定的实例
-	 * @return
+	 * @return T
 	 */
 	@SuppressWarnings("unchecked")
 	private <T> T findObject(Class<T> yourClass, T obj) {
@@ -112,7 +112,7 @@ final public class _ConfigFactory {
 	/**
 	 * 静态资源URL权限 表达式
 	 * 
-	 * @return
+	 * @return ExpressConfigVO
 	 */
 	public ExpressConfigVO find_staticResourcesURLExpresstion() {
 		ExpressConfigVO vo = new ExpressConfigVO();
@@ -127,7 +127,7 @@ final public class _ConfigFactory {
 	/**
 	 * web入口 url权限 表达式
 	 * 
-	 * @return
+	 * @return ExpressConfigVO
 	 */
 	private ExpressConfigVO find_controllerURLExpresstion() {
 		ExpressConfigVO vo = new ExpressConfigVO();
@@ -142,7 +142,7 @@ final public class _ConfigFactory {
 	/**
 	 * 直接建立 URL-权限模型
 	 * 
-	 * @param jwebPowerControllerModel
+	 * @param jwebPowerControllerModel  权限模型
 	 */
 	public void setControllerPowerModel(Map<String, JWebPowerControllerModel> jwebPowerControllerModel) {
 		ClassPowerHandleTools_Temp temp = new ClassPowerHandleTools_Temp(siConfig, jwebPowerControllerModel);

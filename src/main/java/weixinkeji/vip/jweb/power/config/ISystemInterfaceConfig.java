@@ -15,7 +15,7 @@ public interface ISystemInterfaceConfig {
 	 * <p>
 	 * 如果此类没有绑定URL，但是方法绑定了，请返回空
 	 * 
-	 * @param c
+	 * @param c 绑定了相关注解的类
 	 * @return String
 	 */
 	public String getURLByClass(Class<?> c);
@@ -26,8 +26,8 @@ public interface ISystemInterfaceConfig {
 	 * <p>
 	 * 此方法不是控制方法，请返回null
 	 * 
-	 * @param method
-	 * @return
+	 * @param method 绑定了相关url的方法
+	 * @return String
 	 */
 	public String getURLByMethod(Method method);
 
@@ -47,7 +47,7 @@ public interface ISystemInterfaceConfig {
 	/**
 	 * 直接建立 URL-权限模型
 	 * 
-	 * @param jwebPowerControllerModel
+	 * @param jwebPowerControllerModel 权限模型
 	 */
 	default void setControllerPowerModel(Map<String, JWebPowerControllerModel> jwebPowerControllerModel) {
 

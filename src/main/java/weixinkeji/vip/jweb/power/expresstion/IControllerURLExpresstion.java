@@ -19,8 +19,8 @@ public interface IControllerURLExpresstion {
 	 * <p>
 	 * 
 	 * 
-	 * 【 总结】<br/>
-	 * 路径选择器的手段1：简单表达式 <br/>
+	 * 【 总结】<br>
+	 * 路径选择器的手段1：简单表达式 <br>
 	 * 路径选择器的手段2：regex:正则表达式
 	 * 
 	 * <p>
@@ -43,9 +43,9 @@ public interface IControllerURLExpresstion {
 	 * 使用非常复杂的，我们可以使用正则表达式：set.add("regex:正则表达式 [[会员等级]] "); 注regex:前缀是必需的
 	 * 
 	 * <p>
-	 *【 总结】<br/>
-	 * 路径选择器的手段1：简单表达式 [[会员等级]]<br/>
-	 * 路径选择器的手段2：regex:正则表达式 [[会员等级]]<br/>
+	 *【 总结】<br>
+	 * 路径选择器的手段1：简单表达式 [[会员等级]]<br>
+	 * 路径选择器的手段2：regex:正则表达式 [[会员等级]]<br>
 	 * 其中，会员等级 可以省略不写
 	 * 
 	 * @param set
@@ -66,9 +66,9 @@ public interface IControllerURLExpresstion {
 	 * 使用非常复杂的，我们可以使用正则表达式：set.add("regex:正则表达式 [[编号]] "); 注regex:前缀是必需的
 	 * 
 	 * <p>
-	 * 【 总结】<br/>
-	 * 路径选择器的手段1：简单表达式 [[编号]]<br/>
-	 * 路径选择器的手段2：regex:正则表达式 [[编号]]<br/>
+	 * 【 总结】<br>
+	 * 路径选择器的手段1：简单表达式 [[编号]]<br>
+	 * 路径选择器的手段2：regex:正则表达式 [[编号]]<br>
 	 * 其中，会员等级 可以省略不写
 	 * 
 	 * @param set

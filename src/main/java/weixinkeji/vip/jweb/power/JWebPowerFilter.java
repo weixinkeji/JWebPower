@@ -100,7 +100,7 @@ public class JWebPowerFilter implements Filter {
 			// System.out.println("不在监控内的权限 ！"+requestURL);
 			return;
 		}
-		if (!controllerUrlPowerEvent.doJWebPower_start(request, response, requestURL)) {
+		if (!controllerUrlPowerEvent.jWebPower_start(request, response, requestURL)) {
 			return;
 		}
 		switch (powerModel.urlType) {
