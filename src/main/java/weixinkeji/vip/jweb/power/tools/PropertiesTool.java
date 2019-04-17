@@ -18,8 +18,7 @@ public class PropertiesTool {
 	 * 
 	 * @param map
 	 *            Map实例 要求必须有key。 value的值由此方法填充(根据属性文件对应的key-value)
-	 * @param filepath
-	 *            属性文件的物理路径
+	 * @param filepath 属性文件的物理路径
 	 */
 	void loadPropertiesToMap(Map<String, String> map, String filepath) {
 		Properties pt = new Properties();// 实例一个专门处理属性文件的 对象
