@@ -11,7 +11,7 @@ public interface IStaticResourcesURLExpresstion {
 	 * 静态资源的根
 	 * <p>
 	 * 默认值是 "/static/"
-	 * 
+	 * @return String
 	 */
 	default String setStaticResourcesRoot() {
 		return "/static/";

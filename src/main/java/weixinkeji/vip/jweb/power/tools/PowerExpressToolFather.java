@@ -17,7 +17,7 @@ public abstract class PowerExpressToolFather {
 	/**
 	 * 从strs，切除“regex:”前缀
 	 * 
-	 * @param strs
+	 * @param strs 本框架定义的表达式
 	 * @return String
 	 */
 	protected String toRemoveStr(String strs) {
@@ -33,7 +33,7 @@ public abstract class PowerExpressToolFather {
 	/**
 	 * 从strs，切除“*”前缀|后缀
 	 * 
-	 * @param strs
+	 * @param strs 本框架定义的表达式
 	 * @param index 0表示切除前缀*，1表示切除后缀*
 	 * @return String
 	 */
@@ -54,7 +54,7 @@ public abstract class PowerExpressToolFather {
 	}
 
 	/**
-	 * 
+	 * 执行校验
 	 * @param express 正则表达式
 	 * @param srcStr  被检验的字符串
 	 * @return boolean
@@ -68,9 +68,8 @@ public abstract class PowerExpressToolFather {
 	/**
 	 * 表达式 [[会员等级]] 切割符
 	 * 
-	 * @param express
-	 * @param srcStr
-	 * @return
+	 * @param express 本框架定义的表达式
+	 * @return JWebPowerExpressVO
 	 */
 	protected JWebPowerExpressVO splitSessionExpressStr(String express) {
 		JWebPowerExpressVO vo = new JWebPowerExpressVO();
@@ -90,9 +89,9 @@ public abstract class PowerExpressToolFather {
 	/**
 	 * 只能针单个字节 进行处理
 	 * 
-	 * @param srcStr
-	 * @param findStr byte
-	 * @return
+	 * @param srcStr  字符串
+	 * @param findStr 被查找的字符串
+	 * @return int
 	 */
 	protected int countStr(String srcStr, byte findStr) {
 		int i = 0;
@@ -112,7 +111,9 @@ public abstract class PowerExpressToolFather {
 		}
 		return v;
 	}
-
+	/**
+	 * 析放内存
+	 */
 	public void closeResources() {
 		this.tempMap = null;
 	}
