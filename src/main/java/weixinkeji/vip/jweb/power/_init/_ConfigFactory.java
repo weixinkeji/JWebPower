@@ -43,12 +43,10 @@ import weixinkeji.vip.jweb.tools.PropertiesTool;
 final public class _ConfigFactory {
 	private List<Class<?>> list;
 	private ISystemInterfaceConfig siConfig;
-	private Map<String,String> userPropertiesConfig;
 	
 	public _ConfigFactory(List<Class<?>> list) {
 		this.list = list;
 		this.siConfig = loadISystemInterfaceConfig();
-		this.userPropertiesConfig=this.getUserPropertiesConfig();
 	}
 	
 	/**
@@ -60,10 +58,6 @@ final public class _ConfigFactory {
 		return findObject(ISystemInterfaceConfig.class, new DefaultSystemInterfaceConfig());
 	}
 	
-	private Map<String,String> getUserPropertiesConfig(){
-		String configPath=PathTool.getMyProjectPath("jwebPower.properties");
-		return new PropertiesTool().loadPropertiesToMap(new File(configPath));
-	}
 	/**
 	 * 系统路径处理工具
 	 * 

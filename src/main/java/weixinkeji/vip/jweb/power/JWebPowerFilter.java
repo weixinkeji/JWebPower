@@ -1,5 +1,6 @@
 package weixinkeji.vip.jweb.power;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,8 @@ import weixinkeji.vip.jweb.power.vo.ExpressConfigVO;
 import weixinkeji.vip.jweb.power.vo.RequestURLVO;
 import weixinkeji.vip.jweb.power.vo.SessionCodeAndIdentifiterCodeVO;
 import weixinkeji.vip.jweb.scan.ScanClassFactory;
+import weixinkeji.vip.jweb.tools.PathTool;
+import weixinkeji.vip.jweb.tools.PropertiesTool;
 
 public class JWebPowerFilter implements Filter {
 
@@ -41,8 +44,15 @@ public class JWebPowerFilter implements Filter {
 	private RequestURLVO requestUrlTool;
 
 	public void init(FilterConfig fConfig) throws ServletException {
+		Map<String, String> configMap = new PropertiesTool()
+				.loadPropertiesToMap(new File(PathTool.getMyProjectPath("jwebPower.properties")));
+		String path = configMap.get("scan_package");
+		if (null==configMap||null == path || path.isEmpty()) {
+			System.err.println("JWebPower启动失败，没有配置扫描路径。请在类路径下，创建属性文件【jwebPower.properties】，并设置一个键值对【scan_package=扫描的路径】");
+			return;
+		}
 		// 扫描路径
-		List<Class<?>> classList = ScanClassFactory.getClassByFilePath("jwebpower", "test.servlet");
+		List<Class<?>> classList = ScanClassFactory.getClassByFilePath(path.split("[,，]{1}"));
 		// 启动配置工厂
 		_ConfigFactory tempConfigFactory = new _ConfigFactory(classList);
 		requestUrlTool = tempConfigFactory.getRequestURLVO(fConfig.getServletContext().getContextPath());

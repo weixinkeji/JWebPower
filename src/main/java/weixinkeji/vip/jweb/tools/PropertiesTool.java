@@ -56,6 +56,10 @@ public class PropertiesTool {
 	 * @return Map
 	 */
 	public Map<String, String> loadPropertiesToMap(File file) {
+		if(null==file||!file.exists()||file.isDirectory()) {
+			System.err.println("没有找到文件"+file.getAbsolutePath());
+			return null;
+		}
 		Properties pt = new Properties();// 实例一个专门处理属性文件的 对象
 		InputStream is = null;
 		try {

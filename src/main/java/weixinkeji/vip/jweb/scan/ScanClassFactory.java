@@ -10,13 +10,6 @@ public class ScanClassFactory {
 	private ScanClassFactory() {
 	}
 
-//	public static void main(String args[]) {
-//		List<Class<?>> list = getClassByFilePath("weixinkeji.vip");
-//		for (Class<?> c : list) {
-//			System.out.println(c.getName());
-//		}
-//	}
-
 	public static List<Class<?>> getClassByFilePath(String path) {
 		ScanClassFactory sf = new ScanClassFactory();
 		// 项目根目录
