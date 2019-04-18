@@ -1,5 +1,6 @@
 package weixinkeji.vip.jweb.power._init;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +29,8 @@ import weixinkeji.vip.jweb.power.tools.PowerExpressionTool;
 import weixinkeji.vip.jweb.power.vo.ExpressConfigVO;
 import weixinkeji.vip.jweb.power.vo.RequestURLVO;
 import weixinkeji.vip.jweb.power.vo.SessionCodeAndIdentifiterCodeVO;
+import weixinkeji.vip.jweb.tools.PathTool;
+import weixinkeji.vip.jweb.tools.PropertiesTool;
 
 /**
  * IPublicSystemInterfaceConfig 接口的驱动类
@@ -40,12 +43,14 @@ import weixinkeji.vip.jweb.power.vo.SessionCodeAndIdentifiterCodeVO;
 final public class _ConfigFactory {
 	private List<Class<?>> list;
 	private ISystemInterfaceConfig siConfig;
-
+	private Map<String,String> userPropertiesConfig;
+	
 	public _ConfigFactory(List<Class<?>> list) {
 		this.list = list;
 		this.siConfig = loadISystemInterfaceConfig();
+		this.userPropertiesConfig=this.getUserPropertiesConfig();
 	}
-
+	
 	/**
 	 * 外部系统接口
 	 * 
@@ -54,7 +59,11 @@ final public class _ConfigFactory {
 	private ISystemInterfaceConfig loadISystemInterfaceConfig() {
 		return findObject(ISystemInterfaceConfig.class, new DefaultSystemInterfaceConfig());
 	}
-
+	
+	private Map<String,String> getUserPropertiesConfig(){
+		String configPath=PathTool.getMyProjectPath("jwebPower.properties");
+		return new PropertiesTool().loadPropertiesToMap(new File(configPath));
+	}
 	/**
 	 * 系统路径处理工具
 	 * 

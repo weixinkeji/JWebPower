@@ -19,7 +19,7 @@ public class PropertiesTool {
 	 * @param map Map实例 要求必须有key。 value的值由此方法填充(根据属性文件对应的key-value)
 	 * @param file  属性文件的路径
 	 */
-	void loadPropertiesToMap(Map<String, String> map, File file) {
+	public void loadPropertiesToMap(Map<String, String> map, File file) {
 		Properties pt = new Properties();// 实例一个专门处理属性文件的 对象
 		InputStream is = null;
 		try {
@@ -55,7 +55,7 @@ public class PropertiesTool {
 	 * 
 	 * @return Map
 	 */
-	Map<String, String> loadPropertiesToMap(File file) {
+	public Map<String, String> loadPropertiesToMap(File file) {
 		Properties pt = new Properties();// 实例一个专门处理属性文件的 对象
 		InputStream is = null;
 		try {
