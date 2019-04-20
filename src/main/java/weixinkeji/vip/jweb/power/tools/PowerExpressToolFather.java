@@ -33,7 +33,7 @@ public abstract class PowerExpressToolFather {
 	/**
 	 * 从strs，切除“*”前缀|后缀
 	 * 
-	 * @param strs 本框架定义的表达式
+	 * @param strs  本框架定义的表达式
 	 * @param index 0表示切除前缀*，1表示切除后缀*
 	 * @return String
 	 */
@@ -55,6 +55,7 @@ public abstract class PowerExpressToolFather {
 
 	/**
 	 * 执行校验
+	 * 
 	 * @param express 正则表达式
 	 * @param srcStr  被检验的字符串
 	 * @return boolean
@@ -76,9 +77,9 @@ public abstract class PowerExpressToolFather {
 		if (express.contains("[[")) {
 			String sstr[] = express.split("\\[\\[");
 			vo.setExpress(sstr[0]);
-			vo.setValues(sstr[1].replace("]]", "").split("[,，]"));
-			
-			System.out.println("splitSessionExpressStr："+vo.getExpress()+" "+Arrays.deepToString(vo.getValues()));
+			String str = sstr[1].replace("]]", "").trim();
+			vo.setValues(str.isEmpty() ? JWebPowerExpressVO.EMPTY_POWER : str.split("[,，]"));
+			System.out.println("splitSessionExpressStr：" + vo.getExpress() + " " + Arrays.deepToString(vo.getValues()));
 		} else {
 			vo.setExpress(express);
 			vo.setValues(JWebPowerExpressVO.EMPTY_POWER);
@@ -111,6 +112,7 @@ public abstract class PowerExpressToolFather {
 		}
 		return v;
 	}
+
 	/**
 	 * 析放内存
 	 */
