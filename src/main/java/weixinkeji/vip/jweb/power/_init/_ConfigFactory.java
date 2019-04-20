@@ -153,6 +153,7 @@ final public class _ConfigFactory {
 		//实例一个专门处理Controller 权限的对象
 		ClassPowerHandleTools_Temp temp = new ClassPowerHandleTools_Temp(siConfig, jwebPowerControllerModel);
 		ExpressConfigVO controllerExpress = this.find_controllerURLExpresstion();
+		temp.createPowerModel_init(controllerExpress);
 		for (Class<?> c : this.list) {
 			temp.createPowerModel(controllerExpress, c);
 		}
@@ -179,7 +180,7 @@ class ClassPowerHandleTools_Temp {
 	 * 
 	 * @param  controllerExpress 权限表达式集合
 	 */
-	private void createPowerModel_init(ExpressConfigVO controllerExpress) {
+	void createPowerModel_init(ExpressConfigVO controllerExpress) {
 		Set<String> expression=controllerExpress.getPublicPowerExpresstion();
 		JWebPowerExpressVO vo;
 		//先对Controller【公共】区的路径进行检验
@@ -230,7 +231,6 @@ class ClassPowerHandleTools_Temp {
 	 * @param c        扫描到的类
 	 */
 	public void createPowerModel(ExpressConfigVO controllerExpress, Class<?> c) {
-		createPowerModel_init(controllerExpress);
 		String headURL = siConfig.getURLByClass(c);
 		if (null == headURL) {// 不是控制类
 			return;
