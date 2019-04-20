@@ -56,6 +56,33 @@ public class PowerExpressionTool extends PowerExpressToolFather {
 	}
 
 	/**
+	 * 检查 用户写的是表达式(表达式返回null)，还是直接路径（直接路径返回JWebPowerExpressVO)
+	 * 
+	 * @param expression 用户配置的字符串（可能是表达式，亦可能是 直接路径）
+	 * @return JWebPowerExpressVO
+	 */
+	public JWebPowerExpressVO getPowerUrl(String expression) {
+		JWebPowerExpressVO vo = null;
+		if (expression.contains("[[")) {// 如果字符中包含[[，表达有会员等级或权限编号 权限控制。分割 路径 与其权限
+			vo = super.splitExpressStr(expression);
+			// 判断表达式是否包含指定*或regex:,没有，则表示 此路径是完整的路径。可以直接加入权限模型
+			if (!vo.getExpress().contains("*") && !vo.getExpress().startsWith("regex:")) {
+				return vo;
+			} else {// 包含了指定的字符，表示不是完整路径
+				return null;
+			}
+		}
+
+		if (!expression.contains("*") && !expression.startsWith("regex:")) {
+			vo = new JWebPowerExpressVO();
+			vo.setExpress(expression);
+			return vo;
+		}
+
+		return null;
+	}
+
+	/**
 	 * 检验url是否是会员
 	 * 
 	 * @param requestURL 请求路径
@@ -67,7 +94,7 @@ public class PowerExpressionTool extends PowerExpressToolFather {
 			return null;
 		}
 		// 对会员的表达式（表达式 [[会员等级]] ）进行切割 。 分成 匹配表达式，与等级
-		JWebPowerExpressVO expressionVO = super.splitSessionExpressStr(expression.trim());
+		JWebPowerExpressVO expressionVO = super.splitExpressStr(expression.trim());
 		expression = expressionVO.getExpress();
 		// 定义个临时变量，用来装载 处理后的字符串（表达式）
 		String regexStr;
@@ -133,7 +160,7 @@ public class PowerExpressionTool extends PowerExpressToolFather {
 			return null;
 		}
 		// 对会员的表达式（表达式 [[权限编号]] ）进行切割 。 分成 匹配表达式，与等级
-		JWebPowerExpressVO expressionVO = super.splitSessionExpressStr(expression.trim());
+		JWebPowerExpressVO expressionVO = super.splitExpressStr(expression.trim());
 		expression = expressionVO.getExpress();
 		// 定义个临时变量，用来装载 处理后的字符串（表达式）
 		String regexStr;

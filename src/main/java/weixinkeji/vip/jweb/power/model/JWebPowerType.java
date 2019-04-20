@@ -9,16 +9,16 @@ public enum JWebPowerType {
 	 */
 	common
 	/**
-	 * 会话区
+	 * 会员等级区
 	 */
-	,session
+	,grades
 	/**
 	 * 编号区
 	 */
 	,identifiter
 	/**
-	 * 会话区+编号区
+	 * 会员等级区+编号区
 	 */
-	,sessionAndIdentifiter;	
+	,gradesAndIdentifiter;	
 	
 }

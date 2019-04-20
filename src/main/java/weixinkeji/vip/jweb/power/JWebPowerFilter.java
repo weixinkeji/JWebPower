@@ -120,7 +120,7 @@ public class JWebPowerFilter implements Filter {
 				chain.doFilter(request, response);
 			}
 			return;
-		case session:// 会话区
+		case grades:// 会话区
 			// 假设你的会员等级是1.判断 用户信息中，是否有相关的权限
 			if (powerModel.isInGrades(powerCode.getGrades())) {
 				// 有权限。调用定义的方法。
@@ -143,7 +143,7 @@ public class JWebPowerFilter implements Filter {
 				controllerUrlPowerEvent.doIdentifiterPower_fail(request, response, requestURL, powerModel.identifier);
 			}
 			return;
-		case sessionAndIdentifiter:// 会员+编号
+		case gradesAndIdentifiter:// 会员+编号
 			// 假设你的会员等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
 			if (powerModel.isInGrades(powerCode.getGrades()) && powerModel.isInIdentifier(powerCode.getIdentifiter())) {
 				// 有权限。调用定义的方法。

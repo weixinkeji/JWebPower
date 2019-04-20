@@ -1,11 +1,11 @@
 package weixinkeji.vip.jweb.power._init;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import weixinkeji.vip.jweb.power.ann.IdentifiterPower;
 import weixinkeji.vip.jweb.power.ann.JWebPowerListen;
@@ -27,10 +27,9 @@ import weixinkeji.vip.jweb.power.model.JWebPowerControllerModel;
 import weixinkeji.vip.jweb.power.model.JWebPowerType;
 import weixinkeji.vip.jweb.power.tools.PowerExpressionTool;
 import weixinkeji.vip.jweb.power.vo.ExpressConfigVO;
+import weixinkeji.vip.jweb.power.vo.JWebPowerExpressVO;
 import weixinkeji.vip.jweb.power.vo.RequestURLVO;
 import weixinkeji.vip.jweb.power.vo.SessionCodeAndIdentifiterCodeVO;
-import weixinkeji.vip.jweb.tools.PathTool;
-import weixinkeji.vip.jweb.tools.PropertiesTool;
 
 /**
  * IPublicSystemInterfaceConfig 接口的驱动类
@@ -133,12 +132,15 @@ final public class _ConfigFactory {
 	 * @return ExpressConfigVO
 	 */
 	private ExpressConfigVO find_controllerURLExpresstion() {
+		//准备一个容器装数据
 		ExpressConfigVO vo = new ExpressConfigVO();
+		//找到用户配置的表达式，没有用户配置，则加载默认的配置
 		IControllerURLExpresstion sue = findObject(IControllerURLExpresstion.class,
 				new DefaultControllerURLExpresstion());
 		sue.setRequestURL_Public(vo.getPublicPowerExpresstion());
 		sue.setRequestURL_Session(vo.getSessionPowerExpresstion());
 		sue.setRequestURL_Identifiter(vo.getIdentifiterPowerExpression());
+		//返回用户配置
 		return vo;
 	}
 
@@ -148,6 +150,7 @@ final public class _ConfigFactory {
 	 * @param jwebPowerControllerModel  权限模型
 	 */
 	public void setControllerPowerModel(Map<String, JWebPowerControllerModel> jwebPowerControllerModel) {
+		//实例一个专门处理Controller 权限的对象
 		ClassPowerHandleTools_Temp temp = new ClassPowerHandleTools_Temp(siConfig, jwebPowerControllerModel);
 		ExpressConfigVO controllerExpress = this.find_controllerURLExpresstion();
 		for (Class<?> c : this.list) {
@@ -158,8 +161,11 @@ final public class _ConfigFactory {
 
 //临时工具类。专用处理标注在类、方法里的请求路径、权限
 class ClassPowerHandleTools_Temp {
+	//系统接口
 	private ISystemInterfaceConfig siConfig;
+	//建立的权限模型：路径-权限模型
 	private Map<String, JWebPowerControllerModel> modelMap;
+	//实例一个表达式处理工具
 	PowerExpressionTool expressTool = new PowerExpressionTool();
 
 	public ClassPowerHandleTools_Temp(ISystemInterfaceConfig siConfig,
@@ -167,11 +173,60 @@ class ClassPowerHandleTools_Temp {
 		this.siConfig = siConfig;
 		this.modelMap = jwebPowerControllerModel;
 	}
-
+	
+	/**
+	 * 先对模型中，没有使用表达的权限，直接为其建立权限模型。
+	 * 
+	 * @param  controllerExpress 权限表达式集合
+	 */
+	public void createPowerModel_init(ExpressConfigVO controllerExpress) {
+		Set<String> expression=controllerExpress.getPublicPowerExpresstion();
+		JWebPowerExpressVO vo;
+		//先对Controller【公共】区的路径进行检验
+		for(String urlOrExpression:expression) {
+			//如果用户写的不是表达式，而是完整的url,进行建模型
+			if(null!=(vo=this.expressTool.getPowerUrl(urlOrExpression))) {
+				System.out.println("直接放行的路径："+vo.getExpress());
+				modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.common,null, null));
+			}
+		}
+		
+		//对Controller【会员等级】区的路径进行检验
+		expression=controllerExpress.getSessionPowerExpresstion();
+		for(String urlOrExpression:expression) {
+			//如果用户写的不是表达式，而是完整的url,进行建模型
+			if(null!=(vo=this.expressTool.getPowerUrl(urlOrExpression))) {
+				System.out.println("直接放行的【会员等级】路径："+vo.getExpress());
+				modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.grades,null, null));
+			}
+		}
+		
+		//对Controller【权限编号】区的路径进行检验
+		//如果发现已经存在，执行合并，或覆盖（如果是公共区）
+		expression=controllerExpress.getSessionPowerExpresstion();
+		JWebPowerControllerModel model;
+		for(String urlOrExpression:expression) {
+			//如果用户写的不是表达式，而是完整的url,进行建模型
+			if(null!=(vo=this.expressTool.getPowerUrl(urlOrExpression))) {
+				if(null==vo.getValues()||vo.getValues().length==0) {
+					System.err.println("直接加入权限模型的【权限编号】路径："+vo.getExpress()+" \t没有指定权限编号 ");
+					continue;
+				}
+				System.out.println("直接加入权限模型的【权限编号】路径："+vo.getExpress());
+				model=modelMap.get(vo.getExpress());
+				//表示还没有此路径的权限模型——直接建立权限模型；或会员权限为null,执行覆盖
+				if(null==model||null==model.grades) {
+					modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.identifiter,null,vo.getValues()));
+				}else {//执行合并
+					modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.gradesAndIdentifiter,model.grades,vo.getValues()));
+				}
+			}
+		}
+	}
 	/**
 	 * 为类+方法 相关的url、权限 建立 权限模型
 	 * 
-	 * @param modelMap 权限模型-容器/ 会把建立的模型放到此容器中
+	 * @param controllerExpress 权限表达式集合
 	 * @param c        扫描到的类
 	 */
 	public void createPowerModel(ExpressConfigVO controllerExpress, Class<?> c) {
@@ -355,13 +410,13 @@ class ClassPowerHandleTools_Temp {
 		switch (type) {
 		case common:
 			return vo;
-		case session:
+		case grades:
 			vo.setGrades(sp.value());
 			return vo;
 		case identifiter:
 			vo.setIdentifiter(ip.value());
 			return vo;
-		case sessionAndIdentifiter:
+		case gradesAndIdentifiter:
 			vo.setGrades(sp.value());
 			vo.setIdentifiter(ip.value());
 			return vo;
@@ -380,10 +435,10 @@ class ClassPowerHandleTools_Temp {
 	 */
 	private JWebPowerType getURLPowerType(PublicPower pp, SessionPower sp, IdentifiterPower ip) {
 		if (null != sp && null != ip) {// 会员等级+权限编号
-			return JWebPowerType.sessionAndIdentifiter;
+			return JWebPowerType.gradesAndIdentifiter;
 		}
 		if (null != sp) {// 仅会员等级
-			return JWebPowerType.session;
+			return JWebPowerType.grades;
 		}
 		if (null != ip) {// 仅权限编号
 			return JWebPowerType.identifiter;
@@ -396,10 +451,10 @@ class ClassPowerHandleTools_Temp {
 
 	private JWebPowerType getURLPowerType(SessionCodeAndIdentifiterCodeVO powerCode) {
 		if (null != powerCode.getGrades() && null != powerCode.getIdentifiter()) {// 会员等级+权限编号
-			return JWebPowerType.sessionAndIdentifiter;
+			return JWebPowerType.gradesAndIdentifiter;
 		}
 		if (null != powerCode.getGrades()) {// 仅会员等级
-			return JWebPowerType.session;
+			return JWebPowerType.grades;
 		}
 		if (null != powerCode.getIdentifiter()) {// 仅权限编号
 			return JWebPowerType.identifiter;

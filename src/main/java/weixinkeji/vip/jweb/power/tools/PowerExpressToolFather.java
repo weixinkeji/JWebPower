@@ -66,12 +66,12 @@ public abstract class PowerExpressToolFather {
 	}
 
 	/**
-	 * 表达式 [[会员等级]] 切割符
+	 * 表达式 [[会员等级|权限编号]] 切割符
 	 * 
 	 * @param express 本框架定义的表达式
 	 * @return JWebPowerExpressVO
 	 */
-	protected JWebPowerExpressVO splitSessionExpressStr(String express) {
+	public JWebPowerExpressVO splitExpressStr(String express) {
 		JWebPowerExpressVO vo = new JWebPowerExpressVO();
 		if (express.contains("[[")) {
 			String sstr[] = express.split("\\[\\[");
