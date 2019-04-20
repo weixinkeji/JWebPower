@@ -7,6 +7,9 @@ package weixinkeji.vip.jweb.power.vo;
  *
  */
 final public class JWebPowerExpressVO {
+	
+	public static final String[] EMPTY_POWER= new String[] {};
+	
 	/**
 	 * 表达式
 	 */

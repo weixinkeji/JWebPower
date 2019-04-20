@@ -81,7 +81,7 @@ public abstract class PowerExpressToolFather {
 			System.out.println("splitSessionExpressStr："+vo.getExpress()+" "+Arrays.deepToString(vo.getValues()));
 		} else {
 			vo.setExpress(express);
-			vo.setValues(new String[] {});
+			vo.setValues(JWebPowerExpressVO.EMPTY_POWER);
 		}
 		return vo;
 	}
