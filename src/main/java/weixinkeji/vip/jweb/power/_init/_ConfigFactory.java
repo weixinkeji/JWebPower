@@ -203,12 +203,12 @@ class ClassPowerHandleTools_Temp {
 		
 		//对Controller【权限编号】区的路径进行检验
 		//如果发现已经存在，执行合并，或覆盖（如果是公共区）
-		expression=controllerExpress.getSessionPowerExpresstion();
+		expression=controllerExpress.getIdentifiterPowerExpression();
 		JWebPowerControllerModel model;
 		for(String urlOrExpression:expression) {
 			//如果用户写的不是表达式，而是完整的url,进行建模型
 			if(null!=(vo=this.expressTool.getPowerUrl(urlOrExpression))) {
-				if(null==vo.getValues()||vo.getValues().length==0) {
+				if(null==vo.getValues()) {
 					System.err.println("直接加入权限模型的【权限编号】路径："+vo.getExpress()+" \t没有指定权限编号 ");
 					continue;
 				}
