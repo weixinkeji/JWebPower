@@ -197,7 +197,7 @@ class ClassPowerHandleTools_Temp {
 			//如果用户写的不是表达式，而是完整的url,进行建模型
 			if(null!=(vo=this.expressTool.getPowerUrl(urlOrExpression))) {
 				System.out.println("直接放行的【会员等级】路径："+vo.getExpress());
-				modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.grades,null, null));
+				modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.grades,vo.getValues(), null));
 			}
 		}
 		
