@@ -83,12 +83,17 @@ public class JWebPowerFilter implements Filter {
 		String requestURL = httpRequest.getRequestURI();
 		// 静态资源处理
 		if (requestURL.startsWith(request.getServletContext().getContextPath() + "/static/")) {
-			System.out.println("静态资源处理！");
+			doStaticRequestURLLiseten(httpRequest, httpResponse, chain, requestURL);
 		} else {
 			this.doServerRequestURLLiseten(httpRequest, httpResponse, chain, requestURL);
 		}
 	}
-
+	private void doStaticRequestURLLiseten(final HttpServletRequest request, final HttpServletResponse response,
+			final FilterChain chain, String url)  throws IOException, ServletException {
+		System.out.println("静态资源处理！");
+		chain.doFilter(request, response);
+	}
+	
 	/**
 	 * Controller入口权限监控
 	 * 
