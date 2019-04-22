@@ -27,7 +27,7 @@ public class JWebPowerControllerModel {
 	private final boolean isGradesNull;
 	private final boolean isIdentifierNull;
 	 //监听的实现
-	private IURLListenMethod listen;
+	public final IURLListenMethod listen;
 	public final  boolean isHasListen;
 	/**
 	 * 

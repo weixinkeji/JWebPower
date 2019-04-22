@@ -115,6 +115,10 @@ public class JWebPowerFilter implements Filter {
 			// System.out.println("不在监控内的权限 ！"+requestURL);
 			return;
 		}
+		//触发监听，并且监听结果不为true时，中断请求。
+		if(powerModel.isHasListen&&!powerModel.listen.doMethod(request, response, requestURL)) {
+			return;
+		}
 		if (!controllerUrlPowerEvent.jWebPower_start(request, response, requestURL)) {
 			return;
 		}
