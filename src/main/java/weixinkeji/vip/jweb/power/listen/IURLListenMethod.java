@@ -11,5 +11,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface IURLListenMethod {
 	
+	/**
+	 * 执行监听的方法 
+	 * 
+	 * @param req  HttpServletRequest
+	 * @param resp	HttpServletResponse
+	 * @param requestURL 请求路径
+	 * @return boolean 返回true表示放行，返回 false表示 拦截下来。
+	 */
 	public boolean doMethod(HttpServletRequest req, HttpServletResponse resp, final String requestURL);
 }

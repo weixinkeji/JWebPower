@@ -4,10 +4,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 public class URLListenPool {
 
 	private static Map<Class<? extends IURLListenMethod>, IURLListenMethod> urlListen = new HashMap<>();
-
+	private static Map<String,IURLListenMethod> url=new HashMap<String,IURLListenMethod>();
+	
+	public static boolean doUrlListen(HttpServletRequest req, HttpServletResponse resp, final String requestURL) {
+		IURLListenMethod obj=url.get(requestURL);
+		if(null==obj) {
+			return true;
+		}
+		return obj.doMethod(req, resp, requestURL);
+	}
+	
 	synchronized public static IURLListenMethod getIURLListenMethod(Class<? extends IURLListenMethod> c) {
 		IURLListenMethod obj = urlListen.get(c);
 		if (null == obj) {

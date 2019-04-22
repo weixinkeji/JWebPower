@@ -188,7 +188,7 @@ class ClassPowerHandleTools_Temp {
 			//如果用户写的不是表达式，而是完整的url,进行建模型
 			if(null!=(vo=this.expressTool.getPowerUrl(urlOrExpression))) {
 				System.out.println("直接放行的路径："+vo.getExpress());
-				modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.common,null, null));
+				modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.common,null, null,null));
 			}
 		}
 		
@@ -198,7 +198,7 @@ class ClassPowerHandleTools_Temp {
 			//如果用户写的不是表达式，而是完整的url,进行建模型
 			if(null!=(vo=this.expressTool.getPowerUrl(urlOrExpression))) {
 				System.out.println(vo+"直接加入权限模型的【会员等级】路径："+vo.getExpress());
-				modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.grades,null==vo.getValues()?JWebPowerExpressVO.EMPTY_POWER:vo.getValues(), null));
+				modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.grades,null==vo.getValues()?JWebPowerExpressVO.EMPTY_POWER:vo.getValues(), null,null));
 			}
 		}
 		
@@ -217,9 +217,9 @@ class ClassPowerHandleTools_Temp {
 				model=modelMap.get(vo.getExpress());
 				//表示还没有此路径的权限模型——直接建立权限模型；或会员权限为null,执行覆盖
 				if(null==model||null==model.grades) {
-					modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.identifiter,null,vo.getValues()));
+					modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.identifiter,null,vo.getValues(),null));
 				}else {//执行合并
-					modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.gradesAndIdentifiter,model.grades,vo.getValues()));
+					modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.gradesAndIdentifiter,model.grades,vo.getValues(),null));
 				}
 			}
 		}
@@ -255,10 +255,11 @@ class ClassPowerHandleTools_Temp {
 		PublicPower mp;
 		SessionPower ms;
 		IdentifiterPower mi;
-		// 标注在类的权限类型归属
+		// 标注在方法的权限类型归属
 		JWebPowerType methodPowerType;
-		// 标注在类的权限代码（会员等级、权限编号）
+		// 标注在方法的权限代码（会员等级、权限编号）
 		SessionCodeAndIdentifiterCodeVO methodPowerCode;
+		
 		String methodURL = null;
 
 		// 存放计算结果
@@ -279,7 +280,10 @@ class ClassPowerHandleTools_Temp {
 				methodPowerType = getURLPowerType(mp, ms, mi);// 标注在方法的权限类型归属
 				methodPowerCode = getPowerCode(methodPowerType, ms, mi);// 标注在方法的权限代码（会员等级、权限编号）
 				final_requestURL = getURLByClassUrlAndMethodUrl(headURL, methodURL);// 完整的请求路径
-
+				listen=m.getAnnotation(JWebPowerListen.class);//监听标识符
+				//最终的权限监听：如果方法上没有标识，则采用标识在类上的监听。
+				final_listen=null==listen.value()?head_listen:URLListenPool.getIURLListenMethod(listen.value());
+				
 				// 方法优先级最高。如果方法的注解权限不为null,以方法的注解权限为准
 				if (null != methodPowerType) {
 					final_powerType = methodPowerType;
@@ -300,7 +304,7 @@ class ClassPowerHandleTools_Temp {
 				System.out.println(final_requestURL + ":权限检验，会员等级" + Arrays.deepToString(final_powerCode.getGrades())
 						+ "    权限编号：" + Arrays.deepToString(final_powerCode.getIdentifiter()));
 				modelMap.put(final_requestURL, new JWebPowerControllerModel(final_powerType,
-						final_powerCode.getGrades(), final_powerCode.getIdentifiter()));
+						final_powerCode.getGrades(), final_powerCode.getIdentifiter(),final_listen));
 			}
 		}
 		if (i == 0) {// 可能是Servlet的权限模型
@@ -322,7 +326,7 @@ class ClassPowerHandleTools_Temp {
 			System.out.println(final_requestURL + ":权限检验，会员等级" + Arrays.deepToString(final_powerCode.getGrades())
 					+ "    权限编号：" + Arrays.deepToString(final_powerCode.getIdentifiter()));
 			modelMap.put(final_requestURL, new JWebPowerControllerModel(final_powerType, final_powerCode.getGrades(),
-					final_powerCode.getIdentifiter()));
+					final_powerCode.getIdentifiter(),head_listen));
 		}
 	}
 

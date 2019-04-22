@@ -1,5 +1,7 @@
 package weixinkeji.vip.jweb.power.model;
 
+import weixinkeji.vip.jweb.power.listen.IURLListenMethod;
+
 /**
  * 权限模型
  * <p>
@@ -24,21 +26,26 @@ public class JWebPowerControllerModel {
 	public final String[] identifier;
 	private final boolean isGradesNull;
 	private final boolean isIdentifierNull;
-
+	 //监听的实现
+	private IURLListenMethod listen;
+	public final  boolean isHasListen;
 	/**
 	 * 
 	 * @param urlType    0:放行区 1：会话区 2：编号区 10:会话+编号 一起
 	 * @param grades     会员等级 没有权限请设置为null，有所有的权限请设置为new String[]{}
 	 * @param identifier 权限编号 没有权限请设置为null，有所有的权限请设置为new String[]{}
+	 * 
 	 */
-	public JWebPowerControllerModel(JWebPowerType urlType, String[] grades, String[] identifier) {
+	public JWebPowerControllerModel(JWebPowerType urlType, String[] grades, String[] identifier,IURLListenMethod listen) {
 		this.urlType = urlType;
 		this.grades = grades;
 		this.identifier = identifier;
 		this.isGradesNull = null == grades;
 		this.isIdentifierNull = null == identifier;
+		this.listen=listen;
+		this.isHasListen=null!=this.listen;
 	}
-
+	
 	/**
 	 * 判断会员等级 yourGrades 是否符合url绑定的 会员等级
 	 * 

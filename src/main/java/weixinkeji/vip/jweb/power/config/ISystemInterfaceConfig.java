@@ -54,7 +54,7 @@ public interface ISystemInterfaceConfig {
 		// urlType 0:放行区 1：会话区 2：编号区 10:会话+编号 一起
 		// grades 会员等级 没有权限请设置为null，有所有的权限请设置为new String[]{}
 		// identifier 权限编号 没有权限请设置为null，有所有的权限请设置为new String[]{}
-		JWebPowerControllerModel value = new JWebPowerControllerModel(JWebPowerType.common, null, null);
+		JWebPowerControllerModel value = new JWebPowerControllerModel(JWebPowerType.common, null, null,null);
 		jwebPowerControllerModel.put("/", value);
 	}
 
