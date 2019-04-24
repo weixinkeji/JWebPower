@@ -116,7 +116,7 @@ public class JWebPowerFilter implements Filter {
 			return;
 		}
 		//触发监听，并且监听结果不为true时，中断请求。
-		if(powerModel.isHasListen&&!powerModel.listen.doMethod(request, response, requestURL)) {
+		if(powerModel.isHasListen&&!powerModel.listen.doMethod(request, response, requestURL,powerCode)) {
 			return;
 		}
 		if (!controllerUrlPowerEvent.jWebPower_start(request, response, requestURL)) {

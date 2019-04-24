@@ -282,7 +282,7 @@ class ClassPowerHandleTools_Temp {
 				final_requestURL = getURLByClassUrlAndMethodUrl(headURL, methodURL);// 完整的请求路径
 				listen=m.getAnnotation(JWebPowerListen.class);//监听标识符
 				//最终的权限监听：如果方法上没有标识，则采用标识在类上的监听。
-				final_listen=null==listen.value()?head_listen:URLListenPool.getIURLListenMethod(listen.value());
+				final_listen=null==listen?head_listen:URLListenPool.getIURLListenMethod(listen.value());
 				
 				// 方法优先级最高。如果方法的注解权限不为null,以方法的注解权限为准
 				if (null != methodPowerType) {
