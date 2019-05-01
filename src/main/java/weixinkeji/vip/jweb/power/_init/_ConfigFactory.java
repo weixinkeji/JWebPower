@@ -30,6 +30,7 @@ import weixinkeji.vip.jweb.power.vo.ExpressConfigVO;
 import weixinkeji.vip.jweb.power.vo.JWebPowerExpressVO;
 import weixinkeji.vip.jweb.power.vo.RequestURLVO;
 import weixinkeji.vip.jweb.power.vo.SessionCodeAndIdentifiterCodeVO;
+import weixinkeji.vip.jweb.tools.ControllePrint;
 
 /**
  * IPublicSystemInterfaceConfig 接口的驱动类
@@ -187,7 +188,7 @@ class ClassPowerHandleTools_Temp {
 		for(String urlOrExpression:expression) {
 			//如果用户写的不是表达式，而是完整的url,进行建模型
 			if(null!=(vo=this.expressTool.getPowerUrl(urlOrExpression))) {
-				System.out.println("直接放行的路径："+vo.getExpress());
+				ControllePrint.addMessage("直接放行的路径："+vo.getExpress(), 1);
 				modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.common,null, null,null));
 			}
 		}
@@ -197,7 +198,8 @@ class ClassPowerHandleTools_Temp {
 		for(String urlOrExpression:expression) {
 			//如果用户写的不是表达式，而是完整的url,进行建模型
 			if(null!=(vo=this.expressTool.getPowerUrl(urlOrExpression))) {
-				System.out.println(vo+"直接加入权限模型的【会员等级】路径："+vo.getExpress());
+//				System.out.println(vo+"直接加入权限模型的【会员等级】路径："+vo.getExpress());
+				ControllePrint.addMessage(vo+"直接加入权限模型的【会员等级】路径："+vo.getExpress(), 1);
 				modelMap.put(vo.getExpress(), new JWebPowerControllerModel(JWebPowerType.grades,null==vo.getValues()?JWebPowerExpressVO.EMPTY_POWER:vo.getValues(), null,null));
 			}
 		}
@@ -210,10 +212,10 @@ class ClassPowerHandleTools_Temp {
 			//如果用户写的不是表达式，而是完整的url,进行建模型
 			if(null!=(vo=this.expressTool.getPowerUrl(urlOrExpression))) {
 				if(null==vo.getValues()) {
-					System.err.println("直接加入权限模型的【权限编号】路径："+vo.getExpress()+" \t没有指定权限编号 ");
+					ControllePrint.addMessage("直接加入权限模型的【权限编号】路径："+vo.getExpress()+" \t没有指定权限编号 ", 1);
 					continue;
 				}
-				System.out.println("直接加入权限模型的【权限编号】路径："+vo.getExpress());
+				ControllePrint.addMessage("直接加入权限模型的【权限编号】路径："+vo.getExpress(), 1);
 				model=modelMap.get(vo.getExpress());
 				//表示还没有此路径的权限模型——直接建立权限模型；或会员权限为null,执行覆盖
 				if(null==model||null==model.grades) {
@@ -298,11 +300,12 @@ class ClassPowerHandleTools_Temp {
 				}
 				// 如果权限类型为null,表示此路径不在权限管理范围内
 				if (null == final_powerType) {
-					System.err.println(final_requestURL + " 不在监控范围内！");
+				ControllePrint.addErrorMessage(final_requestURL + " 不在监控范围内！", 1);	
 					continue;
 				}
-				System.out.println(final_requestURL + ":权限检验，会员等级" + Arrays.deepToString(final_powerCode.getGrades())
-						+ "    权限编号：" + Arrays.deepToString(final_powerCode.getIdentifiter()));
+				ControllePrint.addMessage(final_requestURL + ":权限检验，会员等级" + Arrays.deepToString(final_powerCode.getGrades())
+				+ "    权限编号：" + Arrays.deepToString(final_powerCode.getIdentifiter()), 1);
+				
 				modelMap.put(final_requestURL, new JWebPowerControllerModel(final_powerType,
 						final_powerCode.getGrades(), final_powerCode.getIdentifiter(),final_listen));
 			}
@@ -320,11 +323,11 @@ class ClassPowerHandleTools_Temp {
 			}
 			// 如果权限类型为null,表示此路径不在权限管理范围内
 			if (null == final_powerType) {
-				System.err.println(final_requestURL + " 不在监控范围内！");
+				ControllePrint.addErrorMessage(final_requestURL + " 不在监控范围内！", 1);	
 				return;
 			}
-			System.out.println(final_requestURL + ":权限检验，会员等级" + Arrays.deepToString(final_powerCode.getGrades())
-					+ "    权限编号：" + Arrays.deepToString(final_powerCode.getIdentifiter()));
+			ControllePrint.addMessage(final_requestURL + ":权限检验，会员等级" + Arrays.deepToString(final_powerCode.getGrades())
+			+ "    权限编号：" + Arrays.deepToString(final_powerCode.getIdentifiter()), 1);
 			modelMap.put(final_requestURL, new JWebPowerControllerModel(final_powerType, final_powerCode.getGrades(),
 					final_powerCode.getIdentifiter(),head_listen));
 		}
