@@ -152,19 +152,22 @@ public class JWebPowerFilter implements Filter {
 
 		SessionCodeAndIdentifiterCodeVO powerCode = userPower.getUserPowerCode(request, response, requestURL);
 		if (null == powerModel) {
+			if (controllerUrlPowerEvent.doOtherURL(request, response, requestURL,powerCode)) {
+				chain.doFilter(request, response);
+			}
 			return;
 		}
 		//触发监听，并且监听结果不为true时，中断请求。
-		if(powerModel.isHasListen&&!powerModel.listen.doMethod(request, response, requestURL,powerCode)) {
+		if(powerModel.isHasListen&&!powerModel.listen.doMethod(request, response, requestURL,powerModel,powerCode)) {
 			return;
 		}
-		if (!controllerUrlPowerEvent.jWebPower_start(request, response, requestURL)) {
+		if (!controllerUrlPowerEvent.jWebPower_start(request, response, requestURL,powerModel,powerCode)) {
 			return;
 		}
 		switch (powerModel.urlType) {
 		case common:
 			// 公共路径，得到用户的许可后，执行放行。
-			if (controllerUrlPowerEvent.doPublicPower_success(request, response, requestURL)) {
+			if (controllerUrlPowerEvent.doPublicPower_success(request, response, requestURL,powerModel,powerCode)) {
 				chain.doFilter(request, response);
 			}
 			return;
@@ -172,43 +175,40 @@ public class JWebPowerFilter implements Filter {
 			// 假设你的会员等级是1.判断 用户信息中，是否有相关的权限
 			if (powerModel.isInGrades(powerCode.getGrades())) {
 				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL, powerModel.grades)) {
+				if (controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL,powerModel,powerCode)) {
 					chain.doFilter(request, response);
 				}
 			} else {
-				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel.grades);
+				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL,powerModel,powerCode);
 			}
 			return;
 		case identifiter:// 编号区
 			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限
 			if (powerModel.isInIdentifier(powerCode.getIdentifiter())) {
 				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doIdentifiterPower_success(request, response, requestURL,
-						powerModel.identifier)) {
+				if (controllerUrlPowerEvent.doIdentifiterPower_success(request, response, requestURL,powerModel,powerCode)) {
 					chain.doFilter(request, response);
 				}
 			} else {
-				controllerUrlPowerEvent.doIdentifiterPower_fail(request, response, requestURL, powerModel.identifier);
+				controllerUrlPowerEvent.doIdentifiterPower_fail(request, response, requestURL,powerModel,powerCode);
 			}
 			return;
 		case gradesAndIdentifiter:// 会员+编号
 			// 假设你的会员等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
 			if (powerModel.isInGrades(powerCode.getGrades()) && powerModel.isInIdentifier(powerCode.getIdentifiter())) {
 				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doSessionAndIdentifierPower_success(request, response, requestURL,
-						powerModel.grades, powerModel.identifier)) {
+				if (controllerUrlPowerEvent.doSessionAndIdentifierPower_success(request, response, requestURL,powerModel,powerCode)) {
 					chain.doFilter(request, response);
 				}
 			} else {
-				controllerUrlPowerEvent.doSessionAndIdentifierPower_fail(request, response, requestURL,
-						powerModel.grades, powerModel.identifier);
+				controllerUrlPowerEvent.doSessionAndIdentifierPower_fail(request, response, requestURL,powerModel,powerCode);
 			}
 			return;
-		default: // 不受控制的路径
-			if (controllerUrlPowerEvent.doOtherURL(request, response, requestURL)) {
-				chain.doFilter(request, response);
-			}
-			return;
+//		default: // 不受控制的路径
+//			if (controllerUrlPowerEvent.doOtherURL(request, response, requestURL,powerCode)) {
+//				chain.doFilter(request, response);
+//			}
+//			return;
 		}
 	}
 	/**
@@ -224,78 +224,82 @@ public class JWebPowerFilter implements Filter {
 	private void doServerRequestURLLiseten_print(final HttpServletRequest request, final HttpServletResponse response,
 			final FilterChain chain, String url) throws IOException, ServletException {
 		String requestURL = this.requestUrlTool.formatRequestURL(url);
-		System.out.println("访问的路径:"+requestURL);
 		JWebPowerControllerModel powerModel = jwebPowerControllerModel.get(requestURL);
-
 		SessionCodeAndIdentifiterCodeVO powerCode = userPower.getUserPowerCode(request, response, requestURL);
 		if (null == powerModel) {
-			System.err.println("不在监控内的权限 ！"+requestURL);
+			System.err.println("   不在监控内的权限 ！"+requestURL);
+			if (controllerUrlPowerEvent.doOtherURL(request, response, requestURL,powerCode)) {
+				System.out.println("   用户强制执行放行！"+requestURL);
+				chain.doFilter(request, response);
+			}
 			return;
 		}
 		//触发监听，并且监听结果不为true时，中断请求。
-		if(powerModel.isHasListen&&!powerModel.listen.doMethod(request, response, requestURL,powerCode)) {
-			System.err.println("触发监听，并且监听结果不为true，中断请求 ！"+requestURL);
+		if(powerModel.isHasListen&&!powerModel.listen.doMethod(request, response, requestURL,powerModel,powerCode)) {
+			System.err.println("   触发监听，并且监听结果不为true，中断请求 ！"+requestURL);
 			return;
 		}
-		if (!controllerUrlPowerEvent.jWebPower_start(request, response, requestURL)) {
-			System.err.println("触发用户启动监听事件，并且监听结果不为true，中断请求 ！"+requestURL);
+		if (!controllerUrlPowerEvent.jWebPower_start(request, response, requestURL,powerModel,powerCode)) {
+			System.err.println("   触发用户启动监听事件，并且监听结果不为true，中断请求 ！"+requestURL);
 			return;
 		}
 		switch (powerModel.urlType) {
 		case common:
 			// 公共路径，得到用户的许可后，执行放行。
-			if (controllerUrlPowerEvent.doPublicPower_success(request, response, requestURL)) {
-				System.out.println("公共路径，得到用户的许可后，执行放行！"+requestURL);
+			if (controllerUrlPowerEvent.doPublicPower_success(request, response, requestURL,powerModel,powerCode)) {
+				System.out.println("   执行放行！"+requestURL);
 				chain.doFilter(request, response);
 			}else {
-				System.err.println("公共路径，未得到用户的许可！"+requestURL);
+				System.err.println("   执行拦截！"+requestURL);
 			}
 			return;
 		case grades:// 会话区
 			// 假设你的会员等级是1.判断 用户信息中，是否有相关的权限
-			System.out.println("会话区 的路径！"+requestURL);
 			if (powerModel.isInGrades(powerCode.getGrades())) {
 				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL, powerModel.grades)) {
+				if (controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL,powerModel,powerCode)) {
+					System.out.println("   执行放行！"+requestURL);
 					chain.doFilter(request, response);
 				}
 			} else {
-				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel.grades);
+				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL,powerModel,powerCode);
+				System.err.println("   执行拦截！"+requestURL);
 			}
 			return;
 		case identifiter:// 编号区
 			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限
-			System.out.println("编号区 的路径！"+requestURL);
 			if (powerModel.isInIdentifier(powerCode.getIdentifiter())) {
 				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doIdentifiterPower_success(request, response, requestURL,
-						powerModel.identifier)) {
+				if (controllerUrlPowerEvent.doIdentifiterPower_success(request, response, requestURL,powerModel,powerCode)) {
+					System.out.println("   执行放行！"+requestURL);
 					chain.doFilter(request, response);
 				}
 			} else {
-				controllerUrlPowerEvent.doIdentifiterPower_fail(request, response, requestURL, powerModel.identifier);
+				controllerUrlPowerEvent.doIdentifiterPower_fail(request, response, requestURL,powerModel,powerCode);
+				System.err.println("   执行拦截！"+requestURL);
 			}
 			return;
 		case gradesAndIdentifiter:// 会员+编号
 			// 假设你的会员等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
-			System.out.println("会员+编号 的路径！"+requestURL);
 			if (powerModel.isInGrades(powerCode.getGrades()) && powerModel.isInIdentifier(powerCode.getIdentifiter())) {
 				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doSessionAndIdentifierPower_success(request, response, requestURL,
-						powerModel.grades, powerModel.identifier)) {
+				if (controllerUrlPowerEvent.doSessionAndIdentifierPower_success(request, response, requestURL,powerModel,powerCode)) {
+					System.out.println("   执行放行！"+requestURL);
 					chain.doFilter(request, response);
 				}
 			} else {
-				controllerUrlPowerEvent.doSessionAndIdentifierPower_fail(request, response, requestURL,
-						powerModel.grades, powerModel.identifier);
+				controllerUrlPowerEvent.doSessionAndIdentifierPower_fail(request, response, requestURL,powerModel,powerCode);
+				System.err.println("   执行拦截！"+requestURL);
 			}
 			return;
-		default: // 不受控制的路径
-			System.err.println("不受控制的路径！"+requestURL);
-			if (controllerUrlPowerEvent.doOtherURL(request, response, requestURL)) {
-				chain.doFilter(request, response);
-			}
-			return;
+//		default: // 不受控制的路径
+//			System.err.println("   不受控制的路径！"+requestURL);
+//			if (controllerUrlPowerEvent.doOtherURL(request, response, requestURL,powerCode)) {
+//				System.out.println("   执行放行！"+requestURL);
+//				chain.doFilter(request, response);
+//			}
+//			System.err.println("   执行拦截！"+requestURL);
+//			return;
 		}
 	}
 }

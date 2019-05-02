@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
-public @interface SessionPower {
+public @interface GradesPower {
 	public String[] value() default {};
 }

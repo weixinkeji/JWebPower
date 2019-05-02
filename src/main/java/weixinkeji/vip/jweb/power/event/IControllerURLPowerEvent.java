@@ -3,6 +3,9 @@ package weixinkeji.vip.jweb.power.event;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import weixinkeji.vip.jweb.power.model.JWebPowerControllerModel;
+import weixinkeji.vip.jweb.power.vo.SessionCodeAndIdentifiterCodeVO;
+
 /**
  * 
  * 非静态资源url触发权限检验时，成功或失败，会调用相关的方法执行。
@@ -17,11 +20,13 @@ public interface IControllerURLPowerEvent {
 	 * 
 	 * @param req        HttpServletRequest
 	 * @param resp       HttpServletResponse
-	 * @param requestURL String 用户请求的资源路径
-	 * 
+	 * @param requestURL String 用户请求的路径
+	 * @param powerModel 与请求路径关联的权限模型
+	 * @param userPower  用户的权限
 	 * @return boolean 默认true放行
 	 */
-	default boolean jWebPower_start(HttpServletRequest req, HttpServletResponse resp, final String requestURL) {
+	default boolean jWebPower_start(HttpServletRequest req, HttpServletResponse resp,  String requestURL,
+			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
 		return true;
 	}
 
@@ -30,10 +35,14 @@ public interface IControllerURLPowerEvent {
 	 * 
 	 * @param req        HttpServletRequest
 	 * @param resp       HttpServletResponse
-	 * @param requestURL String 用户请求的资源路径
+	 * @param requestURL String 用户请求的路径
+	 * @param powerModel 与请求路径关联的权限模型
+	 * @param userPower  用户的权限
+	 * 
 	 * @return boolean 默认true放行
 	 */
-	default boolean doPublicPower_success(HttpServletRequest req, HttpServletResponse resp, final String requestURL) {
+	default boolean doPublicPower_success(HttpServletRequest req, HttpServletResponse resp,  String requestURL,
+			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
 		return true;
 	}
 
@@ -42,13 +51,14 @@ public interface IControllerURLPowerEvent {
 	 * 
 	 * @param req        HttpServletRequest
 	 * @param resp       ServletResponse
-	 * @param requestURL String 用户请求的资源路径
-	 * @param grades     String[] 权限模型中的会员等级
+	 * @param requestURL String 用户请求的路径
+	 * @param powerModel 与请求路径关联的权限模型
+	 * @param userPower  用户的权限
 	 * 
 	 * @return boolean 默认true放行
 	 */
-	default boolean doSessionPower_success(HttpServletRequest req, HttpServletResponse resp, final String requestURL,
-			String[] grades) {
+	default boolean doSessionPower_success(HttpServletRequest req, HttpServletResponse resp,  String requestURL,
+			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
 		return true;
 	}
 
@@ -57,11 +67,13 @@ public interface IControllerURLPowerEvent {
 	 * 
 	 * @param req        HttpServletRequest
 	 * @param resp       ServletResponse
-	 * @param requestURL String 用户请求的资源路径
-	 * @param grades     String[] 权限模型中的会员等级
+	 * @param requestURL String 用户请求的路径
+	 * @param powerModel 与请求路径关联的权限模型
+	 * @param userPower  用户的权限
+	 * 
 	 */
-	default void doSessionPower_fail(HttpServletRequest req, HttpServletResponse resp, final String requestURL,
-			String[] grades) {
+	default void doSessionPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
 	}
 
 	/**
@@ -69,13 +81,14 @@ public interface IControllerURLPowerEvent {
 	 * 
 	 * @param req        HttpServletRequest
 	 * @param resp       HttpServletResponse
-	 * @param requestURL String 用户请求的资源路径
-	 * @param identifier String[] 权限模型中的权限编号
+	 * @param requestURL String 用户请求的路径
+	 * @param powerModel 与请求路径关联的权限模型
+	 * @param userPower  用户的权限
 	 * 
 	 * @return boolean 默认true放行
 	 */
-	default boolean doIdentifiterPower_success(HttpServletRequest req, HttpServletResponse resp,
-			final String requestURL, String[] identifier) {
+	default boolean doIdentifiterPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
 		return true;
 	}
 
@@ -84,26 +97,28 @@ public interface IControllerURLPowerEvent {
 	 * 
 	 * @param req        HttpServletRequest
 	 * @param resp       HttpServletResponse
-	 * @param requestURL String 用户请求的资源路径
-	 * @param identifier String[] 权限模型中的权限编号
+	 * @param requestURL String 用户请求的路径
+	 * @param powerModel 与请求路径关联的权限模型
+	 * @param userPower  用户的权限
+	 * 
 	 */
-	default void doIdentifiterPower_fail(HttpServletRequest req, HttpServletResponse resp, final String requestURL,
-			String[] identifier) {
+	default void doIdentifiterPower_fail(HttpServletRequest req, HttpServletResponse resp,  String requestURL,
+			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
 	}
 
 	/**
 	 * 通过【会话、权限编号】验证，执行此方法
 	 * 
 	 * @param req        HttpHttpServletRequest
-	 * @param resp       HttpServletResponse
-	 * @param requestURL String 用户请求的资源路径
-	 * @param grades     String[] 权限模型中的会员等级
-	 * @param identifier String[] 权限模型中的权限编号
+	 * @param resp       HttpServletRespons
+	 * @param requestURL String 用户请求的路径
+	 * @param powerModel 与请求路径关联的权限模型
+	 * @param userPower  用户的权限
 	 * 
 	 * @return boolean 默认true放行
 	 */
-	default boolean doSessionAndIdentifierPower_success(HttpServletRequest req, HttpServletResponse resp,
-			final String requestURL, String[] grades, String[] identifier) {
+	default boolean doSessionAndIdentifierPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
 		return true;
 	}
 
@@ -112,12 +127,13 @@ public interface IControllerURLPowerEvent {
 	 * 
 	 * @param req        HttpHttpServletRequest
 	 * @param resp       HttpServletResponse
-	 * @param requestURL String 用户请求的资源路径
-	 * @param grades     String[] 权限模型中的会员等级
-	 * @param identifier String[] 权限模型中的权限编号
+	 * @param requestURL String 用户请求的路径
+	 * @param powerModel 与请求路径关联的权限模型
+	 * @param userPower  用户的权限
+	 * 
 	 */
-	default void doSessionAndIdentifierPower_fail(HttpServletRequest req, HttpServletResponse resp,
-			final String requestURL, String[] grades, String[] identifier) {
+	default void doSessionAndIdentifierPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
 	}
 
 	/**
@@ -127,9 +143,11 @@ public interface IControllerURLPowerEvent {
 	 * @param req        HttpServletRequest
 	 * @param resp       HttpServletResponse
 	 * @param requestURL String 用户请求的路径
+	 * @param userPower  用户的权限
+	 * 
 	 * @return boolean 默认false,不放行！
 	 */
-	default boolean doOtherURL(HttpServletRequest req, HttpServletResponse resp, final String requestURL) {
+	default boolean doOtherURL(HttpServletRequest req, HttpServletResponse resp, String requestURL,SessionCodeAndIdentifiterCodeVO userPower) {
 		return false;
 	}
 
