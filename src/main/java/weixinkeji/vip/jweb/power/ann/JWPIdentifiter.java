@@ -9,6 +9,12 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
-public @interface GradesPower {
-	public String[] value() default {};
+public @interface JWPIdentifiter {
+
+	/**
+	 * 权限代码
+	 * 
+	 * @return String[]
+	 */
+	public String[] value();
 }

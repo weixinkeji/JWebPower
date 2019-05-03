@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import weixinkeji.vip.jweb.power.ann.IdentifiterPower;
+import weixinkeji.vip.jweb.power.ann.JWPIdentifiter;
 import weixinkeji.vip.jweb.power.ann.JWebPowerListen;
-import weixinkeji.vip.jweb.power.ann.PublicPower;
-import weixinkeji.vip.jweb.power.ann.GradesPower;
+import weixinkeji.vip.jweb.power.ann.JWPPublic;
+import weixinkeji.vip.jweb.power.ann.JWPGrades;
 import weixinkeji.vip.jweb.power.config.DefaultJWebPowerUserInterface;
 import weixinkeji.vip.jweb.power.config.DefaultSystemInterfaceConfig;
 import weixinkeji.vip.jweb.power.config.IJWebPowerUserInterface;
@@ -239,9 +239,9 @@ class ClassPowerHandleTools_Temp {
 		}
 //		System.out.println("找到控制类绑定的url:" + headURL);
 		// 可能标注在类上的权限标识符
-		PublicPower cp = c.getAnnotation(PublicPower.class);
-		GradesPower cs = c.getAnnotation(GradesPower.class);
-		IdentifiterPower ci = c.getAnnotation(IdentifiterPower.class);
+		JWPPublic cp = c.getAnnotation(JWPPublic.class);
+		JWPGrades cs = c.getAnnotation(JWPGrades.class);
+		JWPIdentifiter ci = c.getAnnotation(JWPIdentifiter.class);
 		// 标注在类的监听注册
 		JWebPowerListen listen = c.getAnnotation(JWebPowerListen.class);
 
@@ -254,9 +254,9 @@ class ClassPowerHandleTools_Temp {
 
 		Method[] methods = c.getMethods();
 		// 可能标注在方法上的权限标识符
-		PublicPower mp;
-		GradesPower ms;
-		IdentifiterPower mi;
+		JWPPublic mp;
+		JWPGrades ms;
+		JWPIdentifiter mi;
 		// 标注在方法的权限类型归属
 		JWebPowerType methodPowerType;
 		// 标注在方法的权限代码（权限等级、权限编号）
@@ -276,9 +276,9 @@ class ClassPowerHandleTools_Temp {
 			// 表示请求路径由 类相关url+方法相关url 组成！
 			if (null != (methodURL = this.siConfig.getURLByMethod(m))) {
 				i++;
-			 	mp = m.getAnnotation(PublicPower.class);
-				ms = m.getAnnotation(GradesPower.class);
-				mi = m.getAnnotation(IdentifiterPower.class);
+			 	mp = m.getAnnotation(JWPPublic.class);
+				ms = m.getAnnotation(JWPGrades.class);
+				mi = m.getAnnotation(JWPIdentifiter.class);
 				methodPowerType = getURLPowerType(mp, ms, mi);// 标注在方法的权限类型归属
 				methodPowerCode = getPowerCode(methodPowerType, ms, mi);// 标注在方法的权限代码（权限等级、权限编号）
 				final_requestURL = getURLByClassUrlAndMethodUrl(headURL, methodURL);// 完整的请求路径
@@ -424,7 +424,7 @@ class ClassPowerHandleTools_Temp {
 	 * @param ip   IdentifiterPower 注解：权限编号
 	 * @return SessionCodeAndIdentifiterCodeVO
 	 */
-	private SessionCodeAndIdentifiterCodeVO getPowerCode(JWebPowerType type, GradesPower sp, IdentifiterPower ip) {
+	private SessionCodeAndIdentifiterCodeVO getPowerCode(JWebPowerType type, JWPGrades sp, JWPIdentifiter ip) {
 		if (null == type) {
 			return null;
 		}
@@ -455,7 +455,7 @@ class ClassPowerHandleTools_Temp {
 	 * @param ip IdentifiterPower 注解：权限编号
 	 * @return JWebPowerType
 	 */
-	private JWebPowerType getURLPowerType(PublicPower pp, GradesPower sp, IdentifiterPower ip) {
+	private JWebPowerType getURLPowerType(JWPPublic pp, JWPGrades sp, JWPIdentifiter ip) {
 		if (null != sp && null != ip) {// 权限等级+权限编号
 			return JWebPowerType.gradesAndIdentifiter;
 		}
