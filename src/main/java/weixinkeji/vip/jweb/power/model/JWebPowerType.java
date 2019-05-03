@@ -19,6 +19,10 @@ public enum JWebPowerType {
 	/**
 	 * 等级区+编号区
 	 */
-	,gradesAndIdentifiter;	
+	,gradesAndIdentifiter
 	
+	/**
+	 * 仅仅有监听
+	 */
+	,onlyListen;
 }

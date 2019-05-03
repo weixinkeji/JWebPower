@@ -79,7 +79,7 @@ public abstract class PowerExpressToolFather {
 			vo.setExpress(sstr[0]);
 			String str = sstr[1].replace("]]", "").trim();
 			vo.setValues(str.isEmpty() ? JWebPowerExpressVO.EMPTY_POWER : str.split("[,，]"));
-			System.out.println("splitSessionExpressStr：" + vo.getExpress() + " " + Arrays.deepToString(vo.getValues()));
+		//	System.out.println("splitSessionExpressStr：" + vo.getExpress() + " " + Arrays.deepToString(vo.getValues()));
 		} else {
 			vo.setExpress(express);
 			vo.setValues(JWebPowerExpressVO.EMPTY_POWER);

@@ -98,7 +98,7 @@ public class JWebPowerFilter implements Filter {
 		
 		// 获取【会员等级】、【权限编号】的用户接口
 		userPower = tempConfigFactory.find_IJWebPowerUserInterface();
-		ControllePrint.addMessage("[目录]设置  获取【会员等级】、【权限编号】的用户接口的实现类  处理完毕"+userPower.getClass().getName());
+		ControllePrint.addMessage("[目录]设置  获取【权限等级】、【权限编号】的用户接口的实现类  处理完毕"+userPower.getClass().getName());
 		
 		if(console_print) {
 			ControllePrint.printMessage();
@@ -203,6 +203,9 @@ public class JWebPowerFilter implements Filter {
 				controllerUrlPowerEvent.doSessionAndIdentifierPower_fail(request, response, requestURL,powerModel,powerCode);
 			}
 			return;
+		case onlyListen:
+			chain.doFilter(request, response);
+			return;
 //		default: // 不受控制的路径
 //			if (controllerUrlPowerEvent.doOtherURL(request, response, requestURL,powerCode)) {
 //				chain.doFilter(request, response);
@@ -290,6 +293,9 @@ public class JWebPowerFilter implements Filter {
 				controllerUrlPowerEvent.doSessionAndIdentifierPower_fail(request, response, requestURL,powerModel,powerCode);
 				System.err.println("   执行拦截！"+requestURL);
 			}
+			return;
+		case onlyListen:
+			chain.doFilter(request, response);
 			return;
 //		default: // 不受控制的路径
 //			System.err.println("   不受控制的路径！"+requestURL);

@@ -298,6 +298,14 @@ class ClassPowerHandleTools_Temp {
 					final_powerCode = this.getExpressPowerCode(final_requestURL, controllerExpress);
 					final_powerType = this.getURLPowerType(final_powerCode);
 				}
+				//只有监听的情况
+				if(null!=final_listen&&null==final_powerType) {
+					ControllePrint.addErrorMessage(final_requestURL + " 注意，此路径只有监听！", 1);
+					modelMap.put(final_requestURL, new JWebPowerControllerModel(JWebPowerType.onlyListen,
+							null, null,final_listen));
+					continue;
+				}
+				
 				// 如果权限类型为null,表示此路径不在权限管理范围内
 				if (null == final_powerType) {
 				ControllePrint.addErrorMessage(final_requestURL + " 不在监控范围内！", 1);	
@@ -320,6 +328,12 @@ class ClassPowerHandleTools_Temp {
 				// 检验表达式，取得url相关权限
 				final_powerCode = this.getExpressPowerCode(final_requestURL, controllerExpress);
 				final_powerType = this.getURLPowerType(final_powerCode);
+			}
+			//只有监听的情况
+			if(null!=final_listen&&null==final_powerType) {
+				ControllePrint.addErrorMessage(final_requestURL + " 注意，此路径只有监听！", 1);
+				modelMap.put(final_requestURL, new JWebPowerControllerModel(JWebPowerType.onlyListen,
+						null, null,final_listen));
 			}
 			// 如果权限类型为null,表示此路径不在权限管理范围内
 			if (null == final_powerType) {
