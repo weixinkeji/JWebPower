@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,13 +18,13 @@ public class URLListenPool {
 	private static Map<Class<? extends IURLListenMethod>, IURLListenMethod> urlListen = new HashMap<>();
 	private static Map<String,IURLListenMethod> url=new HashMap<String,IURLListenMethod>();
 	
-	public static boolean doUrlListen(HttpServletRequest req, HttpServletResponse resp, final String requestURL
+	public static boolean doUrlListen(FilterChain chain, HttpServletRequest req, HttpServletResponse resp, final String requestURL
 			,JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO powerCode ) throws IOException, ServletException {
 		IURLListenMethod obj=url.get(requestURL);
 		if(null==obj) {
 			return true;
 		}
-		return obj.doMethod(req, resp, requestURL,powerModel,powerCode );
+		return obj.doMethod(chain,req, resp, requestURL,powerModel,powerCode );
 	}
 	
 	synchronized public static IURLListenMethod getIURLListenMethod(Class<? extends IURLListenMethod> c) {

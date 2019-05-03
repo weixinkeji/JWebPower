@@ -2,6 +2,7 @@ package weixinkeji.vip.jweb.power.listen;
 
 import java.io.IOException;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +20,8 @@ public interface IURLListenMethod {
 	
 	/**
 	 * 执行监听的方法 
+	 * 
+	 * @param chain      FilterChain
 	 * @param req  HttpServletRequest
 	 * @param resp	HttpServletResponse
 	 * @param requestURL 请求路径
@@ -30,7 +33,7 @@ public interface IURLListenMethod {
 	 * @throws IOException  IO流异常
 	 * @throws ServletException javax.servlet.ServletException
 	 */
-	public boolean doMethod(HttpServletRequest req, HttpServletResponse resp, final String requestURL
+	public boolean doMethod(FilterChain chain, HttpServletRequest req, HttpServletResponse resp, final String requestURL
 			,JWebPowerControllerModel powerModel
 			,SessionCodeAndIdentifiterCodeVO powerCode)throws IOException, ServletException ;
 }
