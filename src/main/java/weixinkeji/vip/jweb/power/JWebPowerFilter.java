@@ -96,7 +96,7 @@ public class JWebPowerFilter implements Filter {
 		staticResourcesValiDate = new JWebPowerStaticResourcesValidateModel(staticExpresstion);
 		ControllePrint.addMessage("[目录]设置用户的静态资源 检验模型 处理完毕");
 		
-		// 获取【会员等级】、【权限编号】的用户接口
+		// 获取【等级等级】、【权限编号】的用户接口
 		userPower = tempConfigFactory.find_IJWebPowerUserInterface();
 		ControllePrint.addMessage("[目录]设置  获取【权限等级】、【权限编号】的用户接口的实现类  处理完毕"+userPower.getClass().getName());
 		
@@ -171,7 +171,7 @@ public class JWebPowerFilter implements Filter {
 			}
 			return;
 		case grades:// 会话区
-			// 假设你的会员等级是1.判断 用户信息中，是否有相关的权限
+			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限
 			if (powerModel.isInGrades(powerCode.getGrades())) {
 				// 有权限。调用定义的方法。
 				if (controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL,powerModel,powerCode)) {
@@ -192,8 +192,8 @@ public class JWebPowerFilter implements Filter {
 				controllerUrlPowerEvent.doIdentifiterPower_fail(request, response, requestURL,powerModel,powerCode);
 			}
 			return;
-		case gradesAndIdentifiter:// 会员+编号
-			// 假设你的会员等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
+		case gradesAndIdentifiter:// 等级+编号
+			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
 			if (powerModel.isInGrades(powerCode.getGrades()) && powerModel.isInIdentifier(powerCode.getIdentifiter())) {
 				// 有权限。调用定义的方法。
 				if (controllerUrlPowerEvent.doSessionAndIdentifierPower_success(request, response, requestURL,powerModel,powerCode)) {
@@ -255,8 +255,8 @@ public class JWebPowerFilter implements Filter {
 				System.err.println("   执行拦截！"+requestURL);
 			}
 			return;
-		case grades:// 会话区
-			// 假设你的会员等级是1.判断 用户信息中，是否有相关的权限
+		case grades:// 等级区
+			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限
 			if (powerModel.isInGrades(powerCode.getGrades())) {
 				// 有权限。调用定义的方法。
 				if (controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL,powerModel,powerCode)) {
@@ -281,8 +281,8 @@ public class JWebPowerFilter implements Filter {
 				System.err.println("   执行拦截！"+requestURL);
 			}
 			return;
-		case gradesAndIdentifiter:// 会员+编号
-			// 假设你的会员等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
+		case gradesAndIdentifiter:// 等级+编号
+			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
 			if (powerModel.isInGrades(powerCode.getGrades()) && powerModel.isInIdentifier(powerCode.getIdentifiter())) {
 				// 有权限。调用定义的方法。
 				if (controllerUrlPowerEvent.doSessionAndIdentifierPower_success(request, response, requestURL,powerModel,powerCode)) {
