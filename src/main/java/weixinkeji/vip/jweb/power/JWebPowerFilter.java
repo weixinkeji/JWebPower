@@ -125,8 +125,6 @@ public class JWebPowerFilter implements Filter {
 			}else {
 				this.doServerRequestURLLiseten(httpRequest, httpResponse, chain, requestURL);
 			}
-			
-			
 		}
 	}
 	private void doStaticRequestURLLiseten(final HttpServletRequest request, final HttpServletResponse response,
@@ -149,8 +147,12 @@ public class JWebPowerFilter implements Filter {
 			final FilterChain chain, String url) throws IOException, ServletException {
 		String requestURL = this.requestUrlTool.formatRequestURL(url);
 		JWebPowerControllerModel powerModel = jwebPowerControllerModel.get(requestURL);
-
 		SessionCodeAndIdentifiterCodeVO powerCode = userPower.getUserPowerCode(request, response, requestURL);
+		
+		if (!controllerUrlPowerEvent.jWebPower_start(chain,request, response, requestURL,powerModel,powerCode)) {
+			return;
+		}
+		
 		if (null == powerModel) {
 			if (controllerUrlPowerEvent.doOtherURL(request, response, requestURL,powerCode)) {
 				chain.doFilter(request, response);
@@ -159,9 +161,6 @@ public class JWebPowerFilter implements Filter {
 		}
 		//触发监听，并且监听结果不为true时，中断请求。
 		if(powerModel.isHasListen&&!powerModel.listen.doMethod(request, response, requestURL,powerModel,powerCode)) {
-			return;
-		}
-		if (!controllerUrlPowerEvent.jWebPower_start(request, response, requestURL,powerModel,powerCode)) {
 			return;
 		}
 		switch (powerModel.urlType) {
@@ -226,6 +225,10 @@ public class JWebPowerFilter implements Filter {
 		String requestURL = this.requestUrlTool.formatRequestURL(url);
 		JWebPowerControllerModel powerModel = jwebPowerControllerModel.get(requestURL);
 		SessionCodeAndIdentifiterCodeVO powerCode = userPower.getUserPowerCode(request, response, requestURL);
+		
+		if (!controllerUrlPowerEvent.jWebPower_start(chain,request, response, requestURL,powerModel,powerCode)) {
+			return;
+		}
 		if (null == powerModel) {
 			System.err.println("   不在监控内的权限 ！"+requestURL);
 			if (controllerUrlPowerEvent.doOtherURL(request, response, requestURL,powerCode)) {
@@ -237,10 +240,6 @@ public class JWebPowerFilter implements Filter {
 		//触发监听，并且监听结果不为true时，中断请求。
 		if(powerModel.isHasListen&&!powerModel.listen.doMethod(request, response, requestURL,powerModel,powerCode)) {
 			System.err.println("   触发监听，并且监听结果不为true，中断请求 ！"+requestURL);
-			return;
-		}
-		if (!controllerUrlPowerEvent.jWebPower_start(request, response, requestURL,powerModel,powerCode)) {
-			System.err.println("   触发用户启动监听事件，并且监听结果不为true，中断请求 ！"+requestURL);
 			return;
 		}
 		switch (powerModel.urlType) {

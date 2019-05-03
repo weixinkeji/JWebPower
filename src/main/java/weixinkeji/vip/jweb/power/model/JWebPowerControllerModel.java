@@ -16,7 +16,7 @@ public class JWebPowerControllerModel {
 
 	public final JWebPowerType urlType;
 	/**
-	 * 会员等级。null时，表示出错。空表示所有等级。
+	 * 权限等级。null时，表示出错。空表示所有等级。
 	 */
 	public final String[] grades;
 
@@ -31,10 +31,10 @@ public class JWebPowerControllerModel {
 	public final  boolean isHasListen;
 	/**
 	 * 
-	 * @param urlType    0:放行区 1：会话区 2：编号区 10:会话+编号 一起
-	 * @param grades     会员等级 没有权限请设置为null，有所有的权限请设置为new String[]{}
+	 * @param urlType    0:放行区 1：等级区 2：编号区 10:会话+编号 一起
+	 * @param grades     权限等级 没有权限请设置为null，有所有的权限请设置为new String[]{}
 	 * @param identifier 权限编号 没有权限请设置为null，有所有的权限请设置为new String[]{}
-	 * 
+	 * @param listen 	 IURLListenMethod 监听器
 	 */
 	public JWebPowerControllerModel(JWebPowerType urlType, String[] grades, String[] identifier,IURLListenMethod listen) {
 		this.urlType = urlType;
@@ -47,17 +47,17 @@ public class JWebPowerControllerModel {
 	}
 	
 	/**
-	 * 判断会员等级 yourGrades 是否符合url绑定的 会员等级
+	 * 判断权限等级 yourGrades 是否符合url绑定的 权限等级
 	 * 
-	 * @param yourGrades 你的会员等级
+	 * @param yourGrades 你的权限等级
 	 * @return boolean
 	 */
 	public boolean isInGrades(String yourGrades) {
-		// 不是会员等级 控制的路径 或你没有权限
+		// 不是权限等级 控制的路径 或你没有权限
 		if (this.isGradesNull || null == yourGrades) {
 			return false;
 		}
-		if(grades.length==0) {//只要不为null的会员等级，都通过
+		if(grades.length==0) {//只要不为null的权限等级，都通过
 			return true;
 		}
 		for (String str : grades) {
@@ -69,17 +69,17 @@ public class JWebPowerControllerModel {
 	}
 
 	/**
-	 * 判断会员等级 yourGrades 是否符合url绑定的 会员等级
+	 * 判断权限等级 yourGrades 是否符合url绑定的 权限等级
 	 * 
-	 * @param yourGrades 你的会员等级集合
+	 * @param yourGrades 你的权限等级集合
 	 * @return boolean
 	 */
 	public boolean isInGrades(String[] yourGrades) {
-		// 不是会员等级 控制的路径 或你没有权限
+		// 不是权限等级 控制的路径 或你没有权限
 		if (this.isGradesNull || null == yourGrades) {
 			return false;
 		}
-		if(grades.length==0) {//只要不为null的会员等级，都通过
+		if(grades.length==0) {//只要不为null的权限等级，都通过
 			return true;
 		}
 		for (String str : grades) {
@@ -131,9 +131,9 @@ public class JWebPowerControllerModel {
 	}
 
 	/**
-	 * 判断会员等级 yourGrades 权限编号 yourIdentifier 是否符合url绑定的 会员等级、权限编号
+	 * 判断权限等级 yourGrades 权限编号 yourIdentifier 是否符合url绑定的 权限等级、权限编号
 	 * 
-	 * @param yourGrades     String 你的会员等级
+	 * @param yourGrades     String 你的权限等级
 	 * @param yourIdentifier String[] 你的权限编号集合
 	 * 
 	 * @return boolean
@@ -143,9 +143,9 @@ public class JWebPowerControllerModel {
 	}
 
 	/**
-	 * 判断会员等级 yourGrades 权限编号 yourIdentifier 是否符合url绑定的 会员等级、权限编号
+	 * 判断权限等级 yourGrades 权限编号 yourIdentifier 是否符合url绑定的 权限等级、权限编号
 	 * 
-	 * @param yourGrades     String[] 你的会员等级
+	 * @param yourGrades     String[] 你的权限等级
 	 * @param yourIdentifier String[] 你的权限编号集合
 	 * 
 	 * @return boolean

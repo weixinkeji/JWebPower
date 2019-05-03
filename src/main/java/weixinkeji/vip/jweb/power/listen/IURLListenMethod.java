@@ -1,5 +1,8 @@
 package weixinkeji.vip.jweb.power.listen;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,8 +26,11 @@ public interface IURLListenMethod {
 	 * @param powerCode 用户的权限
 	 * 
 	 * @return boolean 返回true表示放行，返回 false表示 拦截下来。
+	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
 	 */
 	public boolean doMethod(HttpServletRequest req, HttpServletResponse resp, final String requestURL
 			,JWebPowerControllerModel powerModel
-			,SessionCodeAndIdentifiterCodeVO powerCode);
+			,SessionCodeAndIdentifiterCodeVO powerCode)throws IOException, ServletException ;
 }

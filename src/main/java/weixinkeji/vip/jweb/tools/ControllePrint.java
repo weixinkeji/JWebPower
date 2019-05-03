@@ -10,7 +10,7 @@ public class ControllePrint {
 	/**
 	 * 控制台打印一条 错误信息
 	 * 
-	 * @param msg
+	 * @param msg 需要打印的信息
 	 */
 	public static void addErrorMessage(String msg) {
 		consoleMsg.add(new ConsoleVO(-1, msg));
@@ -19,7 +19,7 @@ public class ControllePrint {
 	/**
 	 * 控制台打印一条 错误信息
 	 * 
-	 * @param msg
+	 * @param msg 需要打印的信息
 	 * @param tabCount 在信息前加入多少个 空格
 	 */
 	public static void addErrorMessage(String msg, int tabCount) {
@@ -29,7 +29,7 @@ public class ControllePrint {
 	/**
 	 * 控制台打印一条 信息
 	 * 
-	 * @param msg
+	 * @param msg 需要打印的信息
 	 */
 	public static void addMessage(String msg) {
 		consoleMsg.add(new ConsoleVO(1, msg));

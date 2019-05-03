@@ -14,7 +14,7 @@ public class JWebPowerStaticResourcesModel {
 
 	public final JWebPowerType urlType;
 	/**
-	 * 会员等级。null时，表示出错。空表示所有等级。
+	 * 权限等级。null时，表示出错。空表示所有等级。
 	 */
 	public final String[] grades;
 	
@@ -34,13 +34,13 @@ public class JWebPowerStaticResourcesModel {
 	}
 
 	/**
-	 * 判断会员等级 yourGrades 是否符合url绑定的 会员等级
+	 * 判断权限等级 yourGrades 是否符合url绑定的 权限等级
 	 * 
-	 * @param yourGrades 你的会员等级
+	 * @param yourGrades 你的权限等级
 	 * @return boolean
 	 */
 	public boolean isInGrades(String yourGrades) {
-		// 不是会员等级 控制的路径 或你没有权限
+		// 不是权限等级 控制的路径 或你没有权限
 		if (this.isGradesNull || null == yourGrades || yourGrades.trim().isEmpty()) {
 			return false;
 		}
@@ -53,13 +53,13 @@ public class JWebPowerStaticResourcesModel {
 	}
 
 	/**
-	 * 判断会员等级 yourGrades 是否符合url绑定的 会员等级
+	 * 判断权限等级 yourGrades 是否符合url绑定的 权限等级
 	 * 
-	 * @param yourGrades 你的会员等级集合
+	 * @param yourGrades 你的权限等级集合
 	 * @return boolean
 	 */
 	public boolean isInGrades(String[] yourGrades) {
-		// 不是会员等级 控制的路径 或你没有权限
+		// 不是权限等级 控制的路径 或你没有权限
 		if (this.isGradesNull || null == yourGrades || yourGrades.length == 0) {
 			return false;
 		}
@@ -112,9 +112,9 @@ public class JWebPowerStaticResourcesModel {
 	}
 
 	/**
-	 * 判断会员等级 yourGrades 权限编号 yourIdentifier 是否符合url绑定的 会员等级、权限编号
+	 * 判断权限等级 yourGrades 权限编号 yourIdentifier 是否符合url绑定的 权限等级、权限编号
 	 * 
-	 * @param yourGrades String 你的会员等级
+	 * @param yourGrades String 你的权限等级
 	 * @param yourIdentifier String[] 你的权限编号集合
 	 * 
 	 * @return boolean
@@ -123,9 +123,9 @@ public class JWebPowerStaticResourcesModel {
 		return this.isInGrades(yourGrades) && this.isInIdentifier(yourIdentifier);
 	}
 	/**
-	 * 判断会员等级 yourGrades 权限编号 yourIdentifier 是否符合url绑定的 会员等级、权限编号
+	 * 判断权限等级 yourGrades 权限编号 yourIdentifier 是否符合url绑定的 权限等级、权限编号
 	 * 
-	 * @param yourGrades String[] 你的会员等级
+	 * @param yourGrades String[] 你的权限等级
 	 * @param yourIdentifier String[] 你的权限编号集合
 	 * 
 	 * @return boolean

@@ -1,5 +1,9 @@
 package weixinkeji.vip.jweb.power.event;
 
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,15 +22,20 @@ public interface IControllerURLPowerEvent {
 	/**
 	 * 进入控制区时，自动调用执行的方法。必定执行。
 	 * 
+	 * @param chain      FilterChain
 	 * @param req        HttpServletRequest
 	 * @param resp       HttpServletResponse
 	 * @param requestURL String 用户请求的路径
 	 * @param powerModel 与请求路径关联的权限模型
 	 * @param userPower  用户的权限
 	 * @return boolean 默认true放行
+	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default boolean jWebPower_start(HttpServletRequest req, HttpServletResponse resp,  String requestURL,
-			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
+	default boolean jWebPower_start(final FilterChain chain, HttpServletRequest req, HttpServletResponse resp,
+			String requestURL, JWebPowerControllerModel powerModel, SessionCodeAndIdentifiterCodeVO userPower)
+			throws IOException, ServletException {
 		return true;
 	}
 
@@ -40,9 +49,13 @@ public interface IControllerURLPowerEvent {
 	 * @param userPower  用户的权限
 	 * 
 	 * @return boolean 默认true放行
+	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default boolean doPublicPower_success(HttpServletRequest req, HttpServletResponse resp,  String requestURL,
-			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
+	default boolean doPublicPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+			JWebPowerControllerModel powerModel, SessionCodeAndIdentifiterCodeVO userPower)
+			throws IOException, ServletException {
 		return true;
 	}
 
@@ -56,9 +69,13 @@ public interface IControllerURLPowerEvent {
 	 * @param userPower  用户的权限
 	 * 
 	 * @return boolean 默认true放行
+	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default boolean doSessionPower_success(HttpServletRequest req, HttpServletResponse resp,  String requestURL,
-			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
+	default boolean doSessionPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+			JWebPowerControllerModel powerModel, SessionCodeAndIdentifiterCodeVO userPower)
+			throws IOException, ServletException {
 		return true;
 	}
 
@@ -71,9 +88,12 @@ public interface IControllerURLPowerEvent {
 	 * @param powerModel 与请求路径关联的权限模型
 	 * @param userPower  用户的权限
 	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
 	 */
 	default void doSessionPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
+			JWebPowerControllerModel powerModel, SessionCodeAndIdentifiterCodeVO userPower)
+			throws IOException, ServletException {
 	}
 
 	/**
@@ -86,9 +106,13 @@ public interface IControllerURLPowerEvent {
 	 * @param userPower  用户的权限
 	 * 
 	 * @return boolean 默认true放行
+	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
 	 */
 	default boolean doIdentifiterPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
+			JWebPowerControllerModel powerModel, SessionCodeAndIdentifiterCodeVO userPower)
+			throws IOException, ServletException {
 		return true;
 	}
 
@@ -101,9 +125,12 @@ public interface IControllerURLPowerEvent {
 	 * @param powerModel 与请求路径关联的权限模型
 	 * @param userPower  用户的权限
 	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default void doIdentifiterPower_fail(HttpServletRequest req, HttpServletResponse resp,  String requestURL,
-			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
+	default void doIdentifiterPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+			JWebPowerControllerModel powerModel, SessionCodeAndIdentifiterCodeVO userPower)
+			throws IOException, ServletException {
 	}
 
 	/**
@@ -116,9 +143,13 @@ public interface IControllerURLPowerEvent {
 	 * @param userPower  用户的权限
 	 * 
 	 * @return boolean 默认true放行
+	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default boolean doSessionAndIdentifierPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
+	default boolean doSessionAndIdentifierPower_success(HttpServletRequest req, HttpServletResponse resp,
+			String requestURL, JWebPowerControllerModel powerModel, SessionCodeAndIdentifiterCodeVO userPower)
+			throws IOException, ServletException {
 		return true;
 	}
 
@@ -131,9 +162,12 @@ public interface IControllerURLPowerEvent {
 	 * @param powerModel 与请求路径关联的权限模型
 	 * @param userPower  用户的权限
 	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
 	 */
 	default void doSessionAndIdentifierPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO userPower) {
+			JWebPowerControllerModel powerModel, SessionCodeAndIdentifiterCodeVO userPower)
+			throws IOException, ServletException {
 	}
 
 	/**
@@ -146,8 +180,12 @@ public interface IControllerURLPowerEvent {
 	 * @param userPower  用户的权限
 	 * 
 	 * @return boolean 默认false,不放行！
+	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default boolean doOtherURL(HttpServletRequest req, HttpServletResponse resp, String requestURL,SessionCodeAndIdentifiterCodeVO userPower) {
+	default boolean doOtherURL(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+			SessionCodeAndIdentifiterCodeVO userPower) throws IOException, ServletException {
 		return false;
 	}
 

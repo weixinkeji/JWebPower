@@ -9,7 +9,7 @@ public enum JWebPowerType {
 	 */
 	common
 	/**
-	 * 会员等级区
+	 * 等级区
 	 */
 	,grades
 	/**
@@ -17,7 +17,7 @@ public enum JWebPowerType {
 	 */
 	,identifiter
 	/**
-	 * 会员等级区+编号区
+	 * 等级区+编号区
 	 */
 	,gradesAndIdentifiter;	
 	

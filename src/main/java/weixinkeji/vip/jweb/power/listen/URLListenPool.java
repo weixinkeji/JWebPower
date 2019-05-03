@@ -1,9 +1,11 @@
 package weixinkeji.vip.jweb.power.listen;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,7 +18,7 @@ public class URLListenPool {
 	private static Map<String,IURLListenMethod> url=new HashMap<String,IURLListenMethod>();
 	
 	public static boolean doUrlListen(HttpServletRequest req, HttpServletResponse resp, final String requestURL
-			,JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO powerCode ) {
+			,JWebPowerControllerModel powerModel,SessionCodeAndIdentifiterCodeVO powerCode ) throws IOException, ServletException {
 		IURLListenMethod obj=url.get(requestURL);
 		if(null==obj) {
 			return true;

@@ -24,7 +24,7 @@ public class JWebPowerStaticResourcesValidateModel {
 	 */
 	private final Set<String> publicPowerExpresstion;
 	/**
-	 * 会员区表达式
+	 * 等级区表达式
 	 */
 	private final Set<String> sessionPowerExpresstion;
 	/**
