@@ -57,7 +57,7 @@ public class JWPFilter implements Filter {
 	public void init(FilterConfig fConfig) throws ServletException {
 		JWPControllePrint.addMessage("[目录]加载框架配置文件");
 		Map<String, String> configMap = new JWPPropertiesTool()
-				.loadPropertiesToMap(new File(JWPPathTool.getMyProjectPath("jwebPower.properties")));
+				.loadPropertiesToMap(new File(JWPPathTool.getMyProjectPath("JWP.properties")));
 		
 		this.console_print=null==configMap.get("console_print")?false:Boolean.parseBoolean(configMap.get("console_print"));
 		String path = configMap.get("scan_package");
