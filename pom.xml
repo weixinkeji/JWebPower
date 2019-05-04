@@ -4,7 +4,7 @@
 
   <groupId>weixinkeji.vip</groupId>
   <artifactId>jweb.power</artifactId>
-  <version>1.1</version>
+  <version>1.2</version>
   <packaging>jar</packaging>
 
   <name>JWebPower</name>
