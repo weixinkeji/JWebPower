@@ -48,13 +48,16 @@ public class JWPFilter implements Filter {
 	
 	private boolean console_print;
 	//对静态资源前缀路径进行格式化
-	private void initStaticUrl(final String url) {
+	private void initStaticUrl(String ContextPath,final String url) {
 		if(null==url||url.isEmpty()){
-			static_resources_prefix="/static/";
+			static_resources_prefix=ContextPath+"/static/";
 			JWPControllePrint.addErrorMessage("没找找到配置文件中的键值对[static_resources_prefix],或键的值为空。系统自动采用 /static/ 作为静态url的前缀！",1);
 		}else if(!url.startsWith("/")) {
-			static_resources_prefix="/"+url;
+			static_resources_prefix=ContextPath+"/"+url;
+		}else {
+			static_resources_prefix=ContextPath+url;
 		}
+		
 	}
 	@Override
 	public void init(FilterConfig fConfig) throws ServletException {
@@ -66,7 +69,7 @@ public class JWPFilter implements Filter {
 		String path = configMap.get("scan_package");
 		JWPControllePrint.addMessage("[目录]设置配-扫描的路径："+path+" 完毕");
 		
-		this.initStaticUrl(configMap.get("static_resources_prefix"));
+		this.initStaticUrl(fConfig.getServletContext().getContextPath(),configMap.get("static_resources_prefix"));
 		JWPControllePrint.addMessage("[目录]加载框架配置文件");
 		
 		if (null==configMap||null == path || path.isEmpty()) {
@@ -120,7 +123,7 @@ public class JWPFilter implements Filter {
 		}
 		JWPCodeVO powerCode = userPower.getUserPowerCode(httpRequest, httpResponse);
 		// 静态资源处理
-		if (requestURL.startsWith(request.getServletContext().getContextPath() + this.static_resources_prefix)) {
+		if (requestURL.startsWith(this.static_resources_prefix)) {
 			this.doStaticRequestURLLiseten(httpRequest, httpResponse, chain, requestURL, powerCode);
 		} else {
 			if(console_print) {
