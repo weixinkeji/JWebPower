@@ -176,6 +176,9 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		case grades:// 会话区
+			if(null==powerCode||null==powerCode.getGrades()) {
+				return;
+			}
 			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限
 			if (powerModel.isInGrades(powerCode.getGrades())) {
 				// 有权限。调用定义的方法。
@@ -187,6 +190,9 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		case identifiter:// 编号区
+			if(null==powerCode||null==powerCode.getIdentifiter()) {
+				return;
+			}
 			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限
 			if (powerModel.isInIdentifier(powerCode.getIdentifiter())) {
 				// 有权限。调用定义的方法。
@@ -198,6 +204,9 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		case gradesAndIdentifiter:// 等级+编号
+			if(null==powerCode||null==powerCode.getGrades()||null==powerCode.getIdentifiter()) {
+				return;
+			}
 			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
 			if (powerModel.isInGrades(powerCode.getGrades()) && powerModel.isInIdentifier(powerCode.getIdentifiter())) {
 				// 有权限。调用定义的方法。
@@ -261,6 +270,9 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		case grades:// 等级区
+			if(null==powerCode||null==powerCode.getGrades()) {
+				return;
+			}
 			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限
 			if (powerModel.isInGrades(powerCode.getGrades())) {
 				// 有权限。调用定义的方法。
@@ -274,6 +286,9 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		case identifiter:// 编号区
+			if(null==powerCode||null==powerCode.getIdentifiter()) {
+				return;
+			}
 			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限
 			if (powerModel.isInIdentifier(powerCode.getIdentifiter())) {
 				// 有权限。调用定义的方法。
@@ -287,6 +302,9 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		case gradesAndIdentifiter:// 等级+编号
+			if(null==powerCode||null==powerCode.getGrades()||null==powerCode.getIdentifiter()) {
+				return;
+			}
 			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
 			if (powerModel.isInGrades(powerCode.getGrades()) && powerModel.isInIdentifier(powerCode.getIdentifiter())) {
 				// 有权限。调用定义的方法。

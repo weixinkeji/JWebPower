@@ -157,7 +157,7 @@ final public class _JWPConfigFactory {
 		JWPControllerURLExpresstion sue = findObject(JWPControllerURLExpresstion.class,
 				new DefaultJWPControllerURLExpresstion());
 		sue.setRequestURL_Public(vo.getPublicPowerExpresstion());
-		sue.setRequestURL_Session(vo.getSessionPowerExpresstion());
+		sue.setRequestURL_grades(vo.getSessionPowerExpresstion());
 		sue.setRequestURL_Identifiter(vo.getIdentifiterPowerExpression());
 		//返回用户配置
 		return vo;

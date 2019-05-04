@@ -54,7 +54,7 @@ public interface JWPControllerURLExpresstion {
 	 * 
 	 * @param set 存放表达式字符的Set集合
 	 */
-	public void setRequestURL_Session(Set<String> set);
+	public void setRequestURL_grades(Set<String> set);
 
 	/**
 	 * 设置绑定编号的请求路径 <br>

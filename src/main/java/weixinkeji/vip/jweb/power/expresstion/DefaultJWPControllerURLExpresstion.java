@@ -6,11 +6,11 @@ public class DefaultJWPControllerURLExpresstion implements JWPControllerURLExpre
 
 	@Override
 	public void setRequestURL_Public(Set<String> set) {
-
+	
 	}
 
 	@Override
-	public void setRequestURL_Session(Set<String> set) {
+	public void setRequestURL_grades(Set<String> set) {
 		
 	}
 
