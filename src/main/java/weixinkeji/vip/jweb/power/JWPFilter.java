@@ -115,11 +115,11 @@ public class JWPFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String requestURL = httpRequest.getRequestURI();
-		JWPCodeVO powerCode = userPower.getUserPowerCode(httpRequest, httpResponse);
 		
-		if(!jwpGlobalEvent.jwpGlobal(chain, httpRequest, httpResponse, powerCode)) {
+		if(!jwpGlobalEvent.jwpGlobal(chain, httpRequest, httpResponse, requestURL)) {
 			return;
 		}
+		JWPCodeVO powerCode = userPower.getUserPowerCode(httpRequest, httpResponse);
 		// 静态资源处理
 		if (requestURL.startsWith(request.getServletContext().getContextPath() + this.static_resources_prefix)) {
 			this.doStaticRequestURLLiseten(httpRequest, httpResponse, chain, requestURL, powerCode);
