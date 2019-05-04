@@ -115,7 +115,6 @@ public class JWPFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String requestURL = httpRequest.getRequestURI();
-		
 		if(!jwpGlobalEvent.jwpGlobal(chain, httpRequest, httpResponse, requestURL)) {
 			return;
 		}
