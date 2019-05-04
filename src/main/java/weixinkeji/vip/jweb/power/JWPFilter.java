@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import weixinkeji.vip.jweb.power._init._JWPConfigFactory;
 import weixinkeji.vip.jweb.power.config.JWPUserInterface;
 import weixinkeji.vip.jweb.power.event.JWPControllerURLPowerEvent;
+import weixinkeji.vip.jweb.power.event.JWPGlobalEvent;
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
 import weixinkeji.vip.jweb.power.model.JWPStaticResourcesModel;
 import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
@@ -35,6 +36,8 @@ public class JWPFilter implements Filter {
 	private Map<String, JWPControllerModel> jwebPowerControllerModel = new HashMap<>();
 	private String static_resources_prefix;
 //---------方法区---------
+	//全局事件
+	private JWPGlobalEvent jwpGlobalEvent;
 	// 事件
 	private JWPControllerURLPowerEvent controllerUrlPowerEvent;
 	// 用户权限 -接口
@@ -82,7 +85,8 @@ public class JWPFilter implements Filter {
 		
 //从集合中，找到我们的配置实例
 		// 事件触发-实现对象
-		controllerUrlPowerEvent = tempConfigFactory.find_controllerURLPowerEvent();
+		jwpGlobalEvent=tempConfigFactory.getJWPGlobalEvent();
+		controllerUrlPowerEvent = tempConfigFactory.getJWPControllerURLPowerEvent();
 		JWPControllePrint.addMessage("[目录]事件触发-实现对象 处理完毕");
 		// 设置用户类与方法上注解的权限的模型
 		tempConfigFactory.setControllerPowerModel(jwebPowerControllerModel);
@@ -92,7 +96,7 @@ public class JWPFilter implements Filter {
 		JWPControllePrint.addMessage("[目录]设置用户的静态资源 检验模型 处理完毕");
 		
 		// 获取【等级等级】、【权限编号】的用户接口
-		userPower = tempConfigFactory.find_IJWebPowerUserInterface();
+		userPower = tempConfigFactory.getJWPUserInterface();
 		JWPControllePrint.addMessage("[目录]设置  获取【权限等级】、【权限编号】的用户接口的实现类  处理完毕"+userPower.getClass().getName());
 		
 		if(console_print) {
@@ -111,22 +115,26 @@ public class JWPFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String requestURL = httpRequest.getRequestURI();
+		JWPCodeVO powerCode = userPower.getUserPowerCode(httpRequest, httpResponse);
+		
+		if(!jwpGlobalEvent.jwpGlobal(chain, httpRequest, httpResponse, powerCode)) {
+			return;
+		}
 		// 静态资源处理
 		if (requestURL.startsWith(request.getServletContext().getContextPath() + this.static_resources_prefix)) {
-			doStaticRequestURLLiseten(httpRequest, httpResponse, chain, requestURL);
+			this.doStaticRequestURLLiseten(httpRequest, httpResponse, chain, requestURL, powerCode);
 		} else {
 			if(console_print) {
-				this.doServerRequestURLLiseten_print(httpRequest, httpResponse, chain, requestURL);
+				this.doServerRequestURLLiseten_print(httpRequest, httpResponse, chain, requestURL,powerCode);
 			}else {
-				this.doServerRequestURLLiseten(httpRequest, httpResponse, chain, requestURL);
+				this.doServerRequestURLLiseten(httpRequest, httpResponse, chain, requestURL,powerCode);
 			}
 		}
 	}
 	//静态资源监听 匹配与执行
 	private void doStaticRequestURLLiseten(final HttpServletRequest request, final HttpServletResponse response,
-			final FilterChain chain, String url)  throws IOException, ServletException {
+			final FilterChain chain, final String url,final JWPCodeVO powerCode)  throws IOException, ServletException {
 		String requestURL = this.requestUrlTool.formatStaticRequestURL(url);
-		JWPCodeVO powerCode = userPower.getUserPowerCode(request, response, requestURL);
 		if(staticResourcesModel.doListen(chain, request, response, requestURL, null, powerCode)) {
 			chain.doFilter(request, response);
 		}
@@ -143,10 +151,9 @@ public class JWPFilter implements Filter {
 	 * @throws ServletException
 	 */
 	private void doServerRequestURLLiseten(final HttpServletRequest request, final HttpServletResponse response,
-			final FilterChain chain, String url) throws IOException, ServletException {
+			final FilterChain chain, final String url,final JWPCodeVO powerCode) throws IOException, ServletException {
 		String requestURL = this.requestUrlTool.formatRequestURL(url);
 		JWPControllerModel powerModel = jwebPowerControllerModel.get(requestURL);
-		JWPCodeVO powerCode = userPower.getUserPowerCode(request, response, requestURL);
 		
 		if (!controllerUrlPowerEvent.jWebPower_start(chain,request, response, requestURL,powerModel,powerCode)) {
 			return;
@@ -212,6 +219,7 @@ public class JWPFilter implements Filter {
 //			return;
 		}
 	}
+	
 	/**
 	 * Controller入口权限监控
 	 * 
@@ -223,10 +231,9 @@ public class JWPFilter implements Filter {
 	 * @throws ServletException
 	 */
 	private void doServerRequestURLLiseten_print(final HttpServletRequest request, final HttpServletResponse response,
-			final FilterChain chain, String url) throws IOException, ServletException {
+			final FilterChain chain,final String url,final JWPCodeVO powerCode ) throws IOException, ServletException {
 		String requestURL = this.requestUrlTool.formatRequestURL(url);
 		JWPControllerModel powerModel = jwebPowerControllerModel.get(requestURL);
-		JWPCodeVO powerCode = userPower.getUserPowerCode(request, response, requestURL);
 		
 		if (!controllerUrlPowerEvent.jWebPower_start(chain,request, response, requestURL,powerModel,powerCode)) {
 			return;

@@ -16,7 +16,7 @@ import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
 public class DefaultJWPUserInterface implements JWPUserInterface {
 
 	@Override
-	public JWPCodeVO getUserPowerCode(HttpServletRequest req, HttpServletResponse resp, String requestURL) {
+	public JWPCodeVO getUserPowerCode(HttpServletRequest req, HttpServletResponse resp) {
 		JWPCodeVO sai = new JWPCodeVO();
 		sai.setGrades(new String[] {});//"11","1"
 		sai.setIdentifiter(new String[]{});//"11","2","1"

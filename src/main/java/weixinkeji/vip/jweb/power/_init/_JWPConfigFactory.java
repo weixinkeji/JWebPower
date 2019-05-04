@@ -12,12 +12,14 @@ import weixinkeji.vip.jweb.power.ann.JWPGrades;
 import weixinkeji.vip.jweb.power.ann.JWPIdentifiter;
 import weixinkeji.vip.jweb.power.ann.JWPListen;
 import weixinkeji.vip.jweb.power.ann.JWPPublic;
-import weixinkeji.vip.jweb.power.config.DefaultJWPUserInterface;
 import weixinkeji.vip.jweb.power.config.DefaultJWPSystemInterfaceConfig;
-import weixinkeji.vip.jweb.power.config.JWPUserInterface;
+import weixinkeji.vip.jweb.power.config.DefaultJWPUserInterface;
 import weixinkeji.vip.jweb.power.config.JWPSystemInterfaceConfig;
+import weixinkeji.vip.jweb.power.config.JWPUserInterface;
 import weixinkeji.vip.jweb.power.event.DefaultJWPControllerURLPowerEvent;
+import weixinkeji.vip.jweb.power.event.DefaultJWPGlobalEvent;
 import weixinkeji.vip.jweb.power.event.JWPControllerURLPowerEvent;
+import weixinkeji.vip.jweb.power.event.JWPGlobalEvent;
 import weixinkeji.vip.jweb.power.expresstion.DefaultJWPControllerURLExpresstion;
 import weixinkeji.vip.jweb.power.expresstion.DefaultJWPStaticResourcesURLExpresstion;
 import weixinkeji.vip.jweb.power.expresstion.JWPControllerURLExpresstion;
@@ -28,8 +30,8 @@ import weixinkeji.vip.jweb.power.model.JWPControllerModel;
 import weixinkeji.vip.jweb.power.model.JWPStaticResourcesModel;
 import weixinkeji.vip.jweb.power.model.JWPType;
 import weixinkeji.vip.jweb.power.tools.JWPExpressionTool;
-import weixinkeji.vip.jweb.power.vo.JWPExpressConfigVO;
 import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
+import weixinkeji.vip.jweb.power.vo.JWPExpressConfigVO;
 import weixinkeji.vip.jweb.power.vo.JWPExpressVO;
 import weixinkeji.vip.jweb.power.vo.JWPRequestUrlVO;
 import weixinkeji.vip.jweb.tools.JWPControllePrint;
@@ -75,19 +77,28 @@ final public class _JWPConfigFactory {
 	 * 
 	 * @return IJWebPowerUserInterface
 	 */
-	public JWPUserInterface find_IJWebPowerUserInterface() {
+	public JWPUserInterface getJWPUserInterface() {
 		return findObject(JWPUserInterface.class, new DefaultJWPUserInterface());
 	}
-
+	/**
+	 * url全局事件
+	 * 
+	 * @return IControllerURLPowerEvent
+	 */
+	public JWPGlobalEvent getJWPGlobalEvent() {
+		return findObject(JWPGlobalEvent.class, new DefaultJWPGlobalEvent());
+	}
+	
 	/**
 	 * web入口 url事件
 	 * 
 	 * @return IControllerURLPowerEvent
 	 */
-	public JWPControllerURLPowerEvent find_controllerURLPowerEvent() {
+	public JWPControllerURLPowerEvent getJWPControllerURLPowerEvent() {
 		return findObject(JWPControllerURLPowerEvent.class, new DefaultJWPControllerURLPowerEvent());
 	}
 
+	
 	/**
 	 * 工具：找到T的实现类，并返回一个实例。
 	 * <p>
