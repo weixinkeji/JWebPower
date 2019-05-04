@@ -452,13 +452,13 @@ class ClassPowerHandleTools_Temp {
 		case common:
 			return vo;
 		case grades:
-			vo.setGrades(sp.value());
+			vo.setGrades(this.getStringArray(sp.value()));
 			return vo;
 		case identifiter:
 			vo.setIdentifiter(this.getStringArray(ip.value()));
 			return vo;
 		case gradesAndIdentifiter:
-			vo.setGrades(sp.value());
+			vo.setGrades(this.getStringArray(sp.value()));
 			vo.setIdentifiter(this.getStringArray(ip.value()));
 			return vo;
 		default:
