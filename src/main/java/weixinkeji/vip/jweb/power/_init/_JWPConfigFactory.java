@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -454,17 +455,37 @@ class ClassPowerHandleTools_Temp {
 			vo.setGrades(sp.value());
 			return vo;
 		case identifiter:
-			vo.setIdentifiter(ip.value());
+			vo.setIdentifiter(this.getStringArray(ip.value()));
 			return vo;
 		case gradesAndIdentifiter:
 			vo.setGrades(sp.value());
-			vo.setIdentifiter(ip.value());
+			vo.setIdentifiter(this.getStringArray(ip.value()));
 			return vo;
 		default:
 			return null;
 		}
 	}
-
+	/**
+	 * 把 {"a,a1","b"}  变成  {"a","a1","b"}
+	 * @param powers String[] 权限数据
+	 * @return String[]
+	 */
+	private String[] getStringArray(String[] powers) {
+		Set<String> set=new HashSet<>();
+		String[] sonPower;
+		for(String p:powers) {
+			if(p.contains(",")) {
+				sonPower=p.split(",");
+				for(String son:sonPower) {
+					set.add(son);
+				}
+			}else {
+				set.add(p);
+			}
+		}
+		String[] mypower=new String[set.size()];
+		return set.toArray(mypower);
+	}
 	/**
 	 * 取得权限类型
 	 * 
