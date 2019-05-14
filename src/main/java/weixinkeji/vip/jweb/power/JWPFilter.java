@@ -21,6 +21,7 @@ import weixinkeji.vip.jweb.power.event.JWPControllerURLPowerEvent;
 import weixinkeji.vip.jweb.power.event.JWPGlobalEvent;
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
 import weixinkeji.vip.jweb.power.model.JWPStaticResourcesModel;
+import weixinkeji.vip.jweb.power.tools.DUrlTools;
 import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
 import weixinkeji.vip.jweb.power.vo.JWPRequestUrlVO;
 import weixinkeji.vip.jweb.scan.JWPScanClassFactory;
@@ -47,6 +48,8 @@ public class JWPFilter implements Filter {
 	private JWPRequestUrlVO requestUrlTool;
 	
 	private boolean console_print;
+	private boolean dynamics_controller_url;
+	
 	//对静态资源前缀路径进行格式化
 	private void initStaticUrl(String ContextPath,final String url) {
 		if(null==url||url.isEmpty()){
@@ -64,7 +67,7 @@ public class JWPFilter implements Filter {
 		JWPControllePrint.addMessage("[目录]加载框架配置文件");
 		Map<String, String> configMap = new JWPPropertiesTool()
 				.loadPropertiesToMap(new File(JWPPathTool.getMyProjectPath("JWP.properties")));
-		
+		this.dynamics_controller_url=null==configMap.get("dynamics_controller_url")?true:Boolean.parseBoolean(configMap.get("dynamics_controller_url"));
 		this.console_print=null==configMap.get("console_print")?false:Boolean.parseBoolean(configMap.get("console_print"));
 		String path = configMap.get("scan_package");
 		JWPControllePrint.addMessage("[目录]设置配-扫描的路径："+path+" 完毕");
@@ -155,8 +158,15 @@ public class JWPFilter implements Filter {
 	private void doServerRequestURLLiseten(final HttpServletRequest request, final HttpServletResponse response,
 			final FilterChain chain, final String url,final JWPCodeVO powerCode) throws IOException, ServletException {
 		String requestURL = this.requestUrlTool.formatRequestURL(url);
+		String durl;
 		JWPControllerModel powerModel = jwebPowerControllerModel.get(requestURL);
-		
+		if(this.dynamics_controller_url&&null==powerModel) {
+			durl=DUrlTools.getUserURL(requestURL);
+			if(null!=durl) {
+				requestURL=durl;
+				powerModel = jwebPowerControllerModel.get(requestURL);
+			}
+		}
 		if (!controllerUrlPowerEvent.jWebPower_start(chain,request, response, requestURL,powerModel,powerCode)) {
 			return;
 		}
@@ -245,7 +255,14 @@ public class JWPFilter implements Filter {
 			final FilterChain chain,final String url,final JWPCodeVO powerCode ) throws IOException, ServletException {
 		String requestURL = this.requestUrlTool.formatRequestURL(url);
 		JWPControllerModel powerModel = jwebPowerControllerModel.get(requestURL);
-		
+		String durl;
+		if(this.dynamics_controller_url&&null==powerModel) {
+			durl=DUrlTools.getUserURL(requestURL);
+			if(null!=durl) {
+				requestURL=durl;
+				powerModel = jwebPowerControllerModel.get(requestURL);
+			}
+		}
 		if (!controllerUrlPowerEvent.jWebPower_start(chain,request, response, requestURL,powerModel,powerCode)) {
 			return;
 		}

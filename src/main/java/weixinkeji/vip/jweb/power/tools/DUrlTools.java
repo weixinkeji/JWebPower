@@ -1,27 +1,37 @@
 package weixinkeji.vip.jweb.power.tools;
 
-import java.util.HashSet;
-import java.util.Set;
+import weixinkeji.vip.jweb.power.model.DUrlPools;
 
-public class DUrlTools {
+public class DUrlTools extends DUrlPools{
 	private static char cDKH = "{".toCharArray()[0];
 	private static char cDKH2 = "}".toCharArray()[0];
 	private static char xg = "/".toCharArray()[0];
-	private static Set<char[]> urlExpress=new HashSet<>();
-	static {
-		urlExpress.add(formatURL("/xxx2/{a1}/bb/ccc/{a2}/{a3}/{a4}/{a5}/{a6}"));
-		urlExpress.add(formatURL("/xxx2/{a1}/123"));
-	}
 	
 	public static void main(String args[]) {
-		System.out.println(checkURL("/xxx2/参数1/bb/ccc/参数2/参数3/参数4/参数5/12222   2222"));
-		System.out.println(checkURL("/xxx2/参数1/bb/ccc/参数2/参数3/参数4/参数5/12222 / 2222"));
-		System.out.println(checkURL("/xxx2/参数1"));
-		System.out.println(checkURL("/xxx/参数1/6666"));
-		System.out.println(checkURL("xxx/参数1/6666"));
-		System.out.println(checkURL("/aaxxx/参数1/6666"));
-		System.out.println(checkURL("/xxx2/参数1/bb/ccc/参数2/参数3/参数4/参数5"));
-		System.out.println(checkURL("/xxx2/参数1/123"));
+		DUrlPools.addDUrl("/subject/forward/{id}/subjectAdd2/");
+		System.out.println(getUserURL("/subject/forward/2/subjectAdd2/"));
+		
+//		System.out.println(checkURL("/xxx2/参数1/bb/ccc/参数2/参数3/参数4/参数5/12222   2222"));
+//		System.out.println(checkURL("/xxx2/参数1/bb/ccc/参数2/参数3/参数4/参数5/12222 / 2222"));
+//		System.out.println(checkURL("/xxx2/参数1"));
+//		System.out.println(checkURL("/xxx/参数1/6666"));
+//		System.out.println(checkURL("xxx/参数1/6666"));
+//		System.out.println(checkURL("/aaxxx/参数1/6666"));
+//		System.out.println(checkURL("/xxx2/参数1/bb/ccc/参数2/参数3/参数4/参数5"));
+//		System.out.println(checkURL("/xxx2/参数1/123"));
+	}
+	
+	public static String getUserURL(String requestUrl) {
+		if(requestUrl.isEmpty()||requestUrl.length()==1) {
+			return null;
+		}
+		char[] url = requestUrl.toCharArray();
+		for(char[] model:urlExpress) {
+			if(checkOneUrl(model,url)) {
+				return new String(model);
+			}
+		}
+		return null;
 	}
 	public static boolean checkURL(String requestUrl) {
 		if(requestUrl.isEmpty()||requestUrl.length()==1) {

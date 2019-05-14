@@ -55,30 +55,36 @@ public class JWPRequestUrlVO {
 	 * @return String
 	 */
 	public String formatRequestURL(final String url) {
+		String formaturl=null;
 		switch (i) {
 		case 0: {// /请求路径 形式时，i=0
-			return url;
+			formaturl= url;
+			break;
 		}
 		case 1: {// /项目名/请求路径 形式时，i=1
-			return url.substring(this.contextPathLength);
+			formaturl=  url.substring(this.contextPathLength);
+			break;
 		}
 		case 2: {// /请求路径.hz 形式时，i=2 后缀时，有可能是自定义的后缀。
 			String mySuffix = this.findUrlSuffix(url);// 找到url的后缀
 			if (null == mySuffix) {
-				return url;
+				formaturl=  url;
+			}else {
+				formaturl=  url.substring(0, url.length() - mySuffix.length());
 			}
-			return url.substring(0, url.length() - mySuffix.length());
+			break;
 		}
 		case 12: {// /项目名/请求路径.hz 形式时，i=12
 			String mySuffix = this.findUrlSuffix(url);// 找到url的后缀
 			if (null != mySuffix) {
-				return url.substring(this.contextPathLength, url.length() - mySuffix.length());
+				formaturl=  url.substring(this.contextPathLength, url.length() - mySuffix.length());
+			}else {
+				formaturl=  url.substring(this.contextPathLength);
 			}
-			return url.substring(this.contextPathLength);
+			break;
 		}
-
 		}
-		return null;
+		return null!=formaturl&&formaturl.length()>1&&formaturl.endsWith("/")?formaturl.substring(0, formaturl.length()-1):null;
 	}
 	/**
 	 * 处理静态资源请求路径（主要去除contextPath前缀），返回符合框架使用的请求路径
