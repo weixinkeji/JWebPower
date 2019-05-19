@@ -49,7 +49,7 @@ public class JWPFilter implements Filter {
 
 	private boolean console_print;
 	private boolean dynamics_controller_url;
-
+	private boolean free_url_open;
 	// 对静态资源前缀路径进行格式化
 	private void initStaticUrl(String ContextPath, final String url) {
 		if (null == url || url.isEmpty()) {
@@ -71,10 +71,8 @@ public class JWPFilter implements Filter {
 				.loadPropertiesToMap(new File(JWPPathTool.getMyProjectPath("JWP.properties")));
 		this.dynamics_controller_url = null == configMap.get("dynamics_controller_url") ? true
 				: Boolean.parseBoolean(configMap.get("dynamics_controller_url"));
-		System.err.println(configMap.get("dynamics_controller_url"));
-		System.err.println(Boolean.parseBoolean(configMap.get("dynamics_controller_url")));
-		System.err.println(configMap.get("dynamics_controller_url").equalsIgnoreCase("true"));
-		
+		this.free_url_open= null == configMap.get("free_url_open") ? false
+				: Boolean.parseBoolean(configMap.get("free_url_open"));
 		this.console_print = null == configMap.get("console_print") ? false
 				: Boolean.parseBoolean(configMap.get("console_print"));
 		String path = configMap.get("scan_package");
@@ -183,7 +181,7 @@ public class JWPFilter implements Filter {
 		}
 
 		if (null == powerModel) {
-			if (controllerUrlPowerEvent.doOtherURL(request, response, requestURL, powerCode)) {
+			if (free_url_open&&controllerUrlPowerEvent.doOtherURL(request, response, requestURL, powerCode)) {
 				chain.doFilter(request, response);
 			}
 			return;
@@ -282,12 +280,15 @@ public class JWPFilter implements Filter {
 		if (!controllerUrlPowerEvent.jWebPower_start(chain, request, response, requestURL, powerModel, powerCode)) {
 			return;
 		}
+		//不在监听范围的请求路径 
 		if (null == powerModel) {
 			System.err.println("   不在监控内的权限 ！" + requestURL);
-			if (controllerUrlPowerEvent.doOtherURL(request, response, requestURL, powerCode)) {
+			if (free_url_open&&controllerUrlPowerEvent.doOtherURL(request, response, requestURL, powerCode)) {
 				System.out.println("   用户强制执行放行！" + requestURL);
 				chain.doFilter(request, response);
+				return;
 			}
+			System.err.println("free_url_open=true,或用户强行中止不在监听范围的请求路径 不允许放行！");
 			return;
 		}
 		// 触发监听，并且监听结果不为true时，中断请求。
