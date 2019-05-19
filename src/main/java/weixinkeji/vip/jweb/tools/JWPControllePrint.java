@@ -69,7 +69,6 @@ public class JWPControllePrint {
 	 */
 	public static void clearMessage() {
 		consoleMsg.clear();
-		consoleMsg=null;
 	}
 }
 

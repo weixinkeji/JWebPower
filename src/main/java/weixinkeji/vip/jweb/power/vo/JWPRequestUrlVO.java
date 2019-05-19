@@ -84,7 +84,7 @@ public class JWPRequestUrlVO {
 			break;
 		}
 		}
-		return null!=formaturl&&formaturl.length()>1&&formaturl.endsWith("/")?formaturl.substring(0, formaturl.length()-1):null;
+		return null!=formaturl&&formaturl.length()>1&&formaturl.endsWith("/")?formaturl.substring(0, formaturl.length()-1):formaturl;
 	}
 	/**
 	 * 处理静态资源请求路径（主要去除contextPath前缀），返回符合框架使用的请求路径
