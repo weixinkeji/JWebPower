@@ -22,8 +22,8 @@ import weixinkeji.vip.jweb.power.event.JWPGlobalEvent;
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
 import weixinkeji.vip.jweb.power.model.JWPStaticResourcesModel;
 import weixinkeji.vip.jweb.power.tools.DUrlTools;
+import weixinkeji.vip.jweb.power.tools.JWPRequestUrlTool;
 import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
-import weixinkeji.vip.jweb.power.vo.JWPRequestUrlVO;
 import weixinkeji.vip.jweb.scan.JWPScanClassFactory;
 import weixinkeji.vip.jweb.tools.JWPControllePrint;
 import weixinkeji.vip.jweb.tools.JWPPathTool;
@@ -45,7 +45,7 @@ public class JWPFilter implements Filter {
 	private JWPUserInterface userPower;
 
 	private JWPStaticResourcesModel staticResourcesModel;
-	private JWPRequestUrlVO requestUrlTool;
+	private JWPRequestUrlTool requestUrlTool;
 
 	private boolean console_print;
 	private boolean dynamics_controller_url;

@@ -1,6 +1,6 @@
-package weixinkeji.vip.jweb.power.vo;
+package weixinkeji.vip.jweb.power.tools;
 
-public class JWPRequestUrlVO {
+public class JWPRequestUrlTool {
 
 	/**
 	 * 项目上下文
@@ -32,7 +32,7 @@ public class JWPRequestUrlVO {
 	 * @param paramPath 项目的上下文contextPath
 	 * @param paramSuffix 请求路径的后缀 
 	 */
-	public JWPRequestUrlVO(String paramPath, String[] paramSuffix) {
+	public JWPRequestUrlTool(String paramPath, String[] paramSuffix) {
 		this.contextPath = null == paramPath ? "" : paramPath.trim();
 		this.suffix = null == paramSuffix ? null : paramSuffix;
 		if (this.contextPath.isEmpty() && null == this.suffix) {// 无前缀、后缀。
