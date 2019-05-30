@@ -40,25 +40,28 @@ public class _IniJWPListen extends _InitTool {
 	}
 
 	/**
-	 * 取得注解在方法、类 或者标有@JWPRegListenUrl 的 JWPListenInterface类
+	 * 取得注解在方法、类 或者标有@JWPRegListenUrl 的 JWPListenInterface对象
 	 * 
 	 * 
 	 * @param m   方法 当m为null时，会跳过注解在方法上的监听类的获取
 	 * @param c   类   当类为null时，会跳过注解在类上的监听类的获取
 	 * @param url 路径 当路径为null或空时，会跳过标有@JWPRegListenUrl的监听类的获取
-	 * @return Class 找到的监听类
+	 * @return 	   JWPListenInterface 找到 执行监听的实例
 	 */
-	public Class<? extends JWPListenInterface> getJWPListenInterface(Method m, Class<?> c, String url) {
+	public JWPListenInterface getJWPListenInterface(Method m, Class<?> c, String url) {
 		Class<? extends JWPListenInterface> listen = null != m ? this.inMethod.get(m) : null;
 		if (null != listen) {
-			return listen;
+			return JWPListenPool.getIURLListenMethod(listen);
 		}
 		listen = null != c ? this.inClass.get(c) : null;
 		if (null != listen) {
-			return listen;
+			return JWPListenPool.getIURLListenMethod(listen);
 		}
 		listen = null != url && url.length() > 0 ? this.inJWPRegListenUrl_Controller.get(url) : null;
-		return listen;
+		if (null != listen) {
+			return JWPListenPool.getIURLListenMethod(listen);
+		}
+		return null;
 	}
 	
 	
