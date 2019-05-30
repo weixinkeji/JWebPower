@@ -7,6 +7,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * 放行区
+ * @author wangchunzi
+ *
+ */
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
 public @interface JWPPublic {

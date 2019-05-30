@@ -9,8 +9,13 @@ import java.lang.annotation.Target;
 
 import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
 
+/**
+ * 登陆状态
+ * @author wangchunzi
+ *
+ */
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
-public @interface JWPListen {
+public @interface JWPSession {
 	public Class<?extends JWPListenInterface> value();
 }

@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import weixinkeji.vip.jweb.power.ann.JWPRegListen;
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
 import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
 
@@ -17,7 +18,6 @@ import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
  *
  */
 public interface JWPListenInterface {
-	
 	/**
 	 * 执行监听的方法 
 	 * 

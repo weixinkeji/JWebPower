@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 import weixinkeji.vip.jweb.power.ann.JWPGrades;
 import weixinkeji.vip.jweb.power.ann.JWPIdentifiter;
-import weixinkeji.vip.jweb.power.ann.JWPListen;
+import weixinkeji.vip.jweb.power.ann.JWPRegListen;
 import weixinkeji.vip.jweb.power.ann.JWPPublic;
 import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
 import weixinkeji.vip.jweb.power.listen.JWPListenPool;
@@ -33,8 +33,8 @@ class _AnnotationVOService {
 	 * 取出在类-方法  中的最终 数据
 	 * @return JWPCodeVO
 	 */
-	public _JWPAnnotationVO get_JWPAnnotationVO() {
-		return new _JWPAnnotationVO(
+	public _JWPInfoVO get_JWPAnnotationVO() {
+		return new _JWPInfoVO(
 				null==mVo.powerType?cVo.powerType:mVo.powerType
 				,null==mVo.codeVO?cVo.codeVO:mVo.codeVO
 				,null==mVo.jwepListen?cVo.jwepListen:mVo.jwepListen
@@ -47,7 +47,7 @@ class _AnnotationVOService {
  * 
  * @author wangchunzi
  */
-class _JWPAnnotationVO{
+class _JWPInfoVO{
 	/**
 	 * 计算权限优先级，从而得出类的权限归属（是公共，还是等级，还是编号，还是混合的权限）
 	 */
@@ -60,11 +60,30 @@ class _JWPAnnotationVO{
 	 * 检查 listen 注解，提取实现监听的类 注：前提是 {@listen} 必须存在，并有值。
 	 */
 	final JWPListenInterface jwepListen;
-	public _JWPAnnotationVO(JWPType powerType, JWPCodeVO codeVO, JWPListenInterface jwepListen) {
+	public _JWPInfoVO(JWPType powerType, JWPCodeVO codeVO, JWPListenInterface jwepListen) {
 		super();
 		this.powerType = powerType;
 		this.codeVO = codeVO;
 		this.jwepListen = jwepListen;
+	}
+}
+class _JWPInfoExcpressVO extends _InitTool {
+	/**
+	 * 计算权限优先级，从而得出类的权限归属（是公共，还是等级，还是编号，还是混合的权限）
+	 */
+	final JWPType powerType;
+	/**
+	 * 计算注解在类上的权限代码
+	 */
+	final JWPCodeVO codeVO;
+	/**
+	 * 检查 listen 注解，提取实现监听的类 注：前提是 {@listen} 必须存在，并有值。
+	 */
+	final JWPListenInterface jwepListen;
+	public _JWPInfoExcpressVO(_IniJWPExpress express,String url) {
+		this.codeVO = express.getExpressPowerCode(url);
+		this.powerType = getURLPowerType(this.codeVO);
+		this.jwepListen = null;
 	}
 }
 
@@ -93,7 +112,7 @@ class _JWPAnnotationVO_Class extends _InitTool {
 		JWPPublic ann_public = c.getAnnotation(JWPPublic.class);
 		JWPGrades ann_grades = c.getAnnotation(JWPGrades.class);
 		JWPIdentifiter ann_identifiter = c.getAnnotation(JWPIdentifiter.class);
-		JWPListen ann_listen = c.getAnnotation(JWPListen.class);
+		JWPRegListen ann_listen = c.getAnnotation(JWPRegListen.class);
 		// 监听实现类
 		jwepListen = null == ann_listen ? null : JWPListenPool.getIURLListenMethod(ann_listen.value());
 		// 计算归属与拥有的权限
@@ -133,7 +152,7 @@ class _JWPAnnotationVO_Method extends _InitTool {
 		JWPPublic ann_public = method.getAnnotation(JWPPublic.class);
 		JWPGrades ann_grades = method.getAnnotation(JWPGrades.class);
 		JWPIdentifiter ann_identifiter = method.getAnnotation(JWPIdentifiter.class);
-		JWPListen ann_listen = method.getAnnotation(JWPListen.class);
+		JWPRegListen ann_listen = method.getAnnotation(JWPRegListen.class);
 
 		jwepListen = null == ann_listen ? null : JWPListenPool.getIURLListenMethod(ann_listen.value());
 		powerType = getURLPowerType(ann_public, ann_grades, ann_identifiter);

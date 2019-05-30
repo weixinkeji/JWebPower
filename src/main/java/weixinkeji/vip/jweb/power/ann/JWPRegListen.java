@@ -7,14 +7,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
 
 /**
- * 权限等级
+ * 注册监听
  * @author wangchunzi
  *
  */
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
-public @interface JWPGrades {
-	public String[] value() default {};
+public @interface JWPRegListen {
+	public Class<?extends JWPListenInterface> value();
 }

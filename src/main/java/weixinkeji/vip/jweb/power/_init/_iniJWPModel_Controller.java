@@ -2,17 +2,11 @@ package weixinkeji.vip.jweb.power._init;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import weixinkeji.vip.jweb.power.ann.JWPGrades;
-import weixinkeji.vip.jweb.power.ann.JWPIdentifiter;
-import weixinkeji.vip.jweb.power.ann.JWPListen;
-import weixinkeji.vip.jweb.power.ann.JWPPublic;
 import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
-import weixinkeji.vip.jweb.power.listen.JWPListenPool;
 import weixinkeji.vip.jweb.power.model.DUrlPools;
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
 import weixinkeji.vip.jweb.power.model.JWPType;
@@ -55,7 +49,6 @@ public class _iniJWPModel_Controller extends _InitTool{
 	 * @param jwebPowerControllerModel 权限模型
 	 */
 	public void setControllerPowerModel() {
-		Map<String, JWPControllerModel> jwebPowerControllerModel=new HashMap<>();
 		// 实例一个专门处理Controller 权限的对象
 		JWPExpressConfigVO controllerExpress =this.express.getJWPControllerURLExpresstion();
 		this._1_initUserUrlModel(controllerExpress);//从表达式数据中，找到所有表示[直接路径]的，直接为他们建立业务处理模型
@@ -141,51 +134,21 @@ public class _iniJWPModel_Controller extends _InitTool{
 		if (null == headURL) {// 不是控制类
 			return;
 		}
-//		System.out.println("找到控制类绑定的url:" + headURL);
-//		// 可能标注在类上的权限标识符
-//		JWPPublic cp = c.getAnnotation(JWPPublic.class);
-//		JWPGrades cs = c.getAnnotation(JWPGrades.class);
-//		JWPIdentifiter ci = c.getAnnotation(JWPIdentifiter.class);
-//		// 标注在类的监听注册
-//		JWPListen listen = c.getAnnotation(JWPListen.class);
-//
-//		// 标注在类的权限类型归属
-//		JWPType classPowerType = getURLPowerType(cp, cs, ci);
-//		// 标注在类的权限代码（权限等级、权限编号）
-//		JWPCodeVO classPowerCode = getPowerCode(classPowerType, cs, ci);
-//		// 标注在类上的监听的实现
-//		JWPListenInterface head_listen = null == listen ? null : JWPListenPool.getIURLListenMethod(listen.value());
 		_AnnotationVOService annService=new _AnnotationVOService(c);
-		_JWPAnnotationVO finalVO;
+		_JWPInfoVO finalVO;
 		Method[] methods = c.getMethods();
-		// 可能标注在方法上的权限标识符
-		JWPPublic mp;
-		JWPGrades ms;
-		JWPIdentifiter mi;
-		// 标注在方法的权限类型归属
-		JWPType methodPowerType;
-		// 标注在方法的权限代码（权限等级、权限编号）
-		JWPCodeVO methodPowerCode;
-
 		String methodURL = null;
-
 		// 存放计算结果
 		String final_requestURL = null;
 		JWPType final_powerType = null;
 		JWPCodeVO final_powerCode = null;
-		// 监听的实现
-		JWPListenInterface final_listen = null;
-
+		JWPListenInterface final_listen = null;// 监听的实现
+		
 		int i = 0;
 		for (Method m : methods) {
 			// 表示请求路径由 类相关url+方法相关url 组成！
 			if (null != (methodURL = this.abutmentUrl.getJWPSystemInterfaceConfig().getURLByMethod(m))) {
 				i++;
-//				mp = m.getAnnotation(JWPPublic.class);
-//				ms = m.getAnnotation(JWPGrades.class);
-//				mi = m.getAnnotation(JWPIdentifiter.class);
-//				methodPowerType = getURLPowerType(mp, ms, mi);// 标注在方法的权限类型归属
-//				methodPowerCode = getPowerCode(methodPowerType, ms, mi);// 标注在方法的权限代码（权限等级、权限编号）
 				annService.setMethod(m);
 				finalVO=annService.get_JWPAnnotationVO();
 				
@@ -194,17 +157,12 @@ public class _iniJWPModel_Controller extends _InitTool{
 					final_requestURL = new String(DUrlTools.formatURL(final_requestURL));
 					DUrlPools.addDUrl(final_requestURL);
 				}
-				listen = m.getAnnotation(JWPListen.class);// 监听标识符
-				// 最终的权限监听：如果方法上没有标识，则采用标识在类上的监听。
-				final_listen = null == listen ? head_listen : JWPListenPool.getIURLListenMethod(listen.value());
 
 				// 方法优先级最高。如果方法的注解权限不为null,以方法的注解权限为准
-				if (null != methodPowerType) {
-					final_powerType = methodPowerType;
-					final_powerCode = methodPowerCode;
-				} else if (null != classPowerType) {// 如果方法没有注解权限，以类的注解权限为准
-					final_powerType = classPowerType;
-					final_powerCode = classPowerCode;
+				if (null != finalVO.powerType) {
+					final_powerCode=finalVO.codeVO;
+					final_powerType=finalVO.powerType;
+					final_listen=finalVO.jwepListen;
 				} else {// 否则执行表达式的权限处理
 					// 检验表达式，取得url相关权限
 					final_powerCode =this.express.getExpressPowerCode(final_requestURL);
@@ -238,10 +196,12 @@ public class _iniJWPModel_Controller extends _InitTool{
 				final_requestURL = new String(DUrlTools.formatURL(final_requestURL));
 				DUrlPools.addDUrl(final_requestURL);
 			}
+			finalVO=annService.get_JWPAnnotationVO();
 			// 如果方法没有注解权限，以类的注解权限为准
-			if (null != classPowerType) {
-				final_powerType = classPowerType;
-				final_powerCode = classPowerCode;
+			if  (null != finalVO.powerType) {
+				final_powerCode=finalVO.codeVO;
+				final_powerType=finalVO.powerType;
+				final_listen=finalVO.jwepListen;
 			} else {// 否则执行表达式的权限处理
 				// 检验表达式，取得url相关权限
 				final_powerCode = this.express.getExpressPowerCode(final_requestURL);
@@ -261,7 +221,7 @@ public class _iniJWPModel_Controller extends _InitTool{
 					.addMessage(final_requestURL + ":权限检验，权限等级" + Arrays.deepToString(final_powerCode.getGrades())
 							+ "    权限编号：" + Arrays.deepToString(final_powerCode.getIdentifiter()), 1);
 			modelMap.put(final_requestURL, new JWPControllerModel(final_powerType, final_powerCode.getGrades(),
-					final_powerCode.getIdentifiter(), head_listen));
+					final_powerCode.getIdentifiter(), final_listen));
 		}	
 	}
 }
