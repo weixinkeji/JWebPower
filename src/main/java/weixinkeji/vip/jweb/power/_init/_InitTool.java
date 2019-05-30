@@ -8,6 +8,7 @@ import java.util.Set;
 import weixinkeji.vip.jweb.power.ann.JWPGrades;
 import weixinkeji.vip.jweb.power.ann.JWPIdentifiter;
 import weixinkeji.vip.jweb.power.ann.JWPPublic;
+import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
 import weixinkeji.vip.jweb.power.model.JWPType;
 import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
 
@@ -79,7 +80,15 @@ public abstract class _InitTool {
 		return set.toArray(mypower);
 	}
 	
-
+	/**
+	 * 检查他们的关系 是否是父子关系
+	 * @param father 父亲类
+	 * @param son  儿子类
+	 * @return boolean true:父子关系，false：非父子关系
+	 */
+	protected boolean isFatherSon(Class<?> father,Class<?> son) {
+		return father.isAssignableFrom(son) && !son.equals(father);
+	}
 
 
 	/**

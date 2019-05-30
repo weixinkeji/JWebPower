@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
 import weixinkeji.vip.jweb.power.listen.JWPListenPool;
 import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
+import weixinkeji.vip.jweb.power.vo.JWPStaticUrlAndListenVO;
 
 /**
  * 权限模型
@@ -27,20 +28,20 @@ import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
 public class JWPStaticResourcesModel {
 
 	private final int listenCount;
-	private final StaticListenModel[] listenMode;
+	private final JWPStaticUrlAndListenVO[] listenMode;
 
 	public JWPStaticResourcesModel(Map<String, Class<? extends JWPListenInterface>> map) {
 		String temkey;
 		JWPListenInterface obj;
-		Set<StaticListenModel> set = new HashSet<>();
+		Set<JWPStaticUrlAndListenVO> set = new HashSet<>();
 		for (Map.Entry<String, Class<? extends JWPListenInterface>> kv : map.entrySet()) {
 			temkey = kv.getKey();
 			obj = JWPListenPool.getIURLListenMethod(kv.getValue());
 			if (null != temkey && obj != null) {
-				set.add(new StaticListenModel(temkey, obj));
+				set.add(new JWPStaticUrlAndListenVO(temkey, obj));
 			}
 		}
-		listenMode = new StaticListenModel[set.size()];
+		listenMode = new JWPStaticUrlAndListenVO[set.size()];
 		set.toArray(listenMode);
 		listenCount = listenMode.length;
 	}
@@ -192,7 +193,7 @@ public class JWPStaticResourcesModel {
 			}
 			return true;
 		default: {
-			for (StaticListenModel mobj : this.listenMode) {
+			for (JWPStaticUrlAndListenVO mobj : this.listenMode) {
 				if (requestURL.startsWith(mobj.url)) {
 					return mobj.obj.doMethod(chain, req, resp, requestURL, powerModel, powerCode);
 				}
@@ -200,16 +201,5 @@ public class JWPStaticResourcesModel {
 			return true;
 		}
 		}
-	}
-
-}
-
-class StaticListenModel {
-	public final String url;
-	public final JWPListenInterface obj;
-
-	public StaticListenModel(String url, JWPListenInterface obj) {
-		this.url = url;
-		this.obj = obj;
 	}
 }
