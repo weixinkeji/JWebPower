@@ -14,4 +14,7 @@ public abstract class DUrlPools {
 	public static void addDUrl(String url) {
 		urlExpress.add(DUrlTools.formatURL(url));
 	}
+	public static void addDUrl(char[] url) {
+		urlExpress.add(url);
+	}
 }

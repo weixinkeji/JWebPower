@@ -85,7 +85,7 @@ public class _IniJWPExpress extends _InitTool{
 		JWPCodeVO vo = new JWPCodeVO();
 		// 找到所有与url有关的表达式所附加的【权限等级】权限。
 		for (String express : this.controllerExpress.getSessionPowerExpresstion()) {
-			if (null != (powercode = this.expressTool.isSessionPower(express, url))) {
+			if (null != (powercode = this.expressTool.isGradePower(express, url))) {
 				ishasSessionPowerCode = true;
 				sessionCode.add(powercode);// 加入权限等级集合
 			}
