@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
-import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
+import weixinkeji.vip.jweb.power.vo.JWPUserPower;
 
 public class JWPListenPool {
 
@@ -19,7 +19,7 @@ public class JWPListenPool {
 	private static Map<String,JWPListenInterface> url=new HashMap<String,JWPListenInterface>();
 	
 	public static boolean doUrlListen(FilterChain chain, HttpServletRequest req, HttpServletResponse resp, final String requestURL
-			,JWPControllerModel powerModel,JWPCodeVO powerCode ) throws IOException, ServletException {
+			,JWPControllerModel powerModel,JWPUserPower powerCode ) throws IOException, ServletException {
 		JWPListenInterface obj=url.get(requestURL);
 		if(null==obj) {
 			return true;

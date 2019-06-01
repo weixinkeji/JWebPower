@@ -1,10 +1,6 @@
 package weixinkeji.vip.jweb.power.config;
 
 import java.lang.reflect.Method;
-import java.util.Map;
-
-import weixinkeji.vip.jweb.power.model.JWPControllerModel;
-import weixinkeji.vip.jweb.power.model.JWPType;
 
 public interface JWPSystemInterfaceConfig {
 
@@ -43,19 +39,18 @@ public interface JWPSystemInterfaceConfig {
 	default String[] getRequestUrlSuffix() {
 		return null;
 	}
-
-	/**
-	 * 直接建立 URL-权限模型
-	 * 
-	 * @param jwebPowerControllerModel 权限模型
-	 */
-	default void setControllerPowerModel(Map<String, JWPControllerModel> jwebPowerControllerModel) {
-
-		// urlType 0:放行区 1：会话区 2：编号区 10:会话+编号 一起
-		// grades 会员等级 没有权限请设置为null，有所有的权限请设置为new String[]{}
-		// identifier 权限编号 没有权限请设置为null，有所有的权限请设置为new String[]{}
-		JWPControllerModel value = new JWPControllerModel(JWPType.common, null, null,null);
-		jwebPowerControllerModel.put("/", value);
-	}
+//
+//	/**
+//	 * 直接建立 URL-权限模型
+//	 * 
+//	 * @param jwebPowerControllerModel 权限模型
+//	 */
+//	default void setControllerPowerModel(Map<String, JWPControllerModel> jwebPowerControllerModel) {
+//		// boolean isPublic, boolean isSession, String[] grades, String[] identifiter
+//		JWPCodeVO vo = new JWPCodeVO(true, false, null, null);
+//		JWPListenInterface listen=null;
+//		//默认放行首页
+//		jwebPowerControllerModel.put("/",new JWPControllerModel(vo,listen));
+//	}
 
 }

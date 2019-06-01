@@ -1,6 +1,5 @@
 package weixinkeji.vip.jweb.power._init;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import weixinkeji.vip.jweb.power.expresstion.DefaultJWPControllerURLExpresstion;
@@ -8,7 +7,6 @@ import weixinkeji.vip.jweb.power.expresstion.DefaultJWPStaticResourcesURLExpress
 import weixinkeji.vip.jweb.power.expresstion.JWPControllerURLExpresstion;
 import weixinkeji.vip.jweb.power.expresstion.JWPStaticResourcesURLExpresstion;
 import weixinkeji.vip.jweb.power.tools.JWPExpressionTool;
-import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
 import weixinkeji.vip.jweb.power.vo.JWPExpressConfigVO;
 
 /**
@@ -17,14 +15,14 @@ import weixinkeji.vip.jweb.power.vo.JWPExpressConfigVO;
  * @author wangchunzi
  *
  */
-public class _IniJWPExpress extends _InitTool{
+public class _3_IniJWPExpress extends __InitTool{
 	JWPExpressionTool expressTool=new JWPExpressionTool();
 	private JWPExpressConfigVO controllerExpress;
 	
 	/**
 	 * @param list 扫描到的类
 	 */
-	_IniJWPExpress(List<Class<?>> list){
+	_3_IniJWPExpress(List<Class<?>> list){
 		super(list);
 		initJWPControllerURLExpresstion();
 	}
@@ -77,45 +75,45 @@ public class _IniJWPExpress extends _InitTool{
 	 * @param controllerExpress 与他关联的表达式
 	 * @return JWPCodeVO
 	 */
-	JWPCodeVO getExpressPowerCode(String url) {
-		List<String[]> sessionCode = new ArrayList<>();
-		List<String[]> identifiter = new ArrayList<>();
-		String[] powercode;
-		boolean ishasSessionPowerCode = false, isHasIdentifiterPowerCode = false;
-		JWPCodeVO vo = new JWPCodeVO();
-		// 找到所有与url有关的表达式所附加的【权限等级】权限。
-		for (String express : this.controllerExpress.getSessionPowerExpresstion()) {
-			if (null != (powercode = this.expressTool.isGradePower(express, url))) {
-				ishasSessionPowerCode = true;
-				sessionCode.add(powercode);// 加入权限等级集合
-			}
-		}
-
-		// 找到所有与url有关的表达式所附加的【权限编号 】权限。
-		for (String express : this.controllerExpress.getIdentifiterPowerExpression()) {
-			if (null != (powercode = this.expressTool.isIdentifiterPower(express, url))) {
-				isHasIdentifiterPowerCode = true;
-				identifiter.add(powercode);// 加入权限编号集合
-			}
-		}
-		// 不是权限等级与权限编号 绑定的路径
-		if (sessionCode.isEmpty() && identifiter.isEmpty()) {
-			// 检测是否绑定了放行权限
-			for (String express : this.controllerExpress.getPublicPowerExpresstion()) {
-				if (this.expressTool.isPublicPower(express, url)) {
-					vo.setPublic(true);
-				}
-			}
-			return vo;
-		}
-		if (ishasSessionPowerCode) {
-			// 合并权限等级 权限
-			vo.setGrades(this.expressTool.mergeArrayList(sessionCode));
-		}
-		if (isHasIdentifiterPowerCode) {
-			// 合并权限编号 权限
-			vo.setIdentifiter(this.expressTool.mergeArrayList(identifiter));
-		}
-		return vo;
-	}
+//	JWPCodeVO getExpressPowerCode(String url) {
+//		List<String[]> sessionCode = new ArrayList<>();
+//		List<String[]> identifiter = new ArrayList<>();
+//		String[] powercode;
+//		boolean ishasSessionPowerCode = false, isHasIdentifiterPowerCode = false;
+//		JWPCodeVO vo = new JWPCodeVO();
+//		// 找到所有与url有关的表达式所附加的【权限等级】权限。
+//		for (String express : this.controllerExpress.getSessionPowerExpresstion()) {
+//			if (null != (powercode = this.expressTool.isGradePower(express, url))) {
+//				ishasSessionPowerCode = true;
+//				sessionCode.add(powercode);// 加入权限等级集合
+//			}
+//		}
+//
+//		// 找到所有与url有关的表达式所附加的【权限编号 】权限。
+//		for (String express : this.controllerExpress.getIdentifiterPowerExpression()) {
+//			if (null != (powercode = this.expressTool.isIdentifiterPower(express, url))) {
+//				isHasIdentifiterPowerCode = true;
+//				identifiter.add(powercode);// 加入权限编号集合
+//			}
+//		}
+//		// 不是权限等级与权限编号 绑定的路径
+//		if (sessionCode.isEmpty() && identifiter.isEmpty()) {
+//			// 检测是否绑定了放行权限
+//			for (String express : this.controllerExpress.getPublicPowerExpresstion()) {
+//				if (this.expressTool.isPublicPower(express, url)) {
+//					vo.setPublic(true);
+//				}
+//			}
+//			return vo;
+//		}
+//		if (ishasSessionPowerCode) {
+//			// 合并权限等级 权限
+//			vo.setGrades(this.expressTool.mergeArrayList(sessionCode));
+//		}
+//		if (isHasIdentifiterPowerCode) {
+//			// 合并权限编号 权限
+//			vo.setIdentifiter(this.expressTool.mergeArrayList(identifiter));
+//		}
+//		return vo;
+//	}
 }

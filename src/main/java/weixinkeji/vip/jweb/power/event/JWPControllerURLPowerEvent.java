@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
-import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
+import weixinkeji.vip.jweb.power.vo.JWPUserPower;
 
 /**
  * 
@@ -34,7 +34,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	default boolean jWebPower_start(final FilterChain chain, HttpServletRequest req, HttpServletResponse resp,
-			String requestURL, JWPControllerModel powerModel, JWPCodeVO userPower)
+			String requestURL, JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		return true;
 	}
@@ -54,7 +54,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	default boolean doPublicPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPControllerModel powerModel, JWPCodeVO userPower)
+			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		return true;
 	}
@@ -74,7 +74,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	default boolean doSessionPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPControllerModel powerModel, JWPCodeVO userPower)
+			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		return true;
 	}
@@ -92,7 +92,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	default void doSessionPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPControllerModel powerModel, JWPCodeVO userPower)
+			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 	}
 
@@ -111,7 +111,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	default boolean doIdentifiterPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPControllerModel powerModel, JWPCodeVO userPower)
+			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		return true;
 	}
@@ -129,7 +129,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	default void doIdentifiterPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPControllerModel powerModel, JWPCodeVO userPower)
+			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 	}
 
@@ -148,7 +148,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	default boolean doSessionAndIdentifierPower_success(HttpServletRequest req, HttpServletResponse resp,
-			String requestURL, JWPControllerModel powerModel, JWPCodeVO userPower)
+			String requestURL, JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		return true;
 	}
@@ -166,7 +166,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	default void doSessionAndIdentifierPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPControllerModel powerModel, JWPCodeVO userPower)
+			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 	}
 
@@ -185,7 +185,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	default boolean doOtherURL(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPCodeVO userPower) throws IOException, ServletException {
+			JWPUserPower userPower) throws IOException, ServletException {
 		return false;
 	}
 

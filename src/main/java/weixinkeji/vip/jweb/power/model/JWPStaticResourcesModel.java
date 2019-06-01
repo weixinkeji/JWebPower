@@ -1,19 +1,14 @@
 package weixinkeji.vip.jweb.power.model;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
-import weixinkeji.vip.jweb.power.listen.JWPListenPool;
-import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
 import weixinkeji.vip.jweb.power.vo.JWPStaticUrlAndListenVO;
+import weixinkeji.vip.jweb.power.vo.JWPUserPower;
 
 /**
  * 权限模型
@@ -30,21 +25,26 @@ public class JWPStaticResourcesModel {
 	private final int listenCount;
 	private final JWPStaticUrlAndListenVO[] listenMode;
 
-	public JWPStaticResourcesModel(Map<String, Class<? extends JWPListenInterface>> map) {
-		String temkey;
-		JWPListenInterface obj;
-		Set<JWPStaticUrlAndListenVO> set = new HashSet<>();
-		for (Map.Entry<String, Class<? extends JWPListenInterface>> kv : map.entrySet()) {
-			temkey = kv.getKey();
-			obj = JWPListenPool.getIURLListenMethod(kv.getValue());
-			if (null != temkey && obj != null) {
-				set.add(new JWPStaticUrlAndListenVO(temkey, obj));
-			}
-		}
-		listenMode = new JWPStaticUrlAndListenVO[set.size()];
-		set.toArray(listenMode);
-		listenCount = listenMode.length;
+	public JWPStaticResourcesModel(JWPStaticUrlAndListenVO[] listenMode) {
+		this.listenMode=listenMode;
+		this.listenCount=this.listenMode.length;
+		
 	}
+//	public JWPStaticResourcesModel(Map<String, Class<? extends JWPListenInterface>> map) {
+//		String temkey;
+//		JWPListenInterface obj;
+//		Set<JWPStaticUrlAndListenVO> set = new HashSet<>();
+//		for (Map.Entry<String, Class<? extends JWPListenInterface>> kv : map.entrySet()) {
+//			temkey = kv.getKey();
+//			obj = JWPListenPool.getIURLListenMethod(kv.getValue());
+//			if (null != temkey && obj != null) {
+//				set.add(new JWPStaticUrlAndListenVO(temkey, obj));
+//			}
+//		}
+//		listenMode = new JWPStaticUrlAndListenVO[set.size()];
+//		set.toArray(listenMode);
+//		listenCount = listenMode.length;
+//	}
 
 	/**
 	 * 执行监听的方法
@@ -62,7 +62,7 @@ public class JWPStaticResourcesModel {
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	public boolean doListen(FilterChain chain, HttpServletRequest req, HttpServletResponse resp,
-			final String requestURL, JWPControllerModel powerModel, JWPCodeVO powerCode)
+			final String requestURL, JWPControllerModel powerModel, JWPUserPower powerCode)
 			throws IOException, ServletException {
 		switch (this.listenCount) {
 		case 0:

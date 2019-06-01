@@ -3,7 +3,7 @@ package weixinkeji.vip.jweb.power.config;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
+import weixinkeji.vip.jweb.power.vo.JWPUserPower;
 
 public interface JWPUserInterface {
 
@@ -12,8 +12,8 @@ public interface JWPUserInterface {
 	 * 
 	 * @param req	基于Servlet的HttpServletRequest
 	 * @param resp	基于Servlet的HttpServletResponse
-	 * @return SessionCodeAndIdentifiterCodeVO  存储临时 值。返回多值* 封装
+	 * @return JWPUserPower  存储临时 值。返回多值* 封装
 	 */
-	JWPCodeVO getUserPowerCode(HttpServletRequest req, HttpServletResponse resp);
+	JWPUserPower getUserPowerCode(HttpServletRequest req, HttpServletResponse resp);
 	
 }

@@ -7,9 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import weixinkeji.vip.jweb.power.ann.JWPRegListen;
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
-import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
+import weixinkeji.vip.jweb.power.vo.JWPUserPower;
 
 /**
  * url监听 触发方法
@@ -35,5 +34,5 @@ public interface JWPListenInterface {
 	 */
 	public boolean doMethod(FilterChain chain, HttpServletRequest req, HttpServletResponse resp, final String requestURL
 			,JWPControllerModel powerModel
-			,JWPCodeVO powerCode)throws IOException, ServletException ;
+			,JWPUserPower powerCode)throws IOException, ServletException ;
 }

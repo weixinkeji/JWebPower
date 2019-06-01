@@ -9,11 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
-import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
+import weixinkeji.vip.jweb.power.vo.JWPUserPower;
+import weixinkeji.vip.jweb.power.vo.JWPUserPower;
 
 public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerEvent {
 	private void println(String requestURL, JWPControllerModel powerModel,
-			JWPCodeVO userPower) {
+			JWPUserPower userPower) {
 		String urltype = "无";
 		if (null != powerModel) {
 			switch (powerModel.urlType) {
@@ -36,9 +37,8 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 		System.out.println("用户请求地址：" + requestURL + "  ,路径归属：[" + urltype + "]" + "  ,路径绑定的权限等级："
 				+ (null != powerModel ? Arrays.deepToString(powerModel.grades) : null) + "  ,路径绑定的权限编号："
 				+ (null != powerModel ? Arrays.deepToString(powerModel.identifier) : null) + "\n   用户权限等级："
-				+ (null != userPower ? Arrays.deepToString(userPower.getGrades()) : null) + "\n   用户权限编号："
-				+ (null != userPower ? Arrays.deepToString(userPower.getIdentifiter()) : null));
-
+				+ (null != userPower ? Arrays.deepToString(userPower.grades) : null) + "\n   用户权限编号："
+				+ (null != userPower ? Arrays.deepToString(userPower.identifiter) : null));
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 */
 	@Override
 	public boolean jWebPower_start(FilterChain chain, HttpServletRequest req, HttpServletResponse resp,
-			String requestURL, JWPControllerModel powerModel, JWPCodeVO userPower)
+			String requestURL, JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		// this.println(requestURL, powerModel, userPower);
 		return true;
@@ -79,7 +79,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 */
 	@Override
 	public boolean doPublicPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPControllerModel powerModel, JWPCodeVO userPower)
+			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		this.println(requestURL, powerModel, userPower);
 		return true;
@@ -101,7 +101,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 */
 	@Override
 	public boolean doSessionPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPControllerModel powerModel, JWPCodeVO userPower)
+			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		this.println(requestURL, powerModel, userPower);
 		return true;
@@ -121,7 +121,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 */
 	@Override
 	public void doSessionPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPControllerModel powerModel, JWPCodeVO userPower)
+			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		this.println(requestURL, powerModel, userPower);
 	}
@@ -142,7 +142,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 */
 	@Override
 	public boolean doIdentifiterPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPControllerModel powerModel, JWPCodeVO userPower)
+			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 
 		this.println(requestURL, powerModel, userPower);
@@ -163,7 +163,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 */
 	@Override
 	public void doIdentifiterPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPControllerModel powerModel, JWPCodeVO userPower)
+			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		this.println(requestURL, powerModel, userPower);
 	}
@@ -184,7 +184,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 */
 	@Override
 	public boolean doSessionAndIdentifierPower_success(HttpServletRequest req, HttpServletResponse resp,
-			String requestURL, JWPControllerModel powerModel, JWPCodeVO userPower)
+			String requestURL, JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		this.println(requestURL, powerModel, userPower);
 		return true;
@@ -204,7 +204,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 */
 	@Override
 	public void doSessionAndIdentifierPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPControllerModel powerModel, JWPCodeVO userPower)
+			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		this.println(requestURL, powerModel, userPower);
 	}
@@ -225,7 +225,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 */
 	@Override
 	public boolean doOtherURL(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPCodeVO userPower) throws IOException, ServletException {
+			JWPUserPower userPower) throws IOException, ServletException {
 		this.println(requestURL, null, userPower);
 		return false;
 	}

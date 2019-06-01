@@ -16,13 +16,13 @@ import java.lang.annotation.Target;
 public @interface JWPRegListenUrl {
 	/**
 	 * 控制区请求路径
-	 * @return
+	 * @return String[]
 	 */
 	public String[] controllerUrl() default {};
 	
 	/**
 	 * 静态资源 前缀路径（注意 前缀。使用前缀比较与匹配）
-	 * @return
+	 * @return String[]
 	 */
 	public String[] staticUrl() default {};
 	

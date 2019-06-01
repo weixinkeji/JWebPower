@@ -9,6 +9,8 @@ import weixinkeji.vip.jweb.power.ann.JWPRegListen;
 import weixinkeji.vip.jweb.power.ann.JWPRegListenUrl;
 import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
 import weixinkeji.vip.jweb.power.listen.JWPListenPool;
+import weixinkeji.vip.jweb.power.tools.DUrlTools;
+import weixinkeji.vip.jweb.power.tools.JWPTool;
 import weixinkeji.vip.jweb.power.vo.JWPStaticUrlAndListenVO;
 
 /**
@@ -17,7 +19,7 @@ import weixinkeji.vip.jweb.power.vo.JWPStaticUrlAndListenVO;
  * @author wangchunzi
  *
  */
-public class _IniJWPListen extends _InitTool {
+public class _3_IniJWPListen extends __InitTool {
 //	private JWPSystemInterfaceConfig siConfig = super.findObject(JWPSystemInterfaceConfig.class,
 //			new DefaultJWPSystemInterfaceConfig());
 
@@ -34,7 +36,7 @@ public class _IniJWPListen extends _InitTool {
 	/**
 	 * @param list 扫描到的类
 	 */
-	_IniJWPListen(List<Class<?>> list) {
+	_3_IniJWPListen(List<Class<?>> list) {
 		super(list);
 		this.iniCMListen();
 	}
@@ -115,16 +117,18 @@ public class _IniJWPListen extends _InitTool {
 		for (Class<?> c : super.list) {
 			reg = c.getAnnotation(JWPRegListenUrl.class);
 			// 首先需要有@JWPRegListenUrl，次需此类实现了JWPListenInterface接口
-			if (null != reg && super.isFatherSon(JWPListenInterface.class, c)) {
+			if (null != reg && JWPTool.isFatherSon(JWPListenInterface.class, c)) {
 				// 如果绑定了Controller路径
 				if (null != reg.controllerUrl() && reg.controllerUrl().length > 0) {
 					for (String url : reg.controllerUrl()) {
+						url=DUrlTools.formatURLAndCacheUrl(url);
 						this.inJWPRegListenUrl_Controller.put(url, (Class<? extends JWPListenInterface>) c);
 					}
 				}
 				// 如果绑定了静态资源路径
 				if (null != reg.staticUrl() && reg.staticUrl().length > 0) {
 					for (String url : reg.controllerUrl()) {
+						url=DUrlTools.formatURLAndCacheUrl(url);
 						this.inJWPRegListenUrl_static.put(url, (Class<? extends JWPListenInterface>) c);
 					}
 				}

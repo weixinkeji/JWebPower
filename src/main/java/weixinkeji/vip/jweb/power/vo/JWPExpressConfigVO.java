@@ -6,55 +6,42 @@ import java.util.Set;
 final public class JWPExpressConfigVO {
 	// 公共权限的表达式
 	private Set<String> publicPowerExpresstion = new HashSet<String>();
+	// 会话权限的表达式
+	private Set<String> sessionPowerExpresstion = new HashSet<String>();
+
 	// 权限等级的表达式
 	private Set<String> gradesExcpresstion = new HashSet<String>();;
 	// 权限编号的表达式
-	private Set<String> identifiterPowerExpression = new HashSet<String>();;
-//	//map 路径(key)-监听类（value)
-//	private Map<String, Class<?extends JWPListenInterface>> urlAndListen=new HashMap<>();
+	private Set<String> identifiterPowerExpression = new HashSet<String>();
 	
-	/**
-	 * 取得 公共权限的表达式
-	 * 
-	 * @return Set
-	 */
 	public Set<String> getPublicPowerExpresstion() {
 		return publicPowerExpresstion;
 	}
-
-	/**
-	 * 取得 权限等级的表达式
-	 * 
-	 * @return Set
-	 */
 	public Set<String> getSessionPowerExpresstion() {
+		return sessionPowerExpresstion;
+	}
+	public Set<String> getGradesExcpresstion() {
 		return gradesExcpresstion;
 	}
-
-	/**
-	 * 取得 权限编号的表达式
-	 * 
-	 * @return Set
-	 */
 	public Set<String> getIdentifiterPowerExpression() {
 		return identifiterPowerExpression;
 	}
+	public void setPublicPowerExpresstion(Set<String> publicPowerExpresstion) {
+		this.publicPowerExpresstion = publicPowerExpresstion;
+	}
+	public void setSessionPowerExpresstion(Set<String> sessionPowerExpresstion) {
+		this.sessionPowerExpresstion = sessionPowerExpresstion;
+	}
+	public void setGradesExcpresstion(Set<String> gradesExcpresstion) {
+		this.gradesExcpresstion = gradesExcpresstion;
+	}
+	public void setIdentifiterPowerExpression(Set<String> identifiterPowerExpression) {
+		this.identifiterPowerExpression = identifiterPowerExpression;
+	}
 
-//	/**
-//	 * 注册监听 路径(key)-监听类（value)
-//	 * @return Map
-//	 */
-//	public Map<String, Class<? extends JWPListenInterface>> getUrlAndListen() {
-//		return urlAndListen;
-//	}
-//
-//	/**
-//	 * 注册监听的类
-//	 * @param urlAndListen 路径(key)-监听类（value)
-//	 */
-//	public void setUrlAndListen(Map<String, Class<? extends JWPListenInterface>> urlAndListen) {
-//		this.urlAndListen = urlAndListen;
-//	}
+//	//map 路径(key)-监听类（value)
+//	private Map<String, Class<?extends JWPListenInterface>> urlAndListen=new HashMap<>();
 
 	
+
 }

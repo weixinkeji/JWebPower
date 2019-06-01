@@ -11,15 +11,16 @@ import weixinkeji.vip.jweb.power.config.JWPSystemInterfaceConfig;
  * @author wangchunzi
  *
  */
-public class _IniAbutment_url extends _InitTool {
+public class _2_IniAbutment extends __InitTool {
 	private JWPSystemInterfaceConfig siConfig=super.findObject(JWPSystemInterfaceConfig.class, new DefaultJWPSystemInterfaceConfig());
+	
 	/**
 	 * @param list 扫描到的类
 	 */
-	_IniAbutment_url(List<Class<?>> list) {
+	_2_IniAbutment(List<Class<?>> list) {
 		super(list);
 	}
-
+	
 	/**
 	 * 对接系统url的实现
 	 * @return JWPSystemInterfaceConfig

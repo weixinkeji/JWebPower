@@ -13,10 +13,10 @@ import weixinkeji.vip.jweb.tools.JWPPropertiesTool;
  * @author wangchunzi
  *
  */
-public class _InitJWPConfig {
+public class _0_LoadJWPConfig {
 	
 	private Map<String, String> configMap;
-	public _InitJWPConfig(String configFilePath) {
+	public _0_LoadJWPConfig(String configFilePath) {
 		 configMap = new JWPPropertiesTool()
 					.loadPropertiesToMap(new File(JWPPathTool.getMyProjectPath(null==configFilePath||configFilePath.isEmpty()?"JWP.properties":configFilePath))); 
 	}
@@ -38,6 +38,7 @@ public class _InitJWPConfig {
 		boolean dynamics_controller_url=true;
 		// 在控制台输出框架启动信息（默认为false)
 		boolean console_print=false;
+		
 		String ppv;
 //计算与附值		
 		if(null!=(ppv=this.configMap.get("scan_package"))) {
@@ -62,6 +63,7 @@ public class _InitJWPConfig {
 				,free_url_open
 				,dynamics_controller_url
 				,console_print
+				,ContextPath
 				);
 	}
 	// 对静态资源前缀路径进行格式化

@@ -1,9 +1,7 @@
 package weixinkeji.vip.jweb.power;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -15,7 +13,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import weixinkeji.vip.jweb.power._init._JWPConfigFactory;
+import weixinkeji.vip.jweb.power._init.ReturnResultObject;
+import weixinkeji.vip.jweb.power._init._0_LoadJWPConfig;
+import weixinkeji.vip.jweb.power._init._1_IniMain;
 import weixinkeji.vip.jweb.power.config.JWPUserInterface;
 import weixinkeji.vip.jweb.power.event.JWPControllerURLPowerEvent;
 import weixinkeji.vip.jweb.power.event.JWPGlobalEvent;
@@ -23,101 +23,96 @@ import weixinkeji.vip.jweb.power.model.JWPControllerModel;
 import weixinkeji.vip.jweb.power.model.JWPStaticResourcesModel;
 import weixinkeji.vip.jweb.power.tools.DUrlTools;
 import weixinkeji.vip.jweb.power.tools.JWPRequestUrlTool;
-import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
-import weixinkeji.vip.jweb.scan.JWPScanClassFactory;
+import weixinkeji.vip.jweb.power.vo.JWPUserConfigVO;
+import weixinkeji.vip.jweb.power.vo.JWPUserPower;
 import weixinkeji.vip.jweb.tools.JWPControllePrint;
 import weixinkeji.vip.jweb.tools.JWPPathTool;
-import weixinkeji.vip.jweb.tools.JWPPropertiesTool;
 
 public class JWPFilter implements Filter {
-
+	
+	
+	private String static_resources_prefix;
+	private boolean console_print;
+	private boolean dynamics_controller_url;
+	private boolean free_url_open;
+	
 	/**
 	 * 路径 - 与权限模型
 	 */
 	private Map<String, JWPControllerModel> jwebPowerControllerModel = new HashMap<>();
-	private String static_resources_prefix;
-//---------方法区---------
+	private JWPStaticResourcesModel staticResourcesModel;
+	
 	// 全局事件
 	private JWPGlobalEvent jwpGlobalEvent;
 	// 事件
 	private JWPControllerURLPowerEvent controllerUrlPowerEvent;
+	
 	// 用户权限 -接口
 	private JWPUserInterface userPower;
-
-	private JWPStaticResourcesModel staticResourcesModel;
+	
 	private JWPRequestUrlTool requestUrlTool;
 
-	private boolean console_print;
-	private boolean dynamics_controller_url;
-	private boolean free_url_open;
-	// 对静态资源前缀路径进行格式化
-	private void initStaticUrl(String ContextPath, final String url) {
-		if (null == url || url.isEmpty()) {
-			static_resources_prefix = ContextPath + "/static/";
-			JWPControllePrint
-					.addErrorMessage("没找找到配置文件中的键值对[static_resources_prefix],或键的值为空。系统自动采用 /static/ 作为静态url的前缀！", 1);
-		} else if (!url.startsWith("/")) {
-			static_resources_prefix = ContextPath + "/" + url;
-		} else {
-			static_resources_prefix = ContextPath + url;
-		}
-
-	}
 
 	@Override
 	public void init(FilterConfig fConfig) throws ServletException {
-		JWPControllePrint.addMessage("[目录]加载框架配置文件");
-		Map<String, String> configMap = new JWPPropertiesTool()
-				.loadPropertiesToMap(new File(JWPPathTool.getMyProjectPath("JWP.properties")));
-		this.dynamics_controller_url = null == configMap.get("dynamics_controller_url") ? true
-				: Boolean.parseBoolean(configMap.get("dynamics_controller_url"));
-		this.free_url_open= null == configMap.get("free_url_open") ? false
-				: Boolean.parseBoolean(configMap.get("free_url_open"));
-		this.console_print = null == configMap.get("console_print") ? false
-				: Boolean.parseBoolean(configMap.get("console_print"));
-		String path = configMap.get("scan_package");
-		JWPControllePrint.addMessage("[目录]设置配-扫描的路径：" + path + " 完毕");
-
-		this.initStaticUrl(fConfig.getServletContext().getContextPath(), configMap.get("static_resources_prefix"));
-		JWPControllePrint.addMessage("[目录]加载框架配置文件");
-
-		if (null == configMap || null == path || path.isEmpty()) {
-			JWPControllePrint.addErrorMessage(
-					"JWebPower启动失败，没有配置扫描路径。请在类路径下，创建属性文件【jwebPower.properties】，并设置一个键值对【scan_package=扫描的路径】", 1);
+		//加载用户配置
+		JWPUserConfigVO config=this._1_loadConfig(fConfig);
+		if(null==config) {
 			return;
 		}
-		// 扫描路径
-		List<Class<?>> classList = JWPScanClassFactory.getClassByFilePath(path.split("[,，]{1}"));
-		JWPControllePrint.addMessage("[目录]扫描类路径并加载类 完毕");
-		JWPControllePrint.addMessage("[目录]环境初始完毕，开始业务处理");
-		JWPControllePrint.addMessage("");
-		JWPControllePrint.addMessage("[目录]启动配置工厂");
-		// 启动配置工厂
-		_JWPConfigFactory tempConfigFactory = new _JWPConfigFactory(classList);
-		requestUrlTool = tempConfigFactory.getRequestURLVO(fConfig.getServletContext().getContextPath());
-
-//从集合中，找到我们的配置实例
-		// 事件触发-实现对象
-		jwpGlobalEvent = tempConfigFactory.getJWPGlobalEvent();
-		controllerUrlPowerEvent = tempConfigFactory.getJWPControllerURLPowerEvent();
-		JWPControllePrint.addMessage("[目录]事件触发-实现对象 处理完毕");
-		// 设置用户类与方法上注解的权限的模型
-		tempConfigFactory.setControllerPowerModel(jwebPowerControllerModel);
-		JWPControllePrint.addMessage("[目录]设置用户类与方法上注解的权限的模型 处理完毕");
-		// 用户的静态资源 检验模型
-		staticResourcesModel = tempConfigFactory.getJWebPowerStaticResourcesModel();
-		JWPControllePrint.addMessage("[目录]设置用户的静态资源 检验模型 处理完毕");
-
-		// 获取【等级等级】、【权限编号】的用户接口
-		userPower = tempConfigFactory.getJWPUserInterface();
-		JWPControllePrint.addMessage("[目录]设置  获取【权限等级】、【权限编号】的用户接口的实现类  处理完毕" + userPower.getClass().getName());
-
+		//开始执行初始化操作
+		this._2_toStartInit(config);
 		if (console_print) {
 			JWPControllePrint.printMessage();
 		}
 		JWPControllePrint.clearMessage();
 	}
-
+	
+	//加载配置文件
+	private JWPUserConfigVO _1_loadConfig(FilterConfig fConfig) {
+		JWPControllePrint.addMessage("[目录]加载框架配置文件");
+		_0_LoadJWPConfig config=new _0_LoadJWPConfig("JWP.properties");
+		JWPUserConfigVO configVo=config.getJWPUserConfigVO(fConfig.getServletContext().getContextPath());
+		
+		this.dynamics_controller_url =configVo.dynamics_controller_url;
+		this.console_print =configVo.console_print;
+		this.static_resources_prefix=configVo.static_resources_prefix;
+		this.free_url_open=configVo.free_url_open;
+		
+		
+		JWPControllePrint.addMessage("[目录]加载框架配置文件");
+		if (null == configVo.scan_package || configVo.scan_package.length==0) {
+			JWPControllePrint.addErrorMessage(
+					"JWebPower启动失败，没有配置扫描路径。请在类路径下，创建属性文件【JWP.properties】，并设置一个键值对【scan_package=扫描的路径】", 1);
+			return null;
+		}
+		// 扫描路径
+		JWPControllePrint.addMessage("[目录]扫描类路径并加载类 完毕");
+		return configVo;
+	}
+	
+	//开始初始化
+	private void _2_toStartInit(JWPUserConfigVO configVo) {
+		JWPControllePrint.addMessage("[目录]环境初始完毕，开始业务处理");
+		JWPControllePrint.addMessage("");
+		JWPControllePrint.addMessage("[目录]启动配置工厂");
+		//存在初始化结果
+		ReturnResultObject rs=new ReturnResultObject();
+		//开始初始化
+		new _1_IniMain(configVo,rs);
+		
+		this.jwebPowerControllerModel=rs.getModel_controller();
+		this.staticResourcesModel=rs.getModel_static();
+		
+		this.jwpGlobalEvent=rs.getEvent_global();// 全局事件
+		this.controllerUrlPowerEvent=rs.getEvent_controller();// 事件
+		
+		this.userPower=rs.getUserPower();// 用户权限 -接口
+		
+		this.requestUrlTool=rs.getRequestUrlTool();
+		
+	}
+	
 	@Override
 	public void destroy() {
 
@@ -132,7 +127,7 @@ public class JWPFilter implements Filter {
 		if (!jwpGlobalEvent.jwpGlobal(chain, httpRequest, httpResponse, requestURL)) {
 			return;
 		}
-		JWPCodeVO powerCode = userPower.getUserPowerCode(httpRequest, httpResponse);
+		JWPUserPower powerCode = userPower.getUserPowerCode(httpRequest, httpResponse);
 		// 静态资源处理
 		if (requestURL.startsWith(this.static_resources_prefix)) {
 			this.doStaticRequestURLLiseten(httpRequest, httpResponse, chain, requestURL, powerCode);
@@ -147,7 +142,7 @@ public class JWPFilter implements Filter {
 
 	// 静态资源监听 匹配与执行
 	private void doStaticRequestURLLiseten(final HttpServletRequest request, final HttpServletResponse response,
-			final FilterChain chain, final String url, final JWPCodeVO powerCode) throws IOException, ServletException {
+			final FilterChain chain, final String url, final JWPUserPower powerCode) throws IOException, ServletException {
 		String requestURL = this.requestUrlTool.formatStaticRequestURL(url);
 		if (staticResourcesModel.doListen(chain, request, response, requestURL, null, powerCode)) {
 			chain.doFilter(request, response);
@@ -165,7 +160,7 @@ public class JWPFilter implements Filter {
 	 * @throws ServletException
 	 */
 	private void doServerRequestURLLiseten(final HttpServletRequest request, final HttpServletResponse response,
-			final FilterChain chain, final String url, final JWPCodeVO powerCode) throws IOException, ServletException {
+			final FilterChain chain, final String url, final JWPUserPower powerCode) throws IOException, ServletException {
 		String requestURL = url.equals("/") ? url : this.requestUrlTool.formatRequestURL(url);
 		String durl;
 		JWPControllerModel powerModel = jwebPowerControllerModel.get(requestURL);
@@ -199,11 +194,11 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		case grades:// 会话区
-			if (null == powerCode || null == powerCode.getGrades()) {
+			if (null == powerCode || null == powerCode.grades) {
 				return;
 			}
 			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限
-			if (powerModel.isInGrades(powerCode.getGrades())) {
+			if (powerModel.isInGrades(powerCode.grades)) {
 				// 有权限。调用定义的方法。
 				if (controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL, powerModel,
 						powerCode)) {
@@ -214,11 +209,11 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		case identifiter:// 编号区
-			if (null == powerCode || null == powerCode.getIdentifiter()) {
+			if (null == powerCode || null == powerCode.identifiter) {
 				return;
 			}
 			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限
-			if (powerModel.isInIdentifier(powerCode.getIdentifiter())) {
+			if (powerModel.isInIdentifier(powerCode.identifiter)) {
 				// 有权限。调用定义的方法。
 				if (controllerUrlPowerEvent.doIdentifiterPower_success(request, response, requestURL, powerModel,
 						powerCode)) {
@@ -229,11 +224,11 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		case gradesAndIdentifiter:// 等级+编号
-			if (null == powerCode || null == powerCode.getGrades() || null == powerCode.getIdentifiter()) {
+			if (null == powerCode || null == powerCode.grades || null == powerCode.identifiter) {
 				return;
 			}
 			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
-			if (powerModel.isInGrades(powerCode.getGrades()) && powerModel.isInIdentifier(powerCode.getIdentifiter())) {
+			if (powerModel.isInGrades(powerCode.grades) && powerModel.isInIdentifier(powerCode.identifiter)) {
 				// 有权限。调用定义的方法。
 				if (controllerUrlPowerEvent.doSessionAndIdentifierPower_success(request, response, requestURL,
 						powerModel, powerCode)) {
@@ -266,7 +261,7 @@ public class JWPFilter implements Filter {
 	 * @throws ServletException
 	 */
 	private void doServerRequestURLLiseten_print(final HttpServletRequest request, final HttpServletResponse response,
-			final FilterChain chain, final String url, final JWPCodeVO powerCode) throws IOException, ServletException {
+			final FilterChain chain, final String url, final JWPUserPower powerCode) throws IOException, ServletException {
 		String requestURL = url.equals("/") ? url : this.requestUrlTool.formatRequestURL(url);
 		JWPControllerModel powerModel = jwebPowerControllerModel.get(requestURL);
 		String durl;
@@ -308,11 +303,11 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		case grades:// 等级区
-			if (null == powerCode || null == powerCode.getGrades()) {
+			if (null == powerCode || null == powerCode.grades) {
 				return;
 			}
 			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限
-			if (powerModel.isInGrades(powerCode.getGrades())) {
+			if (powerModel.isInGrades(powerCode.grades)) {
 				// 有权限。调用定义的方法。
 				if (controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL, powerModel,
 						powerCode)) {
@@ -325,11 +320,11 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		case identifiter:// 编号区
-			if (null == powerCode || null == powerCode.getIdentifiter()) {
+			if (null == powerCode || null == powerCode.identifiter) {
 				return;
 			}
 			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限
-			if (powerModel.isInIdentifier(powerCode.getIdentifiter())) {
+			if (powerModel.isInIdentifier(powerCode.identifiter)) {
 				// 有权限。调用定义的方法。
 				if (controllerUrlPowerEvent.doIdentifiterPower_success(request, response, requestURL, powerModel,
 						powerCode)) {
@@ -342,11 +337,11 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		case gradesAndIdentifiter:// 等级+编号
-			if (null == powerCode || null == powerCode.getGrades() || null == powerCode.getIdentifiter()) {
+			if (null == powerCode || null == powerCode.grades || null == powerCode.identifiter) {
 				return;
 			}
 			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
-			if (powerModel.isInGrades(powerCode.getGrades()) && powerModel.isInIdentifier(powerCode.getIdentifiter())) {
+			if (powerModel.isInGrades(powerCode.grades) && powerModel.isInIdentifier(powerCode.identifiter)) {
 				// 有权限。调用定义的方法。
 				if (controllerUrlPowerEvent.doSessionAndIdentifierPower_success(request, response, requestURL,
 						powerModel, powerCode)) {

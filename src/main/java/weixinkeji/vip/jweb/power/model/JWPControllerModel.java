@@ -1,6 +1,7 @@
 package weixinkeji.vip.jweb.power.model;
 
 import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
+import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
 
 /**
  * 权限模型
@@ -15,6 +16,7 @@ import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
 public class JWPControllerModel {
 
 	public final JWPType urlType;
+
 	/**
 	 * 权限等级。null时，表示出错。空表示所有等级。
 	 */
@@ -24,40 +26,94 @@ public class JWPControllerModel {
 	 * 绑定的绑定集合
 	 */
 	public final String[] identifier;
+
+	public final boolean isPublic;
+	public final boolean isSession;
+
 	private final boolean isGradesNull;
 	private final boolean isIdentifierNull;
-	 //监听的实现
+	// 监听的实现
 	public final JWPListenInterface listen;
-	public final  boolean isHasListen;
+	public final boolean isHasListen;
+
 	/**
 	 * 
-	 * @param urlType    0:放行区 1：等级区 2：编号区 10:会话+编号 一起
+	 * @param urlType    放行、会话、等级、编号、等级+编号
 	 * @param grades     权限等级 没有权限请设置为null，有所有的权限请设置为new String[]{}
 	 * @param identifier 权限编号 没有权限请设置为null，有所有的权限请设置为new String[]{}
-	 * @param listen 	 IURLListenMethod 监听器
+	 * @param listen     IURLListenMethod 监听器
 	 */
-	public JWPControllerModel(JWPType urlType, String[] grades, String[] identifier,JWPListenInterface listen) {
-		this.urlType = urlType;
-		this.grades = grades;
-		this.identifier = identifier;
+//	public JWPControllerModel(JWPType urlType, String[] grades, String[] identifier, JWPListenInterface listen) {
+//		this.urlType = urlType;
+//		this.grades = grades;
+//		this.identifier = identifier;
+//		this.isGradesNull = null == grades;
+//		this.isIdentifierNull = null == identifier;
+//		this.listen = listen;
+//		this.isHasListen = null != this.listen;
+//	}
+
+	/**
+	 * 
+	 * @param vo    JWPCodeVO
+	 * @param listen  JWPListenInterface 监听器
+	 */
+	public JWPControllerModel(JWPCodeVO vo, JWPListenInterface listen) {
+		this.urlType = vo.type;
+		this.isPublic = vo.isPublic();
+		this.isSession = vo.isSession();
+		this.grades = vo.getGrades();
+		this.identifier = vo.getIdentifiter();
+		
 		this.isGradesNull = null == grades;
 		this.isIdentifierNull = null == identifier;
-		this.listen=listen;
-		this.isHasListen=null!=this.listen;
+		this.listen = listen;
+		this.isHasListen = null != this.listen;
 	}
 	
+	/**
+	 * 融合 其他的 权限模型
+	 * @param vo JWPCodeVO 权限 值对象
+	 * @param jwp JWPControllerModel 其他的权限模型
+	 * 
+	 */
+	public JWPControllerModel(JWPCodeVO vo,JWPControllerModel jwp) {
+		this.isPublic = jwp.isPublic?true:vo.isPublic();
+		this.isSession =jwp.isSession?true: vo.isSession();
+		this.grades = null==jwp.grades?vo.getGrades():null;
+		this.identifier = null==jwp.identifier?vo.getIdentifiter():null;
+		this.isGradesNull = null == grades;
+		this.isIdentifierNull = null == identifier;
+		//重新定位 索引
+		if (!isIdentifierNull && !isGradesNull) {//编号 与 等级 都不为null时
+			this.urlType = JWPType.gradesAndIdentifiter;
+		} else if (!isIdentifierNull) {//编号不为null时
+			this.urlType = JWPType.identifiter;
+		} else if (!isGradesNull) {//等级不为null时
+			this.urlType = JWPType.grades;
+		} else if (isSession) {//会话时
+			this.urlType = JWPType.session;
+		} else if (isPublic) {//公共区时
+			this.urlType = JWPType.common;
+		}else {//未知道类型
+			this.urlType=JWPType.unknow;
+		}
+		
+		this.listen=jwp.listen;
+		this.isHasListen =jwp.isHasListen;
+	}
 	/**
 	 * 判断权限等级 yourGrades 是否符合url绑定的 权限等级
 	 * 
 	 * @param yourGrades 你的权限等级
-	 * @return boolean
+	 * @return boolean 真或假
 	 */
 	public boolean isInGrades(String yourGrades) {
 		// 不是权限等级 控制的路径 或你没有权限
 		if (this.isGradesNull || null == yourGrades) {
 			return false;
 		}
-		if(grades.length==0) {//只要不为null的权限等级，都通过
+		if (grades.length == 0) {// 只要不为null的权限等级，都通过
 			return true;
 		}
 		for (String str : grades) {
@@ -79,7 +135,7 @@ public class JWPControllerModel {
 		if (this.isGradesNull || null == yourGrades) {
 			return false;
 		}
-		if(grades.length==0) {//只要不为null的权限等级，都通过
+		if (grades.length == 0) {// 只要不为null的权限等级，都通过
 			return true;
 		}
 		for (String str : grades) {

@@ -12,14 +12,18 @@ final public class JWPUserConfigVO {
 	public final boolean dynamics_controller_url;
 	// 在控制台输出框架启动信息（默认为false)
 	public final boolean console_print;
-
+	
+	public final String webContextPath;
+	
+	
 	public JWPUserConfigVO(String[] scan_package, String static_resources_prefix, boolean free_url_open,
-			boolean dynamics_controller_url, boolean console_print) {
+			boolean dynamics_controller_url, boolean console_print,String webContextPath) {
 		this.scan_package = scan_package;
 		this.static_resources_prefix = static_resources_prefix;
 		this.free_url_open = free_url_open;
 		this.dynamics_controller_url = dynamics_controller_url;
 		this.console_print = console_print;
+		this.webContextPath=webContextPath;
 	}
 
 }

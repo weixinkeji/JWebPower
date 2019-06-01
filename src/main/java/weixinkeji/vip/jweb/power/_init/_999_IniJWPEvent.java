@@ -13,15 +13,15 @@ import weixinkeji.vip.jweb.power.event.JWPGlobalEvent;
  * @author wangchunzi
  *
  */
-public class _IniJWPEvent extends _InitTool {
-
+public class _999_IniJWPEvent extends __InitTool {
+	
 	/**
 	 * @param list 扫描到的类
 	 */
-	_IniJWPEvent(List<Class<?>> list) {
+	_999_IniJWPEvent(List<Class<?>> list) {
 		super(list);
 	}
-
+	
 	/**
 	 * url全局事件
 	 * @return JWPGlobalEvent
@@ -29,7 +29,7 @@ public class _IniJWPEvent extends _InitTool {
 	public JWPGlobalEvent getJWPGlobalEvent() {
 		return super.findObject(JWPGlobalEvent.class, new DefaultJWPGlobalEvent());
 	}
-
+	
 	/**
 	 * web入口 url事件
 	 * @return JWPControllerURLPowerEvent
