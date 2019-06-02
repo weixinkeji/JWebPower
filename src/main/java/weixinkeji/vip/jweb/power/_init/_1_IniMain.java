@@ -4,6 +4,7 @@ import weixinkeji.vip.jweb.power.config.DefaultJWPUserInterface;
 import weixinkeji.vip.jweb.power.config.JWPUserInterface;
 import weixinkeji.vip.jweb.power.vo.JWPUserConfigVO;
 import weixinkeji.vip.jweb.scan.JWPScanClassFactory;
+import weixinkeji.vip.jweb.tools.JWPControllePrint;
 
 /**
  * 初始化之集中资源
@@ -12,7 +13,7 @@ import weixinkeji.vip.jweb.scan.JWPScanClassFactory;
  */
 final public class _1_IniMain extends __InitTool {
 	
-	public _1_IniMain(JWPUserConfigVO config,ReturnResultObject rs) {
+	public _1_IniMain(JWPUserConfigVO config,ReturnResultObject rs,JWPControllePrint pr) {
 		
 		super(JWPScanClassFactory.getClassByFilePath(config.scan_package));
 		
@@ -34,7 +35,7 @@ final public class _1_IniMain extends __InitTool {
 		//业务处理模型
 		_5_iniJWPModel_Static model_static=new _5_iniJWPModel_Static(listen);//静态
 		rs.setModel_static(model_static.getJWPStaticResourcesModel());
-		_5_iniJWPModel_Controller model_controller=new _5_iniJWPModel_Controller(controllerPower,listen);
+		_5_iniJWPModel_Controller model_controller=new _5_iniJWPModel_Controller(controllerPower,listen,pr);
 		rs.setModel_controller(model_controller.getModel_controller());
 		
 		//用户的权限

@@ -18,4 +18,9 @@ public class DefaultJWPControllerURLExpresstion implements JWPControllerURLExpre
 	public void setRequestURL_Identifiter(Set<String> set) {
 		
 	}
+
+	@Override
+	public void setRequestURL_Session(Set<String> set) {
+		
+	}
 }

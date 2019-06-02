@@ -1,6 +1,7 @@
 package weixinkeji.vip.jweb.power.model;
 
 import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
+import weixinkeji.vip.jweb.power.tools.JWPTool;
 import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
 
 /**
@@ -80,8 +81,8 @@ public class JWPControllerModel {
 	public JWPControllerModel(JWPCodeVO vo,JWPControllerModel jwp) {
 		this.isPublic = jwp.isPublic?true:vo.isPublic();
 		this.isSession =jwp.isSession?true: vo.isSession();
-		this.grades = null==jwp.grades?vo.getGrades():null;
-		this.identifier = null==jwp.identifier?vo.getIdentifiter():null;
+		this.grades = JWPTool.mergeStringArray(jwp.grades,vo.getGrades());
+		this.identifier =JWPTool.mergeStringArray(jwp.identifier,vo.getIdentifiter());
 		this.isGradesNull = null == grades;
 		this.isIdentifierNull = null == identifier;
 		//重新定位 索引

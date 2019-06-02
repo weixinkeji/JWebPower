@@ -75,7 +75,6 @@ public class _4_IniJWPPowerCode_Controller extends __InitTool {
 						if (null != siConfig.getURLByMethod(m)) {// 注解在方法上路径
 							isMethodUrl = true;
 							// 记录下请求路径与方法的关联
-							System.err.println("找到的监听路径：" + requestUrl);
 							mp.main(m);// 标注在方法上的权限
 							urlAndMethodAndClass.put(requestUrl, new MethodAndClass(m, c));// 拼接请求路径与缓存
 						}
@@ -244,7 +243,7 @@ class InClassPowerCode {
 	 * @return JWPCodeVO
 	 */
 	public JWPCodeVO getPowerCode(Class<?> c) {
-		return new JWPCodeVO(null != this.inPublic.get(c), null != this.inSession.get(c), this.inGrades.get(c),
+		return new JWPCodeVO(true== this.inPublic.get(c),true== this.inSession.get(c), this.inGrades.get(c),
 				this.inIdentifiter.get(c));
 	}
 }
@@ -279,7 +278,6 @@ class InExcpressDirectPowerCode {
 			expUrl = DUrlTools.formatURLAndCacheUrl(expUrl);// 处理路径。如果是动态路径，格式成框架处理用的路径。
 			if (null != (vo = tool.getPowerUrl(expUrl))) {
 				inIdentifiter.put(vo.getExpress(), vo.getValues());
-				System.out.println("权限编号的 直接权限:" + expUrl);
 				expressUrl.add(expUrl);
 			}
 		}
@@ -288,7 +286,6 @@ class InExcpressDirectPowerCode {
 			expUrl = DUrlTools.formatURLAndCacheUrl(expUrl);// 处理路径。如果是动态路径，格式成框架处理用的路径。
 			if (null != (vo = tool.getPowerUrl(expUrl))) {
 				inGrades.put(vo.getExpress(), vo.getValues());
-				System.out.println("等级的 直接权限:" + expUrl);
 				expressUrl.add(expUrl);
 			}
 		}
@@ -297,7 +294,6 @@ class InExcpressDirectPowerCode {
 			expUrl = DUrlTools.formatURLAndCacheUrl(expUrl);// 处理路径。如果是动态路径，格式成框架处理用的路径。
 			if (null != (vo = tool.getPowerUrl(expUrl))) {
 				this.inSession.put(vo.getExpress(), true);
-				System.out.println("会话的 直接权限:" + expUrl);
 				expressUrl.add(expUrl);
 			}
 		}
@@ -306,7 +302,6 @@ class InExcpressDirectPowerCode {
 			expUrl = DUrlTools.formatURLAndCacheUrl(expUrl);// 处理路径。如果是动态路径，格式成框架处理用的路径。
 			if (null != (vo = tool.getPowerUrl(expUrl))) {
 				this.inPublic.put(vo.getExpress(), true);
-				System.out.println("公共的 直接权限:" + expUrl);
 				expressUrl.add(expUrl);
 			}
 		}
@@ -330,13 +325,13 @@ class InExcpressDirectPowerCode {
 }
 
 class InExcpressPowerCode {
-	// 在类上的 权限编号--Controller
+	// 在表达式上的 权限编号--Controller
 	private Map<String, String[]> inIdentifiter = new HashMap<>();
-	// 在类上的 权限等级--Controller
+	// 在表达式上的 权限等级--Controller
 	private Map<String, String[]> inGrades = new HashMap<>();
-	// 在类上的 会话--Controller
+	// 在表达式上的 会话--Controller
 	private Map<String, Boolean> inSession = new HashMap<>();
-	// 在类上的 放行区--Controller
+	// 在表达式上的 放行区--Controller
 	private Map<String, Boolean> inPublic = new HashMap<>();
 
 	/**
@@ -347,21 +342,35 @@ class InExcpressPowerCode {
 	 */
 	public void main(JWPExpressConfigVO vo, String requestUrl, JWPExpressionTool tool) {
 		String[] powerCode;
-		for (String expUrl : vo.getIdentifiterPowerExpression()) {
+		String[] hasPowerCode;
+		for (String expUrl : vo.getIdentifiterPowerExpression()) {//编号
 			// 如果不为null,表示有权限编号
 			if (null != (powerCode = tool.isIdentifiterPower(expUrl, requestUrl))) {
+				hasPowerCode=inIdentifiter.get(requestUrl);
+				if(null!=hasPowerCode) {//如果多个表达都与xx请求路径匹配成功，则进行权限融合
+					powerCode=JWPTool.mergeStringArray(powerCode,hasPowerCode);
+				}
 				inIdentifiter.put(requestUrl, powerCode);
 			}
-
+		}
+		for (String expUrl : vo.getGradesExcpresstion()) {//等级
 			// 如果不为null,表示有权限等级
 			if (null != (powerCode = tool.isGradePower(expUrl, requestUrl))) {
+				hasPowerCode=inGrades.get(requestUrl);
+				if(null!=hasPowerCode) {//如果多个表达都与xx请求路径匹配成功，则进行权限融合
+					powerCode=JWPTool.mergeStringArray(powerCode,hasPowerCode);
+				}
 				inGrades.put(requestUrl, powerCode);
 			}
-
+		}
+		for (String expUrl : vo.getSessionPowerExpresstion()) {//会话
 			// 如果不为null,表示有会话权限
 			if (tool.isSessionPower(expUrl, requestUrl)) {
 				inSession.put(requestUrl, true);
 			}
+		}
+		
+		for (String expUrl : vo.getPublicPowerExpresstion()) {//放行区
 			// 如果不为null,表示有公共权限
 			if (tool.isPublicPower(expUrl, requestUrl)) {
 				inPublic.put(requestUrl, true);

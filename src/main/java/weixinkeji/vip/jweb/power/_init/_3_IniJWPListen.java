@@ -39,6 +39,7 @@ public class _3_IniJWPListen extends __InitTool {
 	_3_IniJWPListen(List<Class<?>> list) {
 		super(list);
 		this.iniCMListen();
+		this.iniScanListen();
 	}
 
 	/**

@@ -36,9 +36,9 @@ public class _3_IniJWPExpress extends __InitTool{
 		JWPExpressConfigVO vo = new JWPExpressConfigVO();
 		// 找到用户配置的表达式，没有用户配置，则加载默认的配置
 		JWPControllerURLExpresstion sue = super.findObject(JWPControllerURLExpresstion.class, new DefaultJWPControllerURLExpresstion());
-		
 		sue.setRequestURL_Public(vo.getPublicPowerExpresstion());
-		sue.setRequestURL_grades(vo.getSessionPowerExpresstion());
+		sue.setRequestURL_Session(vo.getSessionPowerExpresstion());
+		sue.setRequestURL_grades(vo.getGradesExcpresstion());
 		sue.setRequestURL_Identifiter(vo.getIdentifiterPowerExpression());
 		
 		this.controllerExpress=vo;

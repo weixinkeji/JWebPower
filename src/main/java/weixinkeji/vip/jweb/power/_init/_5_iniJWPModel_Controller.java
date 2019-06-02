@@ -1,10 +1,13 @@
 package weixinkeji.vip.jweb.power._init;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
+import weixinkeji.vip.jweb.power.model.JWPType;
 import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
+import weixinkeji.vip.jweb.tools.JWPControllePrint;
 
 /**
  * 权限业务处理
@@ -18,18 +21,71 @@ public class _5_iniJWPModel_Controller extends __InitTool {
 	private Map<String, JWPControllerModel> modelMap=new HashMap<>();
 	private _4_IniJWPPowerCode_Controller powerCode;
 	private _3_IniJWPListen listen;
-	
+	private JWPControllePrint pr;
 	/**
 	 * @param powerCode 权限管理中心
 	 * @param listen    监听管理中心
 	 */
-	_5_iniJWPModel_Controller(_4_IniJWPPowerCode_Controller powerCode, _3_IniJWPListen listen) {
+	_5_iniJWPModel_Controller(_4_IniJWPPowerCode_Controller powerCode, _3_IniJWPListen listen,JWPControllePrint pr) {
+		this.pr=pr;
 		this.powerCode = powerCode;
 		this.listen = listen;
 		this._1_createMode_express();//从表达式中，建立权限模型
 		this._2_createMode_MethodAndClass();//从方法、类中，建立 权限模型
+		
+		pr.addMessage("[目录]权限模型区");
+		prModel();//打印信息
 	}
 	
+	public void prModel() {
+		this.prModelByType(JWPType.common,false);
+		this.prModelByType(JWPType.session,false);
+		this.prModelByType(JWPType.grades,false);
+		this.prModelByType(JWPType.identifiter,false);
+		this.prModelByType(JWPType.gradesAndIdentifiter,false);
+		this.prModelByType(JWPType.onlyListen,false);
+		pr.printMessage();
+		pr.clearMessage();
+		this.prModelByType(JWPType.unknow,true);
+		pr.printMessage();
+		pr.clearMessage();
+	}
+	private void prModelByType(JWPType type,boolean error) {
+		StringBuilder sb=new StringBuilder();
+		JWPControllerModel model;
+		for(Map.Entry<String,JWPControllerModel> kv:this.modelMap.entrySet()) {
+			model=kv.getValue();
+			if(model.urlType==type) {
+				sb
+				.append(" [").append(this.prModelByType_chooseType(model.urlType)).append("]：")
+				.append("放行区=").append(model.isPublic?"是":"否")
+				.append("，会话区=").append(model.isSession?"是":"否")
+				.append("，权限等级=").append(null!=model.grades?Arrays.deepToString(model.grades):null)
+				.append("，权限编号=").append(null!=model.identifier?Arrays.deepToString(model.identifier):null)
+				.append(" ，路径=").append(kv.getKey())
+				;
+				if(error) {
+					pr.addErrorMessage(sb.toString(),1);
+				}else{
+					pr.addMessage(sb.toString(),1);
+				}
+				
+				sb.setLength(0);
+			}
+		}
+	}
+	private String prModelByType_chooseType(JWPType type) {
+		switch(type) {
+			case common:return "公共区";
+			case grades:return "等级区";
+			case identifiter:return "编号区";
+			case gradesAndIdentifiter:return "等级+编号区";
+			case onlyListen:return "只监听";
+			case unknow:return "未知区";
+			default:return "异常区";
+		}
+		
+	}
 	/**
 	 * 取得控制区的权限处理模型
 	 * @return Map
@@ -89,8 +145,12 @@ public class _5_iniJWPModel_Controller extends __InitTool {
 				vo = JWPCodeVO.merge(mp.getPowerCode(kv.getValue().m)// 方法上的权限
 						, cp.getPowerCode(kv.getValue().c)// 类上的权限
 				);
+				if(vo.type==JWPType.unknow&&modelMap.get(kv.getKey())!=null) {
+					continue;//没有权限注解在方法、类上。那么，采用表达式的权限。
+				}
 				modelMap.put(kv.getKey(), new JWPControllerModel(vo,
 						listen.getJWPListenInterface(kv.getValue().m, kv.getValue().c, kv.getKey())));
+				
 			}
 		} else {
 			for (Map.Entry<String,Class<?>> kv : powerCode.getUrlAndClass().entrySet()) {

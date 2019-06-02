@@ -24,8 +24,6 @@ final public class JWPCodeVO {
 				);
 	}
 	public JWPCodeVO(boolean isPublic, boolean isSession, String[] grades, String[] identifiter) {
-		this.isPublic = isPublic;
-		this.isSession = isSession;
 		this.grades = grades;
 		this.identifiter = identifiter;
 		boolean identifiter_notNull = null != identifiter;
@@ -43,6 +41,14 @@ final public class JWPCodeVO {
 		}else {
 			this.type=JWPType.unknow;
 		}
+		//有等级与编号 ，都意味着用户已经登陆。所以，他们一旦存在，直接就设置
+		this.isSession =identifiter_notNull||grades_notNull?false: isSession;
+		
+		this.isPublic =
+				identifiter_notNull||grades_notNull
+				?false//有等级与编号 ，都意味着 绝不可能是放行。直接设置成false
+				:(this.isSession?false:isPublic);//如果设置了会话，绝不可能是放行区。直接设置false
+		
 	}
 	
 	public String[] getGrades() {

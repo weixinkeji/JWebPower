@@ -26,7 +26,6 @@ import weixinkeji.vip.jweb.power.tools.JWPRequestUrlTool;
 import weixinkeji.vip.jweb.power.vo.JWPUserConfigVO;
 import weixinkeji.vip.jweb.power.vo.JWPUserPower;
 import weixinkeji.vip.jweb.tools.JWPControllePrint;
-import weixinkeji.vip.jweb.tools.JWPPathTool;
 
 public class JWPFilter implements Filter {
 	
@@ -55,23 +54,29 @@ public class JWPFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig fConfig) throws ServletException {
+		JWPControllePrint pr=new JWPControllePrint(true);
 		//加载用户配置
-		JWPUserConfigVO config=this._1_loadConfig(fConfig);
+		JWPUserConfigVO config=this._1_loadConfig(fConfig,pr);
 		if(null==config) {
 			return;
 		}
+		pr.setPrintInController(console_print);
+		
 		//开始执行初始化操作
-		this._2_toStartInit(config);
-		if (console_print) {
-			JWPControllePrint.printMessage();
-		}
-		JWPControllePrint.clearMessage();
+		this._2_toStartInit(config,pr);
+		
+		pr.printMessage();
+		pr.clearMessage();
+		pr=null;
 	}
 	
 	//加载配置文件
-	private JWPUserConfigVO _1_loadConfig(FilterConfig fConfig) {
-		JWPControllePrint.addMessage("[目录]加载框架配置文件");
-		_0_LoadJWPConfig config=new _0_LoadJWPConfig("JWP.properties");
+	private JWPUserConfigVO _1_loadConfig(FilterConfig fConfig,JWPControllePrint pr) {
+		pr.addMessage("[目录]加载框架配置文件");
+		pr.printMessage();
+		pr.clearMessage();
+		
+		_0_LoadJWPConfig config=new _0_LoadJWPConfig("JWP.properties",pr);
 		JWPUserConfigVO configVo=config.getJWPUserConfigVO(fConfig.getServletContext().getContextPath());
 		
 		this.dynamics_controller_url =configVo.dynamics_controller_url;
@@ -79,27 +84,31 @@ public class JWPFilter implements Filter {
 		this.static_resources_prefix=configVo.static_resources_prefix;
 		this.free_url_open=configVo.free_url_open;
 		
-		
-		JWPControllePrint.addMessage("[目录]加载框架配置文件");
 		if (null == configVo.scan_package || configVo.scan_package.length==0) {
-			JWPControllePrint.addErrorMessage(
+			pr.addErrorMessage(
 					"JWebPower启动失败，没有配置扫描路径。请在类路径下，创建属性文件【JWP.properties】，并设置一个键值对【scan_package=扫描的路径】", 1);
 			return null;
 		}
 		// 扫描路径
-		JWPControllePrint.addMessage("[目录]扫描类路径并加载类 完毕");
+		pr.addMessage("[目录]扫描类路径并加载类 完毕");
+		
+		pr.printMessage();
+		pr.clearMessage();
+		
 		return configVo;
 	}
 	
 	//开始初始化
-	private void _2_toStartInit(JWPUserConfigVO configVo) {
-		JWPControllePrint.addMessage("[目录]环境初始完毕，开始业务处理");
-		JWPControllePrint.addMessage("");
-		JWPControllePrint.addMessage("[目录]启动配置工厂");
+	private void _2_toStartInit(JWPUserConfigVO configVo,JWPControllePrint pr) {
+		pr.addMessage("[目录]环境初始完毕，开始业务处理");
+		pr.addMessage("");
+		pr.printMessage();
+		pr.clearMessage();
+		
 		//存在初始化结果
 		ReturnResultObject rs=new ReturnResultObject();
 		//开始初始化
-		new _1_IniMain(configVo,rs);
+		new _1_IniMain(configVo,rs,pr);
 		
 		this.jwebPowerControllerModel=rs.getModel_controller();
 		this.staticResourcesModel=rs.getModel_static();
@@ -110,7 +119,8 @@ public class JWPFilter implements Filter {
 		this.userPower=rs.getUserPower();// 用户权限 -接口
 		
 		this.requestUrlTool=rs.getRequestUrlTool();
-		
+		pr.printMessage();
+		pr.clearMessage();
 	}
 	
 	@Override

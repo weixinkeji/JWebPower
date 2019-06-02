@@ -16,9 +16,13 @@ import weixinkeji.vip.jweb.tools.JWPPropertiesTool;
 public class _0_LoadJWPConfig {
 	
 	private Map<String, String> configMap;
-	public _0_LoadJWPConfig(String configFilePath) {
+	private JWPControllePrint pr;
+	public _0_LoadJWPConfig(String configFilePath,JWPControllePrint pr) {
+		this.pr=pr;
 		 configMap = new JWPPropertiesTool()
 					.loadPropertiesToMap(new File(JWPPathTool.getMyProjectPath(null==configFilePath||configFilePath.isEmpty()?"JWP.properties":configFilePath))); 
+		 pr.printMessage();
+		 pr.clearMessage();
 	}
 	
 	/**
@@ -54,6 +58,10 @@ public class _0_LoadJWPConfig {
 		if(null!=(ppv=this.configMap.get("free_url_open"))) {
 			free_url_open=Boolean.parseBoolean(ppv);
 		}
+		if(null!=(ppv=this.configMap.get("console_print"))) {
+			console_print=Boolean.parseBoolean(ppv);
+		}
+		
 		if(null!=(ppv=this.configMap.get("dynamics_controller_url"))) {
 			dynamics_controller_url=Boolean.parseBoolean(ppv);
 		}
@@ -71,7 +79,7 @@ public class _0_LoadJWPConfig {
 		String static_resources_prefix="/static/";
 		if (null == myStatic_resources_prefix || myStatic_resources_prefix.isEmpty()) {
 			static_resources_prefix = ContextPath + "/static/";
-			JWPControllePrint
+			pr
 					.addErrorMessage("没找找到配置文件中的键值对[static_resources_prefix],或键的值为空。系统自动采用 /static/ 作为静态url的前缀！", 1);
 		} else if (!myStatic_resources_prefix.startsWith("/")) {
 			static_resources_prefix = ContextPath + "/" + myStatic_resources_prefix;
