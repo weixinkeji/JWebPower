@@ -220,8 +220,9 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		}
-		case grades:// 会话区
+		case grades:// 等级区
 			if (null == powerCode || null == powerCode.grades) {
+				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
 				return;
 			}
 			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限
@@ -237,6 +238,7 @@ public class JWPFilter implements Filter {
 			return;
 		case identifiter:// 编号区
 			if (null == powerCode || null == powerCode.identifiter) {
+				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
 				return;
 			}
 			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限
@@ -252,6 +254,7 @@ public class JWPFilter implements Filter {
 			return;
 		case gradesAndIdentifiter:// 等级+编号
 			if (null == powerCode || null == powerCode.grades || null == powerCode.identifiter) {
+				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
 				return;
 			}
 			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
@@ -349,6 +352,7 @@ public class JWPFilter implements Filter {
 		case grades:// 权限等级区
 			if (null == powerCode || null == powerCode.grades) {
 				System.err.println("【权限等级】未通过，路径="+requestURL);
+				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
 				return;
 			}
 			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限
@@ -366,6 +370,7 @@ public class JWPFilter implements Filter {
 		case identifiter:// 编号区
 			if (null == powerCode || null == powerCode.identifiter) {
 				System.err.println("【权限编号】未通过，路径="+requestURL);
+				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
 				return;
 			}
 			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限
@@ -383,6 +388,7 @@ public class JWPFilter implements Filter {
 		case gradesAndIdentifiter:// 等级+编号
 			if (null == powerCode || null == powerCode.grades || null == powerCode.identifiter) {
 				System.err.println("【权限等级+编号】未通过，路径="+requestURL);
+				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
 				return;
 			}
 			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限

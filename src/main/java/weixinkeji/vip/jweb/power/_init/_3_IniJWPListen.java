@@ -128,8 +128,8 @@ public class _3_IniJWPListen extends __InitTool {
 				}
 				// 如果绑定了静态资源路径
 				if (null != reg.staticUrl() && reg.staticUrl().length > 0) {
-					for (String url : reg.controllerUrl()) {
-						url=DUrlTools.formatURLAndCacheUrl(url);
+					for (String url : reg.staticUrl()) {
+						//url=DUrlTools.formatURLAndCacheUrl(url);
 						this.inJWPRegListenUrl_static.put(url, (Class<? extends JWPListenInterface>) c);
 					}
 				}
