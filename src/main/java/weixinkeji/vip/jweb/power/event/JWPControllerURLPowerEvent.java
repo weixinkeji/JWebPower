@@ -18,6 +18,24 @@ import weixinkeji.vip.jweb.power.vo.JWPUserPower;
  *
  */
 public interface JWPControllerURLPowerEvent {
+	/**
+	 * 
+	 * 不在监控内 的请求地址。执行此方法
+	 * 
+	 * @param req        HttpServletRequest
+	 * @param resp       HttpServletResponse
+	 * @param requestURL String 用户请求的路径
+	 * @param userPower  用户的权限
+	 * 
+	 * @return boolean 默认false,不放行！
+	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
+	 */
+	default boolean doOther_noController(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+			JWPUserPower userPower) throws IOException, ServletException {
+		return false;
+	}
 
 	/**
 	 * 进入控制区时，自动调用执行的方法。必定执行。
@@ -60,7 +78,7 @@ public interface JWPControllerURLPowerEvent {
 	}
 
 	/**
-	 * 通过【会员等级】验证，执行此方法
+	 * 通过【会话区】，执行此方法
 	 * 
 	 * @param req        HttpServletRequest
 	 * @param resp       ServletResponse
@@ -80,7 +98,43 @@ public interface JWPControllerURLPowerEvent {
 	}
 
 	/**
-	 * 未通【会员等级】过验证，执行此方法
+	 * 未通过【会话区】，执行此方法
+	 * 
+	 * @param req        HttpServletRequest
+	 * @param resp       ServletResponse
+	 * @param requestURL String 用户请求的路径
+	 * @param powerModel 与请求路径关联的权限模型
+	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
+	 */
+	default void doSessionPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+			JWPControllerModel powerModel)
+			throws IOException, ServletException {
+	}
+	
+	/**
+	 * 通过【等级】验证，执行此方法
+	 * 
+	 * @param req        HttpServletRequest
+	 * @param resp       ServletResponse
+	 * @param requestURL String 用户请求的路径
+	 * @param powerModel 与请求路径关联的权限模型
+	 * @param userPower  用户的权限
+	 * 
+	 * @return boolean 默认true放行
+	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
+	 */
+	default boolean doGradesPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+			JWPControllerModel powerModel, JWPUserPower userPower)
+			throws IOException, ServletException {
+		return true;
+	}
+	
+	/**
+	 * 未通【等级】过验证，执行此方法
 	 * 
 	 * @param req        HttpServletRequest
 	 * @param resp       ServletResponse
@@ -91,7 +145,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws IOException  IO流异常
 	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default void doSessionPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+	default void doGradesPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
 			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 	}
@@ -134,7 +188,7 @@ public interface JWPControllerURLPowerEvent {
 	}
 
 	/**
-	 * 通过【会话、权限编号】验证，执行此方法
+	 * 通过【权限等级、编号】验证，执行此方法
 	 * 
 	 * @param req        HttpHttpServletRequest
 	 * @param resp       HttpServletRespons
@@ -147,14 +201,14 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws IOException  IO流异常
 	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default boolean doSessionAndIdentifierPower_success(HttpServletRequest req, HttpServletResponse resp,
+	default boolean doGradesAndIdentifierPower_success(HttpServletRequest req, HttpServletResponse resp,
 			String requestURL, JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		return true;
 	}
 
 	/**
-	 * 未通过【会话、权限编号】验证，执行此方法
+	 * 未通过【权限等级、编号】验证，执行此方法
 	 * 
 	 * @param req        HttpHttpServletRequest
 	 * @param resp       HttpServletResponse
@@ -165,28 +219,9 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws IOException  IO流异常
 	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default void doSessionAndIdentifierPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+	default void doGradesAndIdentifierPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
 			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
-	}
-
-	/**
-	 * 
-	 * 不在监控内 的请求地址。执行此方法
-	 * 
-	 * @param req        HttpServletRequest
-	 * @param resp       HttpServletResponse
-	 * @param requestURL String 用户请求的路径
-	 * @param userPower  用户的权限
-	 * 
-	 * @return boolean 默认false,不放行！
-	 * 
-	 * @throws IOException  IO流异常
-	 * @throws ServletException javax.servlet.ServletException
-	 */
-	default boolean doOtherURL(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPUserPower userPower) throws IOException, ServletException {
-		return false;
 	}
 
 }

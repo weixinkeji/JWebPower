@@ -44,9 +44,7 @@ public class _5_iniJWPModel_Controller extends __InitTool {
 		this.prModelByType(JWPType.identifiter,false);
 		this.prModelByType(JWPType.gradesAndIdentifiter,false);
 		this.prModelByType(JWPType.onlyListen,false);
-		pr.printMessage();
-		pr.clearMessage();
-		this.prModelByType(JWPType.unknow,true);
+		this.prModelByType(JWPType.unknow,false);
 		pr.printMessage();
 		pr.clearMessage();
 	}
@@ -77,6 +75,7 @@ public class _5_iniJWPModel_Controller extends __InitTool {
 	private String prModelByType_chooseType(JWPType type) {
 		switch(type) {
 			case common:return "公共区";
+			case session: return "会话区";
 			case grades:return "等级区";
 			case identifiter:return "编号区";
 			case gradesAndIdentifiter:return "等级+编号区";

@@ -100,7 +100,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	@Override
-	public boolean doSessionPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+	public boolean doGradesPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
 			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		this.println(requestURL, powerModel, userPower);
@@ -120,7 +120,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	@Override
-	public void doSessionPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+	public void doGradesPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
 			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		this.println(requestURL, powerModel, userPower);
@@ -183,7 +183,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	@Override
-	public boolean doSessionAndIdentifierPower_success(HttpServletRequest req, HttpServletResponse resp,
+	public boolean doGradesAndIdentifierPower_success(HttpServletRequest req, HttpServletResponse resp,
 			String requestURL, JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		this.println(requestURL, powerModel, userPower);
@@ -203,7 +203,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	@Override
-	public void doSessionAndIdentifierPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+	public void doGradesAndIdentifierPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
 			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		this.println(requestURL, powerModel, userPower);
@@ -224,7 +224,7 @@ public class DefaultJWPControllerURLPowerEvent implements JWPControllerURLPowerE
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	@Override
-	public boolean doOtherURL(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+	public boolean doOther_noController(HttpServletRequest req, HttpServletResponse resp, String requestURL,
 			JWPUserPower userPower) throws IOException, ServletException {
 		this.println(requestURL, null, userPower);
 		return false;
