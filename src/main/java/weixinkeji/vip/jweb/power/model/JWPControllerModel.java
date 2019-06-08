@@ -26,13 +26,13 @@ public class JWPControllerModel {
 	/**
 	 * 绑定的绑定集合
 	 */
-	public final String[] identifier;
+	public final String[] code;
 
-	public final boolean isPublic;
+	public final boolean isCommon;
 	public final boolean isSession;
 
 	private final boolean isGradesNull;
-	private final boolean isIdentifierNull;
+	private final boolean isCodeNull;
 	// 监听的实现
 	public final JWPListenInterface listen;
 	public final boolean isHasListen;
@@ -56,53 +56,61 @@ public class JWPControllerModel {
 
 	/**
 	 * 
-	 * @param vo    JWPCodeVO
-	 * @param listen  JWPListenInterface 监听器
+	 * @param vo     JWPCodeVO
+	 * @param listen JWPListenInterface 监听器
 	 */
 	public JWPControllerModel(JWPCodeVO vo, JWPListenInterface listen) {
-		this.urlType = vo.type;
-		this.isPublic = vo.isPublic();
+		this.isCommon = vo.isCommon();
 		this.isSession = vo.isSession();
 		this.grades = vo.getGrades();
-		this.identifier = vo.getIdentifiter();
-		
+		this.code = vo.getCode();
+
 		this.isGradesNull = null == grades;
-		this.isIdentifierNull = null == identifier;
+		this.isCodeNull = null == code;
 		this.listen = listen;
 		this.isHasListen = null != this.listen;
+
+		if (this.isHasListen && vo.type == JWPType.unknow) {
+			this.urlType = JWPType.onlyListen;
+		} else {
+			this.urlType = vo.type;
+		}
+
 	}
-	
+
 	/**
 	 * 融合 其他的 权限模型
-	 * @param vo JWPCodeVO 权限 值对象
+	 * 
+	 * @param vo  JWPCodeVO 权限 值对象
 	 * @param jwp JWPControllerModel 其他的权限模型
 	 * 
 	 */
-	public JWPControllerModel(JWPCodeVO vo,JWPControllerModel jwp) {
-		this.isPublic = jwp.isPublic?true:vo.isPublic();
-		this.isSession =jwp.isSession?true: vo.isSession();
-		this.grades = JWPTool.mergeStringArray(jwp.grades,vo.getGrades());
-		this.identifier =JWPTool.mergeStringArray(jwp.identifier,vo.getIdentifiter());
+	public JWPControllerModel(JWPCodeVO vo, JWPControllerModel jwp) {
+		this.isCommon = jwp.isCommon ? true : vo.isCommon();
+		this.isSession = jwp.isSession ? true : vo.isSession();
+		this.grades = JWPTool.mergeStringArray(jwp.grades, vo.getGrades());
+		this.code = JWPTool.mergeStringArray(jwp.code, vo.getCode());
 		this.isGradesNull = null == grades;
-		this.isIdentifierNull = null == identifier;
-		//重新定位 索引
-		if (!isIdentifierNull && !isGradesNull) {//编号 与 等级 都不为null时
-			this.urlType = JWPType.gradesAndIdentifiter;
-		} else if (!isIdentifierNull) {//编号不为null时
-			this.urlType = JWPType.identifiter;
-		} else if (!isGradesNull) {//等级不为null时
+		this.isCodeNull = null == code;
+		// 重新定位 索引
+		if (!isCodeNull && !isGradesNull) {// 编号 与 等级 都不为null时
+			this.urlType = JWPType.gradesAndCode;
+		} else if (!isCodeNull) {// 编号不为null时
+			this.urlType = JWPType.code;
+		} else if (!isGradesNull) {// 等级不为null时
 			this.urlType = JWPType.grades;
-		} else if (isSession) {//会话时
+		} else if (isSession) {// 会话时
 			this.urlType = JWPType.session;
-		} else if (isPublic) {//公共区时
+		} else if (isCommon) {// 公共区时
 			this.urlType = JWPType.common;
-		}else {//未知道类型
-			this.urlType=JWPType.unknow;
+		} else {// 未知道类型
+			this.urlType = JWPType.unknow;
 		}
-		
-		this.listen=jwp.listen;
-		this.isHasListen =jwp.isHasListen;
+
+		this.listen = jwp.listen;
+		this.isHasListen = jwp.isHasListen;
 	}
+
 	/**
 	 * 判断权限等级 yourGrades 是否符合url绑定的 权限等级
 	 * 
@@ -150,17 +158,17 @@ public class JWPControllerModel {
 	}
 
 	/**
-	 * 判断权限编号 yourIdentifier 是否符合 url绑定的权限编号
+	 * 判断权限编号 code 是否符合 url绑定的权限编号
 	 * 
-	 * @param yourIdentifier 你的权限编号
+	 * @param code 你的权限编号
 	 * @return boolean
 	 */
-	public boolean isInIdentifier(String yourIdentifier) {
-		if (this.isIdentifierNull || null == yourIdentifier || yourIdentifier.trim().isEmpty()) {// 不是 代码权限控制 的路径
+	public boolean isCode(String code) {
+		if (this.isCodeNull || null == code || code.trim().isEmpty()) {// 不是 代码权限控制 的路径
 			return false;
 		}
-		for (String str : this.identifier) {
-			if (str.equalsIgnoreCase(yourIdentifier)) {
+		for (String str : this.code) {
+			if (str.equalsIgnoreCase(code)) {
 				return true;
 			}
 		}
@@ -168,17 +176,17 @@ public class JWPControllerModel {
 	}
 
 	/**
-	 * 判断权限编号 yourIdentifier 是否符合 url绑定的权限编号
+	 * 判断权限编号 code 是否符合 url绑定的权限编号
 	 * 
-	 * @param yourIdentifier String[] 你的权限编号集合
+	 * @param code String[] 你的权限编号集合
 	 * @return boolean
 	 */
-	public boolean isInIdentifier(String[] yourIdentifier) {
-		if (this.isIdentifierNull || null == yourIdentifier || yourIdentifier.length == 0) {
+	public boolean isCode(String[] code) {
+		if (this.isCodeNull || null == code || code.length == 0) {
 			return false;
 		}
-		for (String str : identifier) {
-			for (String yourStr : yourIdentifier) {
+		for (String str : code) {
+			for (String yourStr : code) {
 				if (str.equalsIgnoreCase(yourStr)) {
 					return true;
 				}
@@ -188,27 +196,27 @@ public class JWPControllerModel {
 	}
 
 	/**
-	 * 判断权限等级 yourGrades 权限编号 yourIdentifier 是否符合url绑定的 权限等级、权限编号
+	 * 判断权限等级 yourGrades 权限编号 code 是否符合url绑定的 权限等级、权限编号
 	 * 
-	 * @param yourGrades     String 你的权限等级
-	 * @param yourIdentifier String[] 你的权限编号集合
+	 * @param yourGrades String 你的权限等级
+	 * @param code       String[] 你的权限编号集合
 	 * 
 	 * @return boolean
 	 */
-	public boolean isInGradesAndIdentifier(String yourGrades, String[] yourIdentifier) {
-		return this.isInGrades(yourGrades) && this.isInIdentifier(yourIdentifier);
+	public boolean isInGradesAndCode(String yourGrades, String[] code) {
+		return this.isInGrades(yourGrades) && this.isCode(code);
 	}
 
 	/**
-	 * 判断权限等级 yourGrades 权限编号 yourIdentifier 是否符合url绑定的 权限等级、权限编号
+	 * 判断权限等级 yourGrades 权限编号 code 是否符合url绑定的 权限等级、权限编号
 	 * 
-	 * @param yourGrades     String[] 你的权限等级
-	 * @param yourIdentifier String[] 你的权限编号集合
+	 * @param yourGrades String[] 你的权限等级
+	 * @param code       String[] 你的权限编号集合
 	 * 
 	 * @return boolean
 	 */
-	public boolean isInGradesAndIdentifier(String yourGrades[], String[] yourIdentifier) {
-		return this.isInGrades(yourGrades) && this.isInIdentifier(yourIdentifier);
+	public boolean isInGradesAndCode(String yourGrades[], String[] code) {
+		return this.isInGrades(yourGrades) && this.isCode(code);
 	}
 
 }

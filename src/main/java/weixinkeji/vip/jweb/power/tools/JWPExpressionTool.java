@@ -20,7 +20,7 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 	 * @param expression 表达式
 	 * @return boolean 请求路径 是否符合表达式
 	 */
-	public boolean isPublicPower(String expression, String requestURL) {
+	public boolean isCommonPower(String expression, String requestURL) {
 		if (null == expression || expression.isEmpty()) {// 表达式没有写。直接不符合。返回false
 			return false;
 		}
@@ -199,7 +199,7 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 	 * @param requestURL 请求路径
 	 * @return boolean 请求路径 是否符合表达式
 	 */
-	public String[] isIdentifiterPower(String expression, String requestURL) {
+	public String[] isCodePower(String expression, String requestURL) {
 		if (null == expression || expression.isEmpty()) {// 表达式没有写。直接不符合。返回false
 			return null;
 		}

@@ -20,11 +20,11 @@ public enum JWPType {
 	/**
 	 * 编号区（提交锁定是会话区之后）
 	 */
-	,identifiter
+	,code
 	/**
 	 * 等级区+编号区（提交锁定是会话区之后）
 	 */
-	,gradesAndIdentifiter
+	,gradesAndCode
 	
 	/**
 	 * 仅仅有监听（提交锁定是会话区之后）

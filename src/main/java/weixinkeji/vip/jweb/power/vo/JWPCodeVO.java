@@ -10,28 +10,28 @@ import weixinkeji.vip.jweb.power.tools.JWPTool;
  */
 final public class JWPCodeVO {
 	public final JWPType type;
-	private boolean isPublic = false;
+	private boolean isCommon = false;
 	private boolean isSession = false;
 	private String[] grades;
-	private String[] identifiter;
+	private String[] code;
 	
 	public static JWPCodeVO merge(JWPCodeVO vo1,JWPCodeVO vo2) {
 		return new JWPCodeVO(
-				vo1.isPublic?true:vo2.isPublic
+				vo1.isCommon?true:vo2.isCommon
 				,vo1.isSession?true:vo2.isSession
 				,JWPTool.mergeStringArray(vo1.grades,vo2.grades)
-				,JWPTool.mergeStringArray(vo1.identifiter,vo2.identifiter)
+				,JWPTool.mergeStringArray(vo1.code,vo2.code)
 				);
 	}
-	public JWPCodeVO(boolean isPublic, boolean isSession, String[] grades, String[] identifiter) {
+	public JWPCodeVO(boolean isPublic, boolean isSession, String[] grades, String[] code) {
 		this.grades = grades;
-		this.identifiter = identifiter;
-		boolean identifiter_notNull = null != identifiter;
+		this.code = code;
+		boolean identifiter_notNull = null != code;
 		boolean grades_notNull = null != this.grades;
 		if (identifiter_notNull && grades_notNull) {
-			this.type = JWPType.gradesAndIdentifiter;
+			this.type = JWPType.gradesAndCode;
 		} else if (identifiter_notNull) {
-			this.type = JWPType.identifiter;
+			this.type = JWPType.code;
 		} else if (grades_notNull) {
 			this.type = JWPType.grades;
 		} else if (isSession) {
@@ -44,7 +44,7 @@ final public class JWPCodeVO {
 		//有等级与编号 ，都意味着用户已经登陆。所以，他们一旦存在，直接就设置
 		this.isSession =identifiter_notNull||grades_notNull?false: isSession;
 		
-		this.isPublic =
+		this.isCommon =
 				identifiter_notNull||grades_notNull
 				?false//有等级与编号 ，都意味着 绝不可能是放行。直接设置成false
 				:(this.isSession?false:isPublic);//如果设置了会话，绝不可能是放行区。直接设置false
@@ -54,11 +54,18 @@ final public class JWPCodeVO {
 	public String[] getGrades() {
 		return grades;
 	}
-
-	public boolean isPublic() {
-		return isPublic;
+	public boolean isCommon() {
+		return isCommon;
 	}
-
+	public String[] getCode() {
+		return code;
+	}
+	public void setCommon(boolean isCommon) {
+		this.isCommon = isCommon;
+	}
+	public void setCode(String[] code) {
+		this.code = code;
+	}
 	public boolean isSession() {
 		return isSession;
 	}
@@ -67,19 +74,7 @@ final public class JWPCodeVO {
 		this.isSession = isSession;
 	}
 
-	public void setPublic(boolean isPublic) {
-		this.isPublic = isPublic;
-	}
-
 	public void setGrades(String[] grades) {
 		this.grades = grades;
-	}
-
-	public String[] getIdentifiter() {
-		return identifiter;
-	}
-
-	public void setIdentifiter(String[] identifiter) {
-		this.identifiter = identifiter;
 	}
 }

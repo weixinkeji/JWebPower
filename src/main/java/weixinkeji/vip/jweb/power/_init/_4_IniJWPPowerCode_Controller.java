@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import weixinkeji.vip.jweb.power.ann.JWPGrades;
-import weixinkeji.vip.jweb.power.ann.JWPIdentifiter;
-import weixinkeji.vip.jweb.power.ann.JWPPublic;
+import weixinkeji.vip.jweb.power.ann.JWPCode;
+import weixinkeji.vip.jweb.power.ann.JWPCommon;
 import weixinkeji.vip.jweb.power.ann.JWPSession;
 import weixinkeji.vip.jweb.power.config.JWPSystemInterfaceConfig;
 import weixinkeji.vip.jweb.power.model.DUrlPools;
@@ -158,13 +158,13 @@ class MethodAndClass {
  */
 class InMethodPowerCode {
 	// 在方法上的 权限编号--Controller
-	private Map<Method, String[]> inIdentifiter = new HashMap<>();
+	private Map<Method, String[]> inCode = new HashMap<>();
 	// 在方法上的 权限等级--Controller
 	private Map<Method, String[]> inGrades = new HashMap<>();
 	// 在方法上的 会话--Controller
 	private Map<Method, Boolean> inSession = new HashMap<>();
 	// 在方法上的 放行区--Controller
-	private Map<Method, Boolean> inPublic = new HashMap<>();
+	private Map<Method, Boolean> inCommon = new HashMap<>();
 
 	/**
 	 * 分析 注解在方法上的权限
@@ -175,10 +175,10 @@ class InMethodPowerCode {
 	 */
 	public boolean main(Method m) {
 		int count = 0;
-		JWPIdentifiter identifiter = m.getAnnotation(JWPIdentifiter.class);
+		JWPCode identifiter = m.getAnnotation(JWPCode.class);
 		if (null != identifiter) {
 			count++;
-			inIdentifiter.put(m, JWPTool.formatMyArray(identifiter.value()));
+			inCode.put(m, JWPTool.formatMyArray(identifiter.value()));
 		}
 		JWPGrades grades = m.getAnnotation(JWPGrades.class);
 		if (null != grades) {
@@ -190,10 +190,10 @@ class InMethodPowerCode {
 			count++;
 			inSession.put(m, true);
 		}
-		JWPPublic ppublic = m.getAnnotation(JWPPublic.class);
+		JWPCommon ppublic = m.getAnnotation(JWPCommon.class);
 		if (null != ppublic) {
 			count++;
-			inPublic.put(m, true);
+			inCommon.put(m, true);
 		}
 		return count > 0;
 	}
@@ -205,25 +205,25 @@ class InMethodPowerCode {
 	 * @return JWPCodeVO
 	 */
 	public JWPCodeVO getPowerCode(Method m) {
-		return new JWPCodeVO(null != this.inPublic.get(m), null != this.inSession.get(m), this.inGrades.get(m),
-				this.inIdentifiter.get(m));
+		return new JWPCodeVO(null != this.inCommon.get(m), null != this.inSession.get(m), this.inGrades.get(m),
+				this.inCode.get(m));
 	}
 }
 
 class InClassPowerCode {
 	// 在类上的 权限编号--Controller
-	private Map<Class<?>, String[]> inIdentifiter = new HashMap<>();
+	private Map<Class<?>, String[]> inCode = new HashMap<>();
 	// 在类上的 权限等级--Controller
 	private Map<Class<?>, String[]> inGrades = new HashMap<>();
 	// 在类上的 会话--Controller
 	private Map<Class<?>, Boolean> inSession = new HashMap<>();
 	// 在类上的 放行区--Controller
-	private Map<Class<?>, Boolean> inPublic = new HashMap<>();
+	private Map<Class<?>, Boolean> inCommon = new HashMap<>();
 
 	public void main(Class<?> c) {
-		JWPIdentifiter identifiter = c.getAnnotation(JWPIdentifiter.class);
+		JWPCode identifiter = c.getAnnotation(JWPCode.class);
 		if (null != identifiter) {
-			inIdentifiter.put(c, JWPTool.formatMyArray(identifiter.value()));
+			inCode.put(c, JWPTool.formatMyArray(identifiter.value()));
 		}
 		JWPGrades grades = c.getAnnotation(JWPGrades.class);
 		if (null != grades) {
@@ -232,8 +232,8 @@ class InClassPowerCode {
 		JWPSession session = c.getAnnotation(JWPSession.class);
 		inSession.put(c, null != session);
 
-		JWPPublic ppublic = c.getAnnotation(JWPPublic.class);
-		inPublic.put(c, null != ppublic);
+		JWPCommon ppublic = c.getAnnotation(JWPCommon.class);
+		inCommon.put(c, null != ppublic);
 	}
 
 	/**
@@ -243,8 +243,8 @@ class InClassPowerCode {
 	 * @return JWPCodeVO
 	 */
 	public JWPCodeVO getPowerCode(Class<?> c) {
-		return new JWPCodeVO(true== this.inPublic.get(c),true== this.inSession.get(c), this.inGrades.get(c),
-				this.inIdentifiter.get(c));
+		return new JWPCodeVO(true== this.inCommon.get(c),true== this.inSession.get(c), this.inGrades.get(c),
+				this.inCode.get(c));
 	}
 }
 
@@ -256,13 +256,13 @@ class InClassPowerCode {
  */
 class InExcpressDirectPowerCode {
 	// 在类上的 权限编号--Controller
-	private Map<String, String[]> inIdentifiter = new HashMap<>();
+	private Map<String, String[]> inCode = new HashMap<>();
 	// 在类上的 权限等级--Controller
 	private Map<String, String[]> inGrades = new HashMap<>();
 	// 在类上的 会话--Controller
 	private Map<String, Boolean> inSession = new HashMap<>();
 	// 在类上的 放行区--Controller
-	private Map<String, Boolean> inPublic = new HashMap<>();
+	private Map<String, Boolean> inCommon = new HashMap<>();
 	private Set<String> expressUrl = new HashSet<>();
 
 	/**
@@ -277,7 +277,7 @@ class InExcpressDirectPowerCode {
 		for (String expUrl : expressVo.getIdentifiterPowerExpression()) {
 			expUrl = DUrlTools.formatURLAndCacheUrl(expUrl);// 处理路径。如果是动态路径，格式成框架处理用的路径。
 			if (null != (vo = tool.getPowerUrl(expUrl))) {
-				inIdentifiter.put(vo.getExpress(), vo.getValues());
+				inCode.put(vo.getExpress(), vo.getValues());
 				expressUrl.add(expUrl);
 			}
 		}
@@ -301,7 +301,7 @@ class InExcpressDirectPowerCode {
 		for (String expUrl : expressVo.getPublicPowerExpresstion()) {
 			expUrl = DUrlTools.formatURLAndCacheUrl(expUrl);// 处理路径。如果是动态路径，格式成框架处理用的路径。
 			if (null != (vo = tool.getPowerUrl(expUrl))) {
-				this.inPublic.put(vo.getExpress(), true);
+				this.inCommon.put(vo.getExpress(), true);
 				expressUrl.add(expUrl);
 			}
 		}
@@ -317,8 +317,8 @@ class InExcpressDirectPowerCode {
 		Map<String, JWPCodeVO> map = new HashMap<>();
 		for (String requestUrl : this.expressUrl) {
 			map.put(requestUrl,
-					new JWPCodeVO(null != this.inPublic.get(requestUrl), null != this.inSession.get(requestUrl),
-							this.inGrades.get(requestUrl), this.inIdentifiter.get(requestUrl)));
+					new JWPCodeVO(null != this.inCommon.get(requestUrl), null != this.inSession.get(requestUrl),
+							this.inGrades.get(requestUrl), this.inCode.get(requestUrl)));
 		}
 		return map;
 	}
@@ -326,13 +326,13 @@ class InExcpressDirectPowerCode {
 
 class InExcpressPowerCode {
 	// 在表达式上的 权限编号--Controller
-	private Map<String, String[]> inIdentifiter = new HashMap<>();
+	private Map<String, String[]> inCode = new HashMap<>();
 	// 在表达式上的 权限等级--Controller
 	private Map<String, String[]> inGrades = new HashMap<>();
 	// 在表达式上的 会话--Controller
 	private Map<String, Boolean> inSession = new HashMap<>();
 	// 在表达式上的 放行区--Controller
-	private Map<String, Boolean> inPublic = new HashMap<>();
+	private Map<String, Boolean> inCommon = new HashMap<>();
 
 	/**
 	 * 取出请求路径 在 检查表达式中的权限
@@ -345,12 +345,12 @@ class InExcpressPowerCode {
 		String[] hasPowerCode;
 		for (String expUrl : vo.getIdentifiterPowerExpression()) {//编号
 			// 如果不为null,表示有权限编号
-			if (null != (powerCode = tool.isIdentifiterPower(expUrl, requestUrl))) {
-				hasPowerCode=inIdentifiter.get(requestUrl);
+			if (null != (powerCode = tool.isCodePower(expUrl, requestUrl))) {
+				hasPowerCode=inCode.get(requestUrl);
 				if(null!=hasPowerCode) {//如果多个表达都与xx请求路径匹配成功，则进行权限融合
 					powerCode=JWPTool.mergeStringArray(powerCode,hasPowerCode);
 				}
-				inIdentifiter.put(requestUrl, powerCode);
+				inCode.put(requestUrl, powerCode);
 			}
 		}
 		for (String expUrl : vo.getGradesExcpresstion()) {//等级
@@ -372,8 +372,8 @@ class InExcpressPowerCode {
 		
 		for (String expUrl : vo.getPublicPowerExpresstion()) {//放行区
 			// 如果不为null,表示有公共权限
-			if (tool.isPublicPower(expUrl, requestUrl)) {
-				inPublic.put(requestUrl, true);
+			if (tool.isCommonPower(expUrl, requestUrl)) {
+				inCommon.put(requestUrl, true);
 			}
 		}
 	}
@@ -385,7 +385,7 @@ class InExcpressPowerCode {
 	 * @return JWPCodeVO
 	 */
 	public JWPCodeVO getPowerCode(String requestUrl) {
-		return new JWPCodeVO(null != this.inPublic.get(requestUrl), null != this.inSession.get(requestUrl),
-				this.inGrades.get(requestUrl), this.inIdentifiter.get(requestUrl));
+		return new JWPCodeVO(null != this.inCommon.get(requestUrl), null != this.inSession.get(requestUrl),
+				this.inGrades.get(requestUrl), this.inCode.get(requestUrl));
 	}
 }

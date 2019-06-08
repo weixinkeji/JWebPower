@@ -5,7 +5,7 @@ import java.util.Set;
 public class DefaultJWPControllerURLExpresstion implements JWPControllerURLExpresstion {
 
 	@Override
-	public void setRequestURL_Public(Set<String> set) {
+	public void setRequestURL_common(Set<String> set) {
 	
 	}
 
@@ -15,12 +15,12 @@ public class DefaultJWPControllerURLExpresstion implements JWPControllerURLExpre
 	}
 
 	@Override
-	public void setRequestURL_Identifiter(Set<String> set) {
+	public void setRequestURL_code(Set<String> set) {
 		
 	}
 
 	@Override
-	public void setRequestURL_Session(Set<String> set) {
+	public void setRequestURL_session(Set<String> set) {
 		
 	}
 }

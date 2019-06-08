@@ -27,7 +27,7 @@ public interface JWPControllerURLExpresstion {
 	 * 
 	 * @param set 存放表达式字符的Set集合
 	 */
-	public void setRequestURL_Public(Set<String> set);
+	public void setRequestURL_common(Set<String> set);
 
 	/**
 	 * 设置会话区请求路径 <br>
@@ -52,7 +52,7 @@ public interface JWPControllerURLExpresstion {
 	 * 
 	 * @param set 存放表达式字符的Set集合
 	 */
-	public void setRequestURL_Session(Set<String> set);
+	public void setRequestURL_session(Set<String> set);
 	
 	/**
 	 * 设置已经会话的请求路径 <br>
@@ -98,6 +98,6 @@ public interface JWPControllerURLExpresstion {
 	 * 
 	 * @param set 存放表达式字符的Set集合
 	 */
-	public void setRequestURL_Identifiter(Set<String> set);
+	public void setRequestURL_code(Set<String> set);
 
 }

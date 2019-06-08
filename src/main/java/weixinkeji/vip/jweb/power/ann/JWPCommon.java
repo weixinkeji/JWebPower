@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
-public @interface JWPPublic {
+public @interface JWPCommon {
 
 }

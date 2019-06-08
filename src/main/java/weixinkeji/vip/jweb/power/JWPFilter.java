@@ -22,6 +22,7 @@ import weixinkeji.vip.jweb.power.event.JWPControllerURLPowerEvent;
 import weixinkeji.vip.jweb.power.event.JWPGlobalEvent;
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
 import weixinkeji.vip.jweb.power.model.JWPStaticResourcesModel;
+import weixinkeji.vip.jweb.power.model.JWPType;
 import weixinkeji.vip.jweb.power.tools.DUrlTools;
 import weixinkeji.vip.jweb.power.tools.JWPRequestUrlTool;
 import weixinkeji.vip.jweb.power.vo.JWPUserConfigVO;
@@ -118,6 +119,7 @@ public class JWPFilter implements Filter {
 		this.controllerUrlPowerEvent=rs.getEvent_controller();// 事件
 		
 		this.userPower=rs.getUserPower();// 用户权限 -接口
+		JWPFilterCommonInterface.initUserPower(userPower);
 		
 		this.requestUrlTool=rs.getRequestUrlTool();
 		pr.printMessage();
@@ -204,7 +206,7 @@ public class JWPFilter implements Filter {
 		switch (powerModel.urlType) {
 		case common:
 			// 公共路径，得到用户的许可后，执行放行。
-			if (controllerUrlPowerEvent.doPublicPower_success(request, response, requestURL, powerModel, powerCode)) {
+			if (controllerUrlPowerEvent.doCommonPower_success(request, response, requestURL, powerModel, powerCode)) {
 				chain.doFilter(request, response);
 			}
 			return;
@@ -236,36 +238,36 @@ public class JWPFilter implements Filter {
 				controllerUrlPowerEvent.doGradesPower_fail(request, response, requestURL, powerModel, powerCode);
 			}
 			return;
-		case identifiter:// 编号区
-			if (null == powerCode || null == powerCode.identifiter) {
+		case code:// 编号区
+			if (null == powerCode || null == powerCode.code) {
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
 				return;
 			}
 			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限
-			if (powerModel.isInIdentifier(powerCode.identifiter)) {
+			if (powerModel.isCode(powerCode.code)) {
 				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doIdentifiterPower_success(request, response, requestURL, powerModel,
+				if (controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,
 						powerCode)) {
 					chain.doFilter(request, response);
 				}
 			} else {
-				controllerUrlPowerEvent.doIdentifiterPower_fail(request, response, requestURL, powerModel, powerCode);
+				controllerUrlPowerEvent.doCodePower_fail(request, response, requestURL, powerModel, powerCode);
 			}
 			return;
-		case gradesAndIdentifiter:// 等级+编号
-			if (null == powerCode || null == powerCode.grades || null == powerCode.identifiter) {
+		case gradesAndCode:// 等级+编号
+			if (null == powerCode || null == powerCode.grades || null == powerCode.code) {
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
 				return;
 			}
 			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
-			if (powerModel.isInGrades(powerCode.grades) && powerModel.isInIdentifier(powerCode.identifiter)) {
+			if (powerModel.isInGrades(powerCode.grades) && powerModel.isCode(powerCode.code)) {
 				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doGradesAndIdentifierPower_success(request, response, requestURL,
+				if (controllerUrlPowerEvent.doGradesAndCodePower_success(request, response, requestURL,
 						powerModel, powerCode)) {
 					chain.doFilter(request, response);
 				}
 			} else {
-				controllerUrlPowerEvent.doGradesAndIdentifierPower_fail(request, response, requestURL, powerModel,
+				controllerUrlPowerEvent.doGradesAndCodePower_fail(request, response, requestURL, powerModel,
 						powerCode);
 			}
 			return;
@@ -330,7 +332,7 @@ public class JWPFilter implements Filter {
 		switch (powerModel.urlType) {
 		case common:
 			// 公共路径，得到用户的许可后，执行放行。
-			if (controllerUrlPowerEvent.doPublicPower_success(request, response, requestURL, powerModel, powerCode)) {
+			if (controllerUrlPowerEvent.doCommonPower_success(request, response, requestURL, powerModel, powerCode)) {
 				chain.doFilter(request, response);
 			}else {
 				System.err.println("【放行区】未通过用户事件，路径="+requestURL);
@@ -367,40 +369,40 @@ public class JWPFilter implements Filter {
 				controllerUrlPowerEvent.doGradesPower_fail(request, response, requestURL, powerModel, powerCode);
 			}
 			return;
-		case identifiter:// 编号区
-			if (null == powerCode || null == powerCode.identifiter) {
+		case code:// 编号区
+			if (null == powerCode || null == powerCode.code) {
 				System.err.println("【权限编号】未通过，路径="+requestURL);
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
 				return;
 			}
 			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限
-			if (powerModel.isInIdentifier(powerCode.identifiter)) {
+			if (powerModel.isCode(powerCode.code)) {
 				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doIdentifiterPower_success(request, response, requestURL, powerModel,
+				if (controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,
 						powerCode)) {
 					chain.doFilter(request, response);
 				}
 			} else {
 				System.err.println("【权限编号】未通过，路径="+requestURL);
-				controllerUrlPowerEvent.doIdentifiterPower_fail(request, response, requestURL, powerModel, powerCode);
+				controllerUrlPowerEvent.doCodePower_fail(request, response, requestURL, powerModel, powerCode);
 			}
 			return;
-		case gradesAndIdentifiter:// 等级+编号
-			if (null == powerCode || null == powerCode.grades || null == powerCode.identifiter) {
+		case gradesAndCode:// 等级+编号
+			if (null == powerCode || null == powerCode.grades || null == powerCode.code) {
 				System.err.println("【权限等级+编号】未通过，路径="+requestURL);
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
 				return;
 			}
 			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
-			if (powerModel.isInGrades(powerCode.grades) && powerModel.isInIdentifier(powerCode.identifiter)) {
+			if (powerModel.isInGrades(powerCode.grades) && powerModel.isCode(powerCode.code)) {
 				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doGradesAndIdentifierPower_success(request, response, requestURL,
+				if (controllerUrlPowerEvent.doGradesAndCodePower_success(request, response, requestURL,
 						powerModel, powerCode)) {
 					chain.doFilter(request, response);
 				}
 			} else {
 				System.err.println("【权限等级+编号】未通过，路径="+requestURL);
-				controllerUrlPowerEvent.doGradesAndIdentifierPower_fail(request, response, requestURL, powerModel,
+				controllerUrlPowerEvent.doGradesAndCodePower_fail(request, response, requestURL, powerModel,
 						powerCode);
 			}
 			return;
@@ -426,10 +428,10 @@ public class JWPFilter implements Filter {
 			case grades:
 				urltype = "等级区";
 				break;
-			case identifiter:
+			case code:
 				urltype = "编号区";
 				break;
-			case gradesAndIdentifiter:
+			case gradesAndCode:
 				urltype = "等级+编号区";
 				break;
 			case onlyListen:
@@ -446,15 +448,47 @@ public class JWPFilter implements Filter {
 			urltype = "监控外";
 		}
 		
-		System.out.println("[" + urltype + "]：" 
-				+ "放行区="+(null != powerModel?(powerModel.isPublic?"是":"否"):"未知")
-				+ "，会话区="+(null != powerModel?(powerModel.isPublic?"是":"否"):"未知")
-				+ "，权限等级="+(null != powerModel?Arrays.deepToString(powerModel.grades):"未知")
-				+ "，权限编号="+(null != powerModel?Arrays.deepToString(powerModel.identifier):"未知")
-				+" ，监听="+(null != powerModel?(powerModel.isHasListen?powerModel.listen.getClass().getName():"否"):"未知")
-				+" ，路径="+requestURL
-				+ "\n  ，用户权限等级="+(null != userPower ? Arrays.deepToString(userPower.grades) : null)
-				+ "，用户权限编号="+(null != userPower ? Arrays.deepToString(userPower.identifiter) : null)
-		);
+//		System.out.println("[" + urltype + "]：" 
+//				+ "放行区="+(null != powerModel?(powerModel.isCommon?"是":"否"):"未知")
+//				+ "，会话区="+(null != powerModel?(powerModel.isSession?"是":"否"):"未知")
+//				+ "，权限等级="+(null != powerModel?Arrays.deepToString(powerModel.grades):"未知")
+//				+ "，权限编号="+(null != powerModel?Arrays.deepToString(powerModel.code):"未知")
+//				+" ，监听="+(null != powerModel?(powerModel.isHasListen?powerModel.listen.getClass().getName():"否"):"未知")
+//				+" ，路径="+requestURL
+//				+ "\n  ，用户权限等级="+(null != userPower ? Arrays.deepToString(userPower.grades) : null)
+//				+ "，用户权限编号="+(null != userPower ? Arrays.deepToString(userPower.code) : null)
+//		);
+		StringBuilder sb=new StringBuilder();
+		int messageHead;
+		sb.append("[权限模型-").append(urltype).append("]：");
+		
+		if(null!=powerModel) {
+			messageHead=sb.length();
+	//		if(model.urlType==JWPType.common||model.urlType==JWPType.session||model.urlType==JWPType.unknow||model.urlType==JWPType.onlyListen) {
+	//			//sb.append("放行区=").append(model.isCommon ? "是" : "否");
+	//		}
+			if(powerModel.urlType==JWPType.session) {
+				//sb.append(messageHead==sb.length()?"":"，").append("会话区=").append(model.isSession ? "是" : "否");
+			}
+			else if(powerModel.urlType==JWPType.grades||powerModel.urlType==JWPType.gradesAndCode) {
+				sb.append(messageHead==sb.length()?"":"，").append("权限等级=").append(null != powerModel.grades ? Arrays.deepToString(powerModel.grades) : null);
+			}
+			else if(powerModel.urlType==JWPType.code||powerModel.urlType==JWPType.gradesAndCode) {
+				sb.append(messageHead==sb.length()?"":"，").append("权限编号=").append(null != powerModel.code ? Arrays.deepToString(powerModel.code) : null);
+			}
+			sb.append(messageHead==sb.length()?"":"，").append("路径=").append(requestURL);
+			if (powerModel.isHasListen) {
+				sb.append(messageHead==sb.length()?"":"，").append("监听类=").append(powerModel.listen.getClass().getName());
+			}
+		}else {
+			sb.append("路径=").append(requestURL);
+		}
+		System.out.println(sb.toString());
+		System.out.print("[系统对接-用户区]: 权限等级="+(null != userPower ? Arrays.deepToString(userPower.grades) : null));
+		System.out.println("， 权限编号="+(null != userPower ? Arrays.deepToString(userPower.code) : null));
+		System.out.println();
+		
+		
+		
 	}
 }

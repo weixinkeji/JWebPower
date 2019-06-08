@@ -19,25 +19,6 @@ import weixinkeji.vip.jweb.power.vo.JWPUserPower;
  */
 public interface JWPControllerURLPowerEvent {
 	/**
-	 * 
-	 * 不在监控内 的请求地址。执行此方法
-	 * 
-	 * @param req        HttpServletRequest
-	 * @param resp       HttpServletResponse
-	 * @param requestURL String 用户请求的路径
-	 * @param userPower  用户的权限
-	 * 
-	 * @return boolean 默认false,不放行！
-	 * 
-	 * @throws IOException  IO流异常
-	 * @throws ServletException javax.servlet.ServletException
-	 */
-	default boolean doOther_noController(HttpServletRequest req, HttpServletResponse resp, String requestURL,
-			JWPUserPower userPower) throws IOException, ServletException {
-		return false;
-	}
-
-	/**
 	 * 进入控制区时，自动调用执行的方法。必定执行。
 	 * 
 	 * @param chain      FilterChain
@@ -58,6 +39,25 @@ public interface JWPControllerURLPowerEvent {
 	}
 
 	/**
+	 * 
+	 * 不在监控内 的请求地址。执行此方法
+	 * 
+	 * @param req        HttpServletRequest
+	 * @param resp       HttpServletResponse
+	 * @param requestURL String 用户请求的路径
+	 * @param userPower  用户的权限
+	 * 
+	 * @return boolean 默认false,不放行！
+	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
+	 */
+	default boolean doOther_noController(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+			JWPUserPower userPower) throws IOException, ServletException {
+		return false;
+	}
+
+	/**
 	 * 服务请求，通过【放行区】验证，执行此方法
 	 * 
 	 * @param req        HttpServletRequest
@@ -71,7 +71,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws IOException  IO流异常
 	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default boolean doPublicPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+	default boolean doCommonPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
 			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		return true;
@@ -164,7 +164,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws IOException  IO流异常
 	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default boolean doIdentifiterPower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+	default boolean doCodePower_success(HttpServletRequest req, HttpServletResponse resp, String requestURL,
 			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		return true;
@@ -182,7 +182,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws IOException  IO流异常
 	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default void doIdentifiterPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+	default void doCodePower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
 			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 	}
@@ -201,7 +201,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws IOException  IO流异常
 	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default boolean doGradesAndIdentifierPower_success(HttpServletRequest req, HttpServletResponse resp,
+	default boolean doGradesAndCodePower_success(HttpServletRequest req, HttpServletResponse resp,
 			String requestURL, JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 		return true;
@@ -219,7 +219,7 @@ public interface JWPControllerURLPowerEvent {
 	 * @throws IOException  IO流异常
 	 * @throws ServletException javax.servlet.ServletException
 	 */
-	default void doGradesAndIdentifierPower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
+	default void doGradesAndCodePower_fail(HttpServletRequest req, HttpServletResponse resp, String requestURL,
 			JWPControllerModel powerModel, JWPUserPower userPower)
 			throws IOException, ServletException {
 	}

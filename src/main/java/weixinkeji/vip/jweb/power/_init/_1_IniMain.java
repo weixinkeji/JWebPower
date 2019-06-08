@@ -33,7 +33,7 @@ final public class _1_IniMain extends __InitTool {
 		_4_IniJWPPowerCode_Controller controllerPower=new _4_IniJWPPowerCode_Controller(super.list,abutmentUrl.getJWPSystemInterfaceConfig(),express);
 		
 		//业务处理模型
-		_5_iniJWPModel_Static model_static=new _5_iniJWPModel_Static(listen);//静态
+		_5_iniJWPModel_Static model_static=new _5_iniJWPModel_Static(listen,pr);//静态
 		rs.setModel_static(model_static.getJWPStaticResourcesModel());
 		_5_iniJWPModel_Controller model_controller=new _5_iniJWPModel_Controller(controllerPower,listen,pr);
 		rs.setModel_controller(model_controller.getModel_controller());

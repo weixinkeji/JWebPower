@@ -3,10 +3,15 @@ package weixinkeji.vip.jweb.power.vo;
 public class JWPUserPower {
 
 	public final String[] grades;
-	public final String[] identifiter;
+	public final String[] code;
 	
-	public JWPUserPower(String[] grades, String[] identifiter) {
+	/**
+	 * 
+	 * @param grades 权限等级
+	 * @param code	 权限编号
+	 */
+	public JWPUserPower(String[] grades, String[] code) {
 		this.grades = grades;
-		this.identifiter = identifiter;
+		this.code = code;
 	}
 }

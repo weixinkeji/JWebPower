@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
-public @interface JWPIdentifiter {
+public @interface JWPCode {
 
 	/**
 	 * 权限代码
