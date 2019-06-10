@@ -47,26 +47,41 @@ public class WUrl {
 			}
 			//上次是0组，本次是3组（内容组），把用户组的下标，移到与sysc[1]同样的地方
 			if(statusCode==0&&sysc[0]==3) {
-				//移动用户组的下标。
-				for(;yourIndex<yoursChar.length;yourIndex++) {
-					if(sysc[1]==yoursChar[yourIndex]) {
-						break;
-					}
+				//移动用户组的下标。如果移到尽头，都找不到与sysc[1]配置的字符，直接返回false
+				if(-1==(yourIndex=mv_0_3(sysc[1],yourIndex,yoursChar))){
+					return false;
 				}
 				//开始与用户组的内容，一一对应
 				for(;yourIndex<yoursChar.length;yourIndex++) {
-					
 					if(sysc[1]==yoursChar[yourIndex]) {
 						break;
 					}
-					
 				}
-				
 				continue;//继续下一次的循环
 			}
 			
 		}
 		return true;
+	}
+	
+	
+	
+	
+	/**
+	 * 从startIndex开始,移动resources数组下标.直到下标关联的字符等于endChar，然后返回移动后的下标。
+	 * 如果一直没有找到endChar字符，直接-1;
+	 * @param endChar
+	 * @param startIndex
+	 * @param resources
+	 * @return int
+	 */
+	private static int mv_0_3(char endChar,int startIndex,char[] resources) {
+		for(;startIndex<resources.length;startIndex++) {
+			if(resources[startIndex]==endChar) {
+				return startIndex;
+			}
+		}
+		return -1;
 	}
 	
 	//格式化字符串
