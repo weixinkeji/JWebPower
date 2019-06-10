@@ -274,7 +274,7 @@ class InExcpressDirectPowerCode {
 	public void main(JWPExpressConfigVO expressVo, JWPExpressionTool tool) {
 		JWPExpressVO vo;
 		// 权限编号的 直接权限
-		for (String expUrl : expressVo.getIdentifiterPowerExpression()) {
+		for (String expUrl : expressVo.getCodePowerExpression()) {
 			expUrl = DUrlTools.formatURLAndCacheUrl(expUrl);// 处理路径。如果是动态路径，格式成框架处理用的路径。
 			if (null != (vo = tool.getPowerUrl(expUrl))) {
 				inCode.put(vo.getExpress(), vo.getValues());
@@ -298,7 +298,7 @@ class InExcpressDirectPowerCode {
 			}
 		}
 		// 公共区的 直接权限
-		for (String expUrl : expressVo.getPublicPowerExpresstion()) {
+		for (String expUrl : expressVo.getCommonPowerExpresstion()) {
 			expUrl = DUrlTools.formatURLAndCacheUrl(expUrl);// 处理路径。如果是动态路径，格式成框架处理用的路径。
 			if (null != (vo = tool.getPowerUrl(expUrl))) {
 				this.inCommon.put(vo.getExpress(), true);
@@ -343,7 +343,7 @@ class InExcpressPowerCode {
 	public void main(JWPExpressConfigVO vo, String requestUrl, JWPExpressionTool tool) {
 		String[] powerCode;
 		String[] hasPowerCode;
-		for (String expUrl : vo.getIdentifiterPowerExpression()) {//编号
+		for (String expUrl : vo.getCodePowerExpression()) {//编号
 			// 如果不为null,表示有权限编号
 			if (null != (powerCode = tool.isCodePower(expUrl, requestUrl))) {
 				hasPowerCode=inCode.get(requestUrl);
@@ -370,7 +370,7 @@ class InExcpressPowerCode {
 			}
 		}
 		
-		for (String expUrl : vo.getPublicPowerExpresstion()) {//放行区
+		for (String expUrl : vo.getCommonPowerExpresstion()) {//放行区
 			// 如果不为null,表示有公共权限
 			if (tool.isCommonPower(expUrl, requestUrl)) {
 				inCommon.put(requestUrl, true);

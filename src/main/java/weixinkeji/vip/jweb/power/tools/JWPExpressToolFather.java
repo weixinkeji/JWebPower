@@ -29,28 +29,28 @@ public abstract class JWPExpressToolFather {
 		return new String(rs);
 	}
 
-	/**
-	 * 从strs，切除“*”前缀|后缀
-	 * 
-	 * @param strs  本框架定义的表达式
-	 * @param index 0表示切除前缀*，1表示切除后缀*
-	 * @return String
-	 */
-	protected String toRemoveStrX(String strs, int index) {
-		byte[] b = strs.getBytes();
-		byte[] rs = new byte[b.length - 1];
-		int rsindex = 0;
-		if (index == 0) {
-			for (int i = 1; i < b.length; i++) {
-				rs[rsindex++] = b[i];
-			}
-		} else {
-			for (int i = 0; i < b.length - 1; i++) {
-				rs[rsindex++] = b[i];
-			}
-		}
-		return new String(rs);
-	}
+//	/**
+//	 * 从strs，切除“*”前缀|后缀
+//	 * 
+//	 * @param strs  本框架定义的表达式
+//	 * @param index 0表示切除前缀*，1表示切除后缀*
+//	 * @return String
+//	 */
+//	protected String toRemoveStrX(String strs, int index) {
+//		byte[] b = strs.getBytes();
+//		byte[] rs = new byte[b.length - 1];
+//		int rsindex = 0;
+//		if (index == 0) {
+//			for (int i = 1; i < b.length; i++) {
+//				rs[rsindex++] = b[i];
+//			}
+//		} else {
+//			for (int i = 0; i < b.length - 1; i++) {
+//				rs[rsindex++] = b[i];
+//			}
+//		}
+//		return new String(rs);
+//	}
 
 	/**
 	 * 执行校验

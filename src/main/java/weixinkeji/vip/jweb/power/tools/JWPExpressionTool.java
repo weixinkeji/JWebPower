@@ -13,6 +13,67 @@ import weixinkeji.vip.jweb.power.vo.JWPExpressVO;
  *
  */
 public class JWPExpressionTool extends JWPExpressToolFather {
+	private final static String SIMPLE_REGEX_ALL = "[./a-zA-Z0-9_-}{]";
+	private final static String SIMPLE_REGEX_AREA = "[}{a-zA-Z0-9_-]";
+
+	/**
+	 * 把简化正则表达式，变成正真的正则表达式
+	 * 
+	 * @param yourExpress 你的简化正则表达式
+	 * @return String
+	 */
+	public static String formatSimpleRegexExpression(String yourExpress) {
+		return yourExpress.replace("**", SIMPLE_REGEX_ALL).replace("*", SIMPLE_REGEX_AREA);
+	}
+	
+	/**
+	 * 找到集合中的简化正则表达式，变成正真的正则表达式
+	 * 
+	 * @param yourExpress 你的达式
+	 * @return Set
+	 */
+	public static Set<String> formatSimpleRegexExpression(Set<String> yourExpress) {
+		if(null==yourExpress) {
+			return null;
+		}
+		if(yourExpress.size()==0) {
+			return yourExpress;
+		}
+		Set<String> myFormatExpression=new HashSet<>();
+		for(String str:yourExpress) {
+			myFormatExpression.add(str.contains("*") && !str.startsWith("regex:")?formatSimpleRegexExpression(str):str);
+		}
+		return myFormatExpression;
+	}
+	
+	
+	/**
+	 * 检查 用户写的是表达式(表达式返回null)，还是直接路径（直接路径返回JWebPowerExpressVO)
+	 * 
+	 * @param expression 用户配置的字符串（可能是表达式，亦可能是 直接路径）
+	 * @return JWebPowerExpressVO
+	 */
+	public JWPExpressVO getPowerUrl(String expression) {
+		JWPExpressVO vo = null;
+		if (expression.contains("[[")) {// 如果字符中包含[[，表达有权限等级或权限编号 权限控制。分割 路径 与其权限
+			vo = super.splitExpressStr(expression);
+			// 判断表达式是否包含指定*或regex:,没有，则表示 此路径是完整的路径。可以直接加入权限模型
+			if (!vo.getExpress().contains("[") && !vo.getExpress().startsWith("regex:")) {
+				return vo;
+			} else {// 包含了指定的字符，表示不是完整路径
+				return null;
+			}
+		}
+		
+		if (!expression.contains("[") && !expression.startsWith("regex:")) {
+			vo = new JWPExpressVO();
+			vo.setExpress(expression);
+			return vo;
+		}
+
+		return null;
+	}
+
 	/**
 	 * 检验url是否符合放行要求
 	 * 
@@ -31,28 +92,12 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 			regexStr = toRemoveStr(expression);
 			return toRegexStr(regexStr, requestURL);
 		}
-		// 表示采用简单表达式 以*开头的检验
-		if (expression.startsWith("*")) {
-			regexStr = toRemoveStrX(expression, 0);
-			return requestURL.endsWith(regexStr);
+		// 表示采用简化正则表达式
+		if (expression.contains("[")) {
+			return requestURL.matches(expression);
 		}
-		// 表示采用简单表达式 以*结尾的检验
-		else if (expression.endsWith("*")) {
-			regexStr = toRemoveStrX(expression, 1);
-			return requestURL.startsWith(regexStr);
-		}
-		// 表示采用简单表达式 包含1个*
-		else if (expression.contains("*")) {
-			if (super.countStr(expression, "*".getBytes()[0]) > 1) {
-				System.err
-						.println("===========注意：如果需要用到复杂表达式，请使用正则表达式。并在表达式前面加上“ regex:”===========，异常字符：" + expression);
-				return false;
-			}
-			String[] regexStr2 = expression.split("[*]{1}");
-			return requestURL.startsWith(regexStr2[0]) && requestURL.endsWith(regexStr2[1]);
-		} else {
-			return requestURL.equals(expression);
-		}
+		// 表示 完整路径，直接比较（无视大小写字符）
+		return requestURL.equalsIgnoreCase(expression);
 	}
 
 	/**
@@ -73,56 +118,11 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 			regexStr = toRemoveStr(expression);
 			return toRegexStr(regexStr, requestURL);
 		}
-		// 表示采用简单表达式 以*开头的检验
-		if (expression.startsWith("*")) {
-			regexStr = toRemoveStrX(expression, 0);
-			return requestURL.endsWith(regexStr);
+		// 表示采用简化正则表达式
+		if (expression.contains("[")) {
+			return requestURL.matches(expression);
 		}
-		// 表示采用简单表达式 以*结尾的检验
-		else if (expression.endsWith("*")) {
-			regexStr = toRemoveStrX(expression, 1);
-			return requestURL.startsWith(regexStr);
-		}
-		// 表示采用简单表达式 包含1个*
-		else if (expression.contains("*")) {
-			if (super.countStr(expression, "*".getBytes()[0]) > 1) {
-				System.err
-						.println("===========注意：如果需要用到复杂表达式，请使用正则表达式。并在表达式前面加上“ regex:”===========，异常字符：" + expression);
-				return false;
-			}
-			String[] regexStr2 = expression.split("[*]{1}");
-			return requestURL.startsWith(regexStr2[0]) && requestURL.endsWith(regexStr2[1]);
-		} else {
-			return requestURL.equals(expression);
-		}
-	}
-	
-	
-	/**
-	 * 检查 用户写的是表达式(表达式返回null)，还是直接路径（直接路径返回JWebPowerExpressVO)
-	 * 
-	 * @param expression 用户配置的字符串（可能是表达式，亦可能是 直接路径）
-	 * @return JWebPowerExpressVO
-	 */
-	public JWPExpressVO getPowerUrl(String expression) {
-		JWPExpressVO vo = null;
-		if (expression.contains("[[")) {// 如果字符中包含[[，表达有权限等级或权限编号 权限控制。分割 路径 与其权限
-			vo = super.splitExpressStr(expression);
-			// 判断表达式是否包含指定*或regex:,没有，则表示 此路径是完整的路径。可以直接加入权限模型
-			if (!vo.getExpress().contains("*") && !vo.getExpress().startsWith("regex:")) {
-				return vo;
-			} else {// 包含了指定的字符，表示不是完整路径
-				return null;
-			}
-		}
-
-		if (!expression.contains("*") && !expression.startsWith("regex:")) {
-			vo = new JWPExpressVO();
-			vo.setExpress(expression);
-			return vo;
-		}
-
-		return null;
+		return requestURL.equalsIgnoreCase(expression);
 	}
 
 	/**
@@ -140,56 +140,20 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 		// 对权限的表达式（表达式 [[权限等级]] ）进行切割 。 分成 匹配表达式，与等级
 		JWPExpressVO expressionVO = super.splitExpressStr(expression.trim());
 		expression = expressionVO.getExpress();
-		// 定义个临时变量，用来装载 处理后的字符串（表达式）
-		String regexStr;
+
 		// 表示采用正则表达检验
 		if (expression.startsWith("regex:")) {
 			// 对表达式的 装饰符 regex: 进行切除
-			regexStr = toRemoveStr(expressionVO.getExpress());
-			// 执行正则表达式检验
-			if (toRegexStr(regexStr, requestURL)) {
-				// 通过检验，返回权限等级
-				return expressionVO.getValues();
-			}
-			return null;
+			// 通过检验，返回权限等级
+			return toRegexStr(toRemoveStr(expressionVO.getExpress()), requestURL) ? expressionVO.getValues() : null;
 		}
-		// 表示采用简单表达式 以*开头的检验
-		if (expression.startsWith("*")) {
-			// 对表达式的 装饰符 * 进行切除
-			regexStr = toRemoveStrX(expression, 0);
-			if (requestURL.endsWith(regexStr)) {
-				// 通过检验，返回权限等级
-				return expressionVO.getValues();
-			}
-			return null;
+		// 表示采用简化正则表达式
+		if (expression.contains("[")) {
+			// 通过检验，返回权限等级
+			return requestURL.matches(expression) ? expressionVO.getValues() : null;
 		}
-		// 表示采用简单表达式 以*结尾的检验
-		else if (expression.endsWith("*")) {
-			// 对表达式的 装饰符 * 进行切除
-			regexStr = toRemoveStrX(expression, 1);
-//			System.out.println("对表达式的 装饰符 * 进行切除" + regexStr + "//" + requestURL.startsWith(regexStr));
-			if (requestURL.startsWith(regexStr)) {
-				// 通过检验，返回权限等级
-				return expressionVO.getValues();
-			}
-			return null;
-		}
-		// 表示采用简单表达式 包含1个*
-		else if (expression.contains("*")) {
-			if (super.countStr(expression, "*".getBytes()[0]) > 1) {
-				System.err
-						.println("===========注意：如果需要用到复杂表达式，请使用正则表达式。并在表达式前面加上“ regex:”===========，异常字符：" + expression);
-				return null;
-			}
-			String[] regexStr2 = expression.split("[*]{1}");
-			if (requestURL.startsWith(regexStr2[0]) && requestURL.endsWith(regexStr2[1])) {
-				// 通过检验，返回权限等级
-				return expressionVO.getValues();
-			}
-			return null;
-		} else {
-			return null;
-		}
+		// 通过检验，返回权限等级
+		return requestURL.matches(expression) ? expressionVO.getValues() : null;
 	}
 
 	/**
@@ -206,56 +170,19 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 		// 对权限的表达式（表达式 [[权限编号]] ）进行切割 。 分成 匹配表达式，与等级
 		JWPExpressVO expressionVO = super.splitExpressStr(expression.trim());
 		expression = expressionVO.getExpress();
-		// 定义个临时变量，用来装载 处理后的字符串（表达式）
-		String regexStr;
 		// 表示采用正则表达检验
 		if (expression.startsWith("regex:")) {
 			// 对表达式的 装饰符 regex: 进行切除
-			regexStr = toRemoveStr(expressionVO.getExpress());
-			// 执行正则表达式检验
-			if (toRegexStr(regexStr, requestURL)) {
-				// 通过检验，返回权限等级
-				return expressionVO.getValues();
-			}
-			return null;
+			// 通过检验，返回权限编号
+			return toRegexStr(toRemoveStr(expressionVO.getExpress()), requestURL) ? expressionVO.getValues() : null;
 		}
-		// 表示采用简单表达式 以*开头的检验
-		if (expression.startsWith("*")) {
-			// 对表达式的 装饰符 * 进行切除
-			regexStr = toRemoveStrX(expression, 0);
-			if (requestURL.endsWith(regexStr)) {
-				// 通过检验，返回权限等级
-				return expressionVO.getValues();
-			}
-			return null;
+		// 表示采用简化正则表达式
+		if (expression.contains("[")) {
+			// 通过检验，返回权限编号
+			return requestURL.matches(expression) ? expressionVO.getValues() : null;
 		}
-		// 表示采用简单表达式 以*结尾的检验
-		else if (expression.endsWith("*")) {
-			// 对表达式的 装饰符 * 进行切除
-			regexStr = toRemoveStrX(expression, 1);
-//			System.out.println("对表达式的 装饰符 * 进行切除" + regexStr + "//" + requestURL.startsWith(regexStr));
-			if (requestURL.startsWith(regexStr)) {
-				// 通过检验，返回权限等级
-				return expressionVO.getValues();
-			}
-			return null;
-		}
-		// 表示采用简单表达式 包含1个*
-		else if (expression.contains("*")) {
-			if (super.countStr(expression, "*".getBytes()[0]) > 1) {
-				System.err
-						.println("===========注意：如果需要用到复杂表达式，请使用正则表达式。并在表达式前面加上“ regex:”===========，异常字符：" + expression);
-				return null;
-			}
-			String[] regexStr2 = expression.split("[*]{1}");
-			if (requestURL.startsWith(regexStr2[0]) && requestURL.endsWith(regexStr2[1])) {
-				// 通过检验，返回权限等级
-				return expressionVO.getValues();
-			}
-			return null;
-		} else {
-				return null;
-		}
+		// 通过检验，返回权限编号
+		return requestURL.matches(expression) ? expressionVO.getValues() : null;
 	}
 
 	public String[] mergeArrayList(final List<String[]> lists) {

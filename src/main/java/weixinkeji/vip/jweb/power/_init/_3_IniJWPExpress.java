@@ -1,6 +1,8 @@
 package weixinkeji.vip.jweb.power._init;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import weixinkeji.vip.jweb.power.expresstion.DefaultJWPControllerURLExpresstion;
 import weixinkeji.vip.jweb.power.expresstion.DefaultJWPStaticResourcesURLExpresstion;
@@ -32,16 +34,25 @@ public class _3_IniJWPExpress extends __InitTool{
 	 * @return ExpressConfigVO
 	 */
 	private void initJWPControllerURLExpresstion() {
-		// 准备一个容器装数据
-		JWPExpressConfigVO vo = new JWPExpressConfigVO();
 		// 找到用户配置的表达式，没有用户配置，则加载默认的配置
 		JWPControllerURLExpresstion sue = super.findObject(JWPControllerURLExpresstion.class, new DefaultJWPControllerURLExpresstion());
-		sue.setRequestURL_common(vo.getPublicPowerExpresstion());
-		sue.setRequestURL_session(vo.getSessionPowerExpresstion());
-		sue.setRequestURL_grades(vo.getGradesExcpresstion());
-		sue.setRequestURL_code(vo.getIdentifiterPowerExpression());
 		
-		this.controllerExpress=vo;
+		// 公共权限的表达式
+		Set<String> commonPowerExpresstion = new HashSet<String>();
+		// 会话权限的表达式
+		Set<String> sessionPowerExpresstion = new HashSet<String>();
+		// 权限等级的表达式
+		Set<String> gradesExcpresstion = new HashSet<String>();;
+		// 权限编号的表达式
+		Set<String> codePowerExpression = new HashSet<String>();
+		
+		sue.setRequestURL_common(commonPowerExpresstion);
+		sue.setRequestURL_session(sessionPowerExpresstion);
+		sue.setRequestURL_grades(gradesExcpresstion);
+		sue.setRequestURL_code(codePowerExpression);
+		
+		
+		this.controllerExpress= new JWPExpressConfigVO(commonPowerExpresstion,sessionPowerExpresstion ,gradesExcpresstion,codePowerExpression );
 	}
 	
 	/**
