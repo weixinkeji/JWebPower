@@ -13,8 +13,8 @@ import weixinkeji.vip.jweb.power.vo.JWPExpressVO;
  *
  */
 public class JWPExpressionTool extends JWPExpressToolFather {
-	private final static String SIMPLE_REGEX_ALL = "[./a-zA-Z0-9_-}{]";
-	private final static String SIMPLE_REGEX_AREA = "[}{a-zA-Z0-9_-]";
+	private final static String SIMPLE_REGEX_ALL = "[./a-zA-Z0-9_-}{?=&]";
+	private final static String SIMPLE_REGEX_AREA = "[.}{a-zA-Z0-9_-?=&]";
 
 	/**
 	 * 把简化正则表达式，变成正真的正则表达式
