@@ -138,7 +138,15 @@ public class _5_iniJWPModel_Controller extends __InitTool {
 		for (Map.Entry<String, JWPCodeVO> kv : edp.getMethodPowerCode().entrySet()) {
 			mcValue=mc.get(kv.getKey());
 			modelMap.put(kv.getKey(),
-					new JWPControllerModel(kv.getValue(), listen.getJWPListenInterfaces(null!=mcValue?mcValue.m:null, null!=mcValue?mcValue.c:null, kv.getKey())));
+					new JWPControllerModel(
+							kv.getValue()
+							, listen.getJWPListenInterfaces(
+									null!=mcValue?mcValue.m:null
+											, null!=mcValue?mcValue.c:null
+											, kv.getKey()
+							)
+					)
+			);
 		}
 		// 对表达式上的权限，建立权限模型
 		InExcpressPowerCode ep = powerCode.getEp();

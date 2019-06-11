@@ -42,35 +42,14 @@ public class JWPControllerModel {
 	private final boolean isGradesNull;
 	private final boolean isCodeNull;
 	// 监听的实现
-	public final JWPListenInterface listen;
 	public final JWPListenInterface[] listens;
 	public final int listenCount;
-	public final boolean isHasListen;
 
 	/**
 	 * 
 	 * @param vo     JWPCodeVO
-	 * @param listen JWPListenInterface 监听器
+	 * @param listen JWPListenInterface[] 监听器
 	 */
-	public JWPControllerModel(JWPCodeVO vo, JWPListenInterface listen) {
-		this.isCommon = vo.isCommon();
-		this.isSession = vo.isSession();
-		this.grades = vo.getGrades();
-		this.code = vo.getCode();
-
-		this.isGradesNull = null == grades;
-		this.isCodeNull = null == code;
-		this.listen = listen;
-		this.isHasListen = null != this.listen;
-		this.listens=null;
-		this.listenCount=0;
-		if (this.isHasListen && vo.type == JWPType.unknow) {
-			this.urlType = JWPType.onlyListen;
-		} else {
-			this.urlType = vo.type;
-		}
-
-	}
 	public JWPControllerModel(JWPCodeVO vo, JWPListenInterface[] listens) {
 		this.isCommon = vo.isCommon();
 		this.isSession = vo.isSession();
@@ -79,8 +58,6 @@ public class JWPControllerModel {
 
 		this.isGradesNull = null == grades;
 		this.isCodeNull = null == code;
-		this.listen = null;
-		this.isHasListen = null != this.listen;
 		this.listens=listens;
 		this.listenCount=null!=listens?listens.length:0;
 		
@@ -120,12 +97,8 @@ public class JWPControllerModel {
 			this.urlType = JWPType.unknow;
 		}
 
-		this.listen = jwp.listen;
-		this.isHasListen = jwp.isHasListen;
-		
 		this.listenCount=jwp.listenCount;
 		this.listens=jwp.listens;
-		
 	}
 
 	/**

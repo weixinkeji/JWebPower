@@ -1,6 +1,7 @@
 package weixinkeji.vip.jweb.power._init;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -14,6 +15,7 @@ import weixinkeji.vip.jweb.power.listen.JWPListenPool;
 import weixinkeji.vip.jweb.power.tools.DUrlTools;
 import weixinkeji.vip.jweb.power.tools.JWPExpressionTool;
 import weixinkeji.vip.jweb.power.tools.JWPTool;
+import weixinkeji.vip.jweb.power.vo.JWPListenClassVO;
 import weixinkeji.vip.jweb.power.vo.JWPStaticUrlAndListenVO;
 
 /**
@@ -31,10 +33,12 @@ public class _3_IniJWPListen extends __InitTool {
 	// 在方法上的监听--Controller
 	private Map<Method, Class<? extends JWPListenInterface>> inMethod = new HashMap<>();
 	// 需要扫描的监听--Controller
-	private Map<String, Class<? extends JWPListenInterface>> inJWPRegListenUrl_Controller = new HashMap<>();
+	private List<JWPListenClassVO> inJWPRegListenUrl_Controller = new ArrayList<>();
+	
 	// 需要扫描的监听-静态方法
-	private Map<String, Class<? extends JWPListenInterface>> inJWPRegListenUrl_static = new HashMap<>();
-
+//	private Map<String, Class<? extends JWPListenInterface>> inJWPRegListenUrl_static = new HashMap<>();
+	private List<JWPListenClassVO> inJWPRegListenUrl_static = new ArrayList<>();
+	
 	/**
 	 * @param list 扫描到的类
 	 */
@@ -76,39 +80,13 @@ public class _3_IniJWPListen extends __InitTool {
 		if(null==url||url.isEmpty()) {
 			return null;
 		}
-		
-		for(Map.Entry<String, Class<? extends JWPListenInterface>> kv:this.inJWPRegListenUrl_Controller.entrySet()) {
-			if(expressTool.isUrlListen(url, kv.getKey())) {
-				list.add(JWPListenPool.getIURLListenMethod(kv.getValue()));
+		for(JWPListenClassVO vo:inJWPRegListenUrl_Controller) {
+			if(expressTool.isUrlListen(url, vo.url)) {
+				list.add(JWPListenPool.getIURLListenMethod(vo.jwpListenClass));
 			}
 		}
 		return list.size()>0?list.toArray(new JWPListenInterface[list.size()]):null;
 	}
-
-//	/**
-//	 * 取得注解在方法、类 或者标有@JWPRegListenUrl 的 JWPListenInterface对象
-//	 * 
-//	 * 
-//	 * @param m   方法 当m为null时，会跳过注解在方法上的监听类的获取
-//	 * @param c   类 当类为null时，会跳过注解在类上的监听类的获取
-//	 * @param url 路径 当路径为null或空时，会跳过标有@JWPRegListenUrl的监听类的获取
-//	 * @return JWPListenInterface 找到 执行监听的实例
-//	 */
-//	public JWPListenInterface getJWPListenInterface(Method m, Class<?> c, String url) {
-//		Class<? extends JWPListenInterface> listen = null != m ? this.inMethod.get(m) : null;
-//		if (null != listen) {
-//			return JWPListenPool.getIURLListenMethod(listen);
-//		}
-//		listen = null != c ? this.inClass.get(c) : null;
-//		if (null != listen) {
-//			return JWPListenPool.getIURLListenMethod(listen);
-//		}
-//		listen = null != url && url.length() > 0 ? this.inJWPRegListenUrl_Controller.get(url) : null;
-//		if (null != listen) {
-//			return JWPListenPool.getIURLListenMethod(listen);
-//		}
-//		return null;
-//	}
 
 	/**
 	 * 取得标有@JWPRegListenUrl 的 JWPListenInterface类-静态资源
@@ -121,8 +99,8 @@ public class _3_IniJWPListen extends __InitTool {
 		JWPStaticUrlAndListenVO[] vos = new JWPStaticUrlAndListenVO[this.inJWPRegListenUrl_static.size()];
 		if (this.inJWPRegListenUrl_static.size() > 0) {
 			int i = 0;
-			for (Map.Entry<String, Class<? extends JWPListenInterface>> kv : this.inJWPRegListenUrl_static.entrySet()) {
-				vos[i++] = new JWPStaticUrlAndListenVO(kv.getKey(), JWPListenPool.getIURLListenMethod(kv.getValue()));
+			for (JWPListenClassVO kv : this.inJWPRegListenUrl_static) {
+				vos[i++] = new JWPStaticUrlAndListenVO(kv.url, JWPListenPool.getIURLListenMethod(kv.jwpListenClass));
 			}
 		}
 		return vos;
@@ -162,15 +140,26 @@ public class _3_IniJWPListen extends __InitTool {
 				// 如果绑定了Controller路径
 				if (null != reg.controllerUrl() && reg.controllerUrl().length > 0) {
 					for (String url : reg.controllerUrl()) {
-						url = JWPExpressionTool.formatSimpleRegexExpression(DUrlTools.formatURLAndCacheUrl(url));
-						this.inJWPRegListenUrl_Controller.put(url, (Class<? extends JWPListenInterface>) c);
+						//如果是正则表达式
+						if(expressTool.isRegexExpression(url)) {
+							this.inJWPRegListenUrl_Controller.add(new JWPListenClassVO(url, (Class<? extends JWPListenInterface>) c));
+						}
+						//如果是简化表达式
+						else if(expressTool.isSimpleRegexExpression(url)) {
+							url = JWPExpressionTool.formatSimpleRegexExpression(url);
+							this.inJWPRegListenUrl_Controller.add(new JWPListenClassVO(url, (Class<? extends JWPListenInterface>) c));
+						}
+						//其他情况，当作完整的路径
+						else {
+							url=DUrlTools.formatURLAndCacheUrl(url);//有可能是动态路径。先对路径进行转化
+							this.inJWPRegListenUrl_Controller.add(new JWPListenClassVO(url, (Class<? extends JWPListenInterface>) c));
+						}
 					}
 				}
 				// 如果绑定了静态资源路径
 				if (null != reg.staticUrl() && reg.staticUrl().length > 0) {
 					for (String url : reg.staticUrl()) {
-						// url=DUrlTools.formatURLAndCacheUrl(url);
-						this.inJWPRegListenUrl_static.put(url, (Class<? extends JWPListenInterface>) c);
+						this.inJWPRegListenUrl_static.add(new JWPListenClassVO(url, (Class<? extends JWPListenInterface>) c));
 					}
 				}
 			}

@@ -20,6 +20,7 @@ import weixinkeji.vip.jweb.power._init._1_IniMain;
 import weixinkeji.vip.jweb.power.config.JWPUserInterface;
 import weixinkeji.vip.jweb.power.event.JWPControllerURLPowerEvent;
 import weixinkeji.vip.jweb.power.event.JWPGlobalEvent;
+import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
 import weixinkeji.vip.jweb.power.model.JWPStaticResourcesModel;
 import weixinkeji.vip.jweb.power.model.JWPType;
@@ -475,8 +476,14 @@ public class JWPFilter implements Filter {
 				sb.append(messageHead==sb.length()?"":"，").append("权限编号=").append(null != powerModel.code ? Arrays.deepToString(powerModel.code) : null);
 			}
 			sb.append(messageHead==sb.length()?"":"，").append("路径=").append(requestURL);
-			if (powerModel.isHasListen) {
-				sb.append(messageHead==sb.length()?"":"，").append("监听类=").append(powerModel.listen.getClass().getName());
+			
+			
+			if (powerModel.listenCount>0) {
+				String listenName="";
+				for(JWPListenInterface list:powerModel.listens) {
+					listenName=listenName+","+list.getClass().getName();
+				}
+				sb.append(messageHead==sb.length()?"":"，").append("监听类=").append(listenName.substring(1));
 			}
 		}else {
 			sb.append("路径=").append(requestURL);

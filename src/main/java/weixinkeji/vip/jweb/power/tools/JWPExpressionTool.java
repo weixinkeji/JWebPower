@@ -198,7 +198,7 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 		url = url.trim();
 		String regexStr;
 		// listenRegexExpress 表示采用正则表达检验
-		if (url.startsWith("regex:")) {
+		if (listenRegexExpress.startsWith("regex:")) {
 			regexStr = toRemoveStr(listenRegexExpress);
 			return toRegexStr(regexStr, url);
 		}
@@ -209,6 +209,16 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 		// 表示 完整路径，直接比较（无视大小写字符）
 		return url.equalsIgnoreCase(listenRegexExpress);
 	}
+	
+	public boolean isRegexExpression(String url) {
+		return url.startsWith("regex:");
+	}
+	public boolean isSimpleRegexExpression(String url) {
+		// 表示采用简化正则表达式
+		return url.contains("*")||url.contains("**");
+	}
+	
+	
 	public String[] mergeArrayList(final List<String[]> lists) {
 		Set<String> rs = new HashSet<>();
 		for (String[] codes : lists) {
