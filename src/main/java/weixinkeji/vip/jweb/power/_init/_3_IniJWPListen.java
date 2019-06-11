@@ -1,10 +1,11 @@
 package weixinkeji.vip.jweb.power._init;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import weixinkeji.vip.jweb.power.ann.JWPRegListen;
 import weixinkeji.vip.jweb.power.ann.JWPRegListenUrl;
@@ -53,7 +54,7 @@ public class _3_IniJWPListen extends __InitTool {
 	 * @return JWPListenInterface 找到 执行监听的实例
 	 */
 	public JWPListenInterface[] getJWPListenInterfaces(Method m, Class<?> c, String url) {
-		List<JWPListenInterface> list = new ArrayList<>();
+		Set<JWPListenInterface> list = new LinkedHashSet<JWPListenInterface>();
 		Class<? extends JWPListenInterface> listen;
 
 // 类与方法上的监听，是相融合的。与表达式上的是排斥的

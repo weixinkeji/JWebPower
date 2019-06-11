@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
 import weixinkeji.vip.jweb.power.model.JWPType;
 import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
@@ -73,9 +74,12 @@ public class _5_iniJWPModel_Controller extends __InitTool {
 				}
 				
 				sb.append(messageHead==sb.length()?"":"，").append("路径=").append(kv.getKey());
-				
-				if (model.isHasListen) {
-					sb.append(messageHead==sb.length()?"":"，").append("监听类=").append(model.listen.getClass().getName());
+				if (model.listenCount>0) {
+					String listenName="";
+					for(JWPListenInterface list:model.listens) {
+						listenName=listenName+","+list.getClass().getName();
+					}
+					sb.append(messageHead==sb.length()?"":"，").append("监听类=").append(listenName.substring(1));
 				}
 				
 				if (error) {
