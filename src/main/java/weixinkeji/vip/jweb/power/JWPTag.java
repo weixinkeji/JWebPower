@@ -36,10 +36,7 @@ public class JWPTag extends SimpleTagSupport {
 		boolean b_grades_notNull=null != grades;
 		boolean b_code_notNull=null != this.code;
 		
-		//只需登录即可访问
-		if(!b_code_notNull&&!b_code_notNull&&this.session&& null!=p) {
-			//显示内容
-			super.getJspBody().invoke(pc.getOut());
+		if(null==p) {
 			return;
 		}
 		
@@ -47,10 +44,11 @@ public class JWPTag extends SimpleTagSupport {
 		try {
 			
 			if (b_grades_notNull &&b_code_notNull ) {
-				
-				if (null==p||code.isEmpty()||null==p.grades||null==p.code) {
+				//用户没有登陆，或输入非法的权限，或 用户没有权限等级，或用户权限等级为空
+				if (null==p||code.isEmpty()||null==p.grades||null==p.code||p.grades.length==0) {
 					return;// 不合法的编号
 				}
+				
 				if (this.isHasCodePower(this.code, req, resp)// 并拥有指定的权限时
 						&&(this.grades.isEmpty()||this.isHasGradesPower(grades, req, resp))//并且 （空等级-表示全部等级都可以  或 有明确的等级权限 ）
 						) {
@@ -84,6 +82,14 @@ public class JWPTag extends SimpleTagSupport {
 				}
 				return;
 			}
+			
+			if(this.session) {
+				//显示内容
+				super.getJspBody().invoke(pc.getOut());
+				return;
+			}
+			
+			
 		} catch (ServletException e) {
 			e.printStackTrace();
 		}
