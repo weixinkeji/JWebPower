@@ -1,5 +1,8 @@
 package weixinkeji.vip.jweb.power.config;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,8 +18,7 @@ import weixinkeji.vip.jweb.power.vo.JWPUserPower;
 public class DefaultJWPUserInterface implements JWPUserInterface {
 
 	@Override
-	public JWPUserPower getUserPowerCode(HttpServletRequest req, HttpServletResponse resp) {
-//		JWPUserPower sai = new JWPUserPower(null, null);
+	public JWPUserPower getUserPowerCode(HttpServletRequest req, HttpServletResponse resp)  throws IOException, ServletException{
 		return null;
 	}
 }

@@ -1,5 +1,8 @@
 package weixinkeji.vip.jweb.power;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,7 +28,8 @@ final class JWPFilterCommonInterface {
 	 * @param resp
 	 * @return
 	 */
-	static JWPUserPower getPowergetUserPowerCode(HttpServletRequest req, HttpServletResponse resp) {
+	static JWPUserPower getPowergetUserPowerCode(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		return userPower.getUserPowerCode(req, resp);
 	}
+	
 }
