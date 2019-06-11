@@ -33,15 +33,16 @@ public class JWPTag extends SimpleTagSupport {
 			p = null;
 		}
 		
+		boolean b_grades_notNull=null != grades;
+		boolean b_code_notNull=null != this.code;
+		
 		//只需登录即可访问
-		if(this.session&& null!=p) {
+		if(!b_code_notNull&&!b_code_notNull&&this.session&& null!=p) {
 			//显示内容
 			super.getJspBody().invoke(pc.getOut());
 			return;
 		}
 		
-		boolean b_grades_notNull=null != grades;
-		boolean b_code_notNull=null != this.code;
 		
 		try {
 			
