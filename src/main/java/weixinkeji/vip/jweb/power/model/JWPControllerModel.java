@@ -1,8 +1,16 @@
 package weixinkeji.vip.jweb.power.model;
 
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
 import weixinkeji.vip.jweb.power.tools.JWPTool;
 import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
+import weixinkeji.vip.jweb.power.vo.JWPUserPower;
 
 /**
  * 权限模型
@@ -35,24 +43,9 @@ public class JWPControllerModel {
 	private final boolean isCodeNull;
 	// 监听的实现
 	public final JWPListenInterface listen;
+	public final JWPListenInterface[] listens;
+	public final int listenCount;
 	public final boolean isHasListen;
-
-	/**
-	 * 
-	 * @param urlType    放行、会话、等级、编号、等级+编号
-	 * @param grades     权限等级 没有权限请设置为null，有所有的权限请设置为new String[]{}
-	 * @param identifier 权限编号 没有权限请设置为null，有所有的权限请设置为new String[]{}
-	 * @param listen     IURLListenMethod 监听器
-	 */
-//	public JWPControllerModel(JWPType urlType, String[] grades, String[] identifier, JWPListenInterface listen) {
-//		this.urlType = urlType;
-//		this.grades = grades;
-//		this.identifier = identifier;
-//		this.isGradesNull = null == grades;
-//		this.isIdentifierNull = null == identifier;
-//		this.listen = listen;
-//		this.isHasListen = null != this.listen;
-//	}
 
 	/**
 	 * 
@@ -69,7 +62,8 @@ public class JWPControllerModel {
 		this.isCodeNull = null == code;
 		this.listen = listen;
 		this.isHasListen = null != this.listen;
-
+		this.listens=null;
+		this.listenCount=0;
 		if (this.isHasListen && vo.type == JWPType.unknow) {
 			this.urlType = JWPType.onlyListen;
 		} else {
@@ -77,7 +71,26 @@ public class JWPControllerModel {
 		}
 
 	}
+	public JWPControllerModel(JWPCodeVO vo, JWPListenInterface[] listens) {
+		this.isCommon = vo.isCommon();
+		this.isSession = vo.isSession();
+		this.grades = vo.getGrades();
+		this.code = vo.getCode();
 
+		this.isGradesNull = null == grades;
+		this.isCodeNull = null == code;
+		this.listen = null;
+		this.isHasListen = null != this.listen;
+		this.listens=listens;
+		this.listenCount=null!=listens?listens.length:0;
+		
+		if (this.listenCount>0 && vo.type == JWPType.unknow) {
+			this.urlType = JWPType.onlyListen;
+		} else {
+			this.urlType = vo.type;
+		}
+
+	}
 	/**
 	 * 融合 其他的 权限模型
 	 * 
@@ -109,8 +122,74 @@ public class JWPControllerModel {
 
 		this.listen = jwp.listen;
 		this.isHasListen = jwp.isHasListen;
+		
+		this.listenCount=jwp.listenCount;
+		this.listens=jwp.listens;
+		
 	}
 
+	/**
+	 * 执行监听方法
+	 * @param chain      FilterChain
+	 * @param req  HttpServletRequest
+	 * @param resp	HttpServletResponse
+	 * @param requestURL 请求路径
+	 * @param powerModel 与请求路径关联的权限模型
+	 * @param powerCode 用户的权限
+	 * 
+	 * @return boolean 返回true表示放行，返回 false表示 拦截下来。
+	 * 
+	 * @throws IOException  IO流异常
+	 * @throws ServletException javax.servlet.ServletException
+	 */
+	public boolean doListen(FilterChain chain, HttpServletRequest req, HttpServletResponse resp, final String requestURL
+			,JWPControllerModel powerModel
+			,JWPUserPower powerCode)throws IOException, ServletException{
+		switch(this.listenCount) {
+			case 0:return true;
+			case 1:return this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode);
+			case 2:
+				return 
+						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode);
+			case 3:
+				return 
+						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[2].doMethod(chain, req, resp, requestURL, powerModel, powerCode);
+			case 4:
+				return 
+						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[2].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[3].doMethod(chain, req, resp, requestURL, powerModel, powerCode);	
+			case 5:
+				return 
+						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[2].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[3].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[4].doMethod(chain, req, resp, requestURL, powerModel, powerCode);
+			case 6:
+				return 
+						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[2].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[3].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[4].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
+						&&this.listens[5].doMethod(chain, req, resp, requestURL, powerModel, powerCode);
+			default:{
+				for(JWPListenInterface listenObject:this.listens) {
+					//一旦发现监听结果是不通过，立马返回false，表示拦截
+					if(!listenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+	}
+	
 	/**
 	 * 判断权限等级 yourGrades 是否符合url绑定的 权限等级
 	 * 

@@ -1,6 +1,7 @@
 package weixinkeji.vip.jweb.power._init;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import weixinkeji.vip.jweb.power.ann.JWPRegListenUrl;
 import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
 import weixinkeji.vip.jweb.power.listen.JWPListenPool;
 import weixinkeji.vip.jweb.power.tools.DUrlTools;
+import weixinkeji.vip.jweb.power.tools.JWPExpressionTool;
 import weixinkeji.vip.jweb.power.tools.JWPTool;
 import weixinkeji.vip.jweb.power.vo.JWPStaticUrlAndListenVO;
 
@@ -20,8 +22,7 @@ import weixinkeji.vip.jweb.power.vo.JWPStaticUrlAndListenVO;
  *
  */
 public class _3_IniJWPListen extends __InitTool {
-//	private JWPSystemInterfaceConfig siConfig = super.findObject(JWPSystemInterfaceConfig.class,
-//			new DefaultJWPSystemInterfaceConfig());
+	private JWPExpressionTool expressTool=new JWPExpressionTool();
 
 //注：收集监听的信息中，三个HashMap有可能有重复的收集。所以在使用时，优先使用 方法上的（如果有），次使用类上的（如果有），最后使用扫描的（如果有）
 	// 在类上的 监听--Controller
@@ -47,47 +48,85 @@ public class _3_IniJWPListen extends __InitTool {
 	 * 
 	 * 
 	 * @param m   方法 当m为null时，会跳过注解在方法上的监听类的获取
-	 * @param c   类   当类为null时，会跳过注解在类上的监听类的获取
+	 * @param c   类 当类为null时，会跳过注解在类上的监听类的获取
 	 * @param url 路径 当路径为null或空时，会跳过标有@JWPRegListenUrl的监听类的获取
-	 * @return 	   JWPListenInterface 找到 执行监听的实例
+	 * @return JWPListenInterface 找到 执行监听的实例
 	 */
-	public JWPListenInterface getJWPListenInterface(Method m, Class<?> c, String url) {
-		Class<? extends JWPListenInterface> listen = null != m ? this.inMethod.get(m) : null;
-		if (null != listen) {
-			return JWPListenPool.getIURLListenMethod(listen);
+	public JWPListenInterface[] getJWPListenInterfaces(Method m, Class<?> c, String url) {
+		List<JWPListenInterface> list = new ArrayList<>();
+		Class<? extends JWPListenInterface> listen;
+
+// 类与方法上的监听，是相融合的。与表达式上的是排斥的
+		
+		// 如果方法不为null，检查方法上有没有监听器。如果有，则注册
+		if (null != (listen = null != m ? this.inMethod.get(m) : null)) {
+			list.add(JWPListenPool.getIURLListenMethod(listen));
 		}
-		listen = null != c ? this.inClass.get(c) : null;
-		if (null != listen) {
-			return JWPListenPool.getIURLListenMethod(listen);
+		// 如果类不为null，检查类上有不有监听器。
+		if (null != (listen = null != c ? this.inClass.get(c) : null)) {
+			list.add(JWPListenPool.getIURLListenMethod(listen));
 		}
-		listen = null != url && url.length() > 0 ? this.inJWPRegListenUrl_Controller.get(url) : null;
-		if (null != listen) {
-			return JWPListenPool.getIURLListenMethod(listen);
+		if(list.size()>0) {
+			return list.toArray(new JWPListenInterface[list.size()]);
 		}
-		return null;
+		
+// 类与方法上没有监听是时，到表达式里找。
+		//没有表达式时，直接返回null
+		if(null==url||url.isEmpty()) {
+			return null;
+		}
+		
+		for(Map.Entry<String, Class<? extends JWPListenInterface>> kv:this.inJWPRegListenUrl_Controller.entrySet()) {
+			if(expressTool.isUrlListen(url, kv.getKey())) {
+				list.add(JWPListenPool.getIURLListenMethod(kv.getValue()));
+			}
+		}
+		return list.size()>0?list.toArray(new JWPListenInterface[list.size()]):null;
 	}
-	
-	
+
+//	/**
+//	 * 取得注解在方法、类 或者标有@JWPRegListenUrl 的 JWPListenInterface对象
+//	 * 
+//	 * 
+//	 * @param m   方法 当m为null时，会跳过注解在方法上的监听类的获取
+//	 * @param c   类 当类为null时，会跳过注解在类上的监听类的获取
+//	 * @param url 路径 当路径为null或空时，会跳过标有@JWPRegListenUrl的监听类的获取
+//	 * @return JWPListenInterface 找到 执行监听的实例
+//	 */
+//	public JWPListenInterface getJWPListenInterface(Method m, Class<?> c, String url) {
+//		Class<? extends JWPListenInterface> listen = null != m ? this.inMethod.get(m) : null;
+//		if (null != listen) {
+//			return JWPListenPool.getIURLListenMethod(listen);
+//		}
+//		listen = null != c ? this.inClass.get(c) : null;
+//		if (null != listen) {
+//			return JWPListenPool.getIURLListenMethod(listen);
+//		}
+//		listen = null != url && url.length() > 0 ? this.inJWPRegListenUrl_Controller.get(url) : null;
+//		if (null != listen) {
+//			return JWPListenPool.getIURLListenMethod(listen);
+//		}
+//		return null;
+//	}
+
 	/**
 	 * 取得标有@JWPRegListenUrl 的 JWPListenInterface类-静态资源
-	 * 因为静态资源路径是按前缀比较，成功了，就检出相关联的监听，然后执行。
-	 * 所以，返回全部找到的执行监听的对象
+	 * 因为静态资源路径是按前缀比较，成功了，就检出相关联的监听，然后执行。 所以，返回全部找到的执行监听的对象
 	 * 
 	 * @return JWPStaticUrlAndListenVO[] 执行监听的对象集合
 	 */
 	public JWPStaticUrlAndListenVO[] getJWPListenInterface_static() {
-		
-		JWPStaticUrlAndListenVO[] vos=new JWPStaticUrlAndListenVO[this.inJWPRegListenUrl_static.size()];
-		if(this.inJWPRegListenUrl_static.size()>0) {
-			int i=0;
-			for(Map.Entry<String, Class<? extends JWPListenInterface>> kv:this.inJWPRegListenUrl_static.entrySet()) {
-				vos[i++]=new JWPStaticUrlAndListenVO(kv.getKey(),JWPListenPool.getIURLListenMethod(kv.getValue()));
+
+		JWPStaticUrlAndListenVO[] vos = new JWPStaticUrlAndListenVO[this.inJWPRegListenUrl_static.size()];
+		if (this.inJWPRegListenUrl_static.size() > 0) {
+			int i = 0;
+			for (Map.Entry<String, Class<? extends JWPListenInterface>> kv : this.inJWPRegListenUrl_static.entrySet()) {
+				vos[i++] = new JWPStaticUrlAndListenVO(kv.getKey(), JWPListenPool.getIURLListenMethod(kv.getValue()));
 			}
 		}
 		return vos;
 	}
-	
-	
+
 	/**
 	 * 找到所有注解在类、方法上的监听类
 	 */
@@ -122,14 +161,14 @@ public class _3_IniJWPListen extends __InitTool {
 				// 如果绑定了Controller路径
 				if (null != reg.controllerUrl() && reg.controllerUrl().length > 0) {
 					for (String url : reg.controllerUrl()) {
-						url=DUrlTools.formatURLAndCacheUrl(url);
+						url = JWPExpressionTool.formatSimpleRegexExpression(DUrlTools.formatURLAndCacheUrl(url));
 						this.inJWPRegListenUrl_Controller.put(url, (Class<? extends JWPListenInterface>) c);
 					}
 				}
 				// 如果绑定了静态资源路径
 				if (null != reg.staticUrl() && reg.staticUrl().length > 0) {
 					for (String url : reg.staticUrl()) {
-						//url=DUrlTools.formatURLAndCacheUrl(url);
+						// url=DUrlTools.formatURLAndCacheUrl(url);
 						this.inJWPRegListenUrl_static.put(url, (Class<? extends JWPListenInterface>) c);
 					}
 				}

@@ -199,8 +199,7 @@ public class JWPFilter implements Filter {
 			return;
 		}
 		// 触发监听，并且监听结果不为true时，中断请求。
-		if (powerModel.isHasListen
-				&& !powerModel.listen.doMethod(chain, request, response, requestURL, powerModel, powerCode)) {
+		if (!powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode)) {
 			return;
 		}
 		switch (powerModel.urlType) {
@@ -324,8 +323,7 @@ public class JWPFilter implements Filter {
 		}
 		
 		// 触发监听，并且监听结果不为true时，中断请求。
-		if (powerModel.isHasListen
-				&& !powerModel.listen.doMethod(chain, request, response, requestURL, powerModel, powerCode)) {
+		if (!powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode)) {
 			System.err.println("【监听事件】未通过用户检验，路径="+requestURL);
 			return;
 		}

@@ -184,7 +184,31 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 		// 通过检验，返回权限编号
 		return requestURL.matches(expression) ? expressionVO.getValues() : null;
 	}
-
+	
+	/**
+	 * 用户的路径（url）与 监听器上的路径（listenRegexExpress）是否匹配。
+	 * @param url 用户的路径 
+	 * @param listenRegexExpress 合监听器上的路径表达式
+	 * @return boolean 用户的路径 是否符合监听器上的路径表达式
+	 */
+	public boolean isUrlListen(String url,String listenRegexExpress) {
+		if (null == url || url.isEmpty()) {// 表达式没有写。直接不符合。返回false
+			return false;
+		}
+		url = url.trim();
+		String regexStr;
+		// listenRegexExpress 表示采用正则表达检验
+		if (url.startsWith("regex:")) {
+			regexStr = toRemoveStr(listenRegexExpress);
+			return toRegexStr(regexStr, url);
+		}
+		// 表示采用简化正则表达式
+		if (listenRegexExpress.contains("[")) {
+			return url.matches(listenRegexExpress);
+		}
+		// 表示 完整路径，直接比较（无视大小写字符）
+		return url.equalsIgnoreCase(listenRegexExpress);
+	}
 	public String[] mergeArrayList(final List<String[]> lists) {
 		Set<String> rs = new HashSet<>();
 		for (String[] codes : lists) {
