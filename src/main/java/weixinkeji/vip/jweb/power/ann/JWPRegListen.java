@@ -17,5 +17,5 @@ import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
 public @interface JWPRegListen {
-	public Class<?extends JWPListenInterface> value();
+	public Class<?extends JWPListenInterface>[] value();
 }

@@ -29,9 +29,9 @@ public class _3_IniJWPListen extends __InitTool {
 
 //注：收集监听的信息中，三个HashMap有可能有重复的收集。所以在使用时，优先使用 方法上的（如果有），次使用类上的（如果有），最后使用扫描的（如果有）
 	// 在类上的 监听--Controller
-	private Map<Class<?>, Class<? extends JWPListenInterface>> inClass = new HashMap<>();
+	private Map<Class<?>, Class<? extends JWPListenInterface>[]> inClass = new HashMap<>();
 	// 在方法上的监听--Controller
-	private Map<Method, Class<? extends JWPListenInterface>> inMethod = new HashMap<>();
+	private Map<Method, Class<? extends JWPListenInterface>[]> inMethod = new HashMap<>();
 	// 需要扫描的监听--Controller
 	private List<JWPListenClassVO> inJWPRegListenUrl_Controller = new ArrayList<>();
 	
@@ -59,17 +59,22 @@ public class _3_IniJWPListen extends __InitTool {
 	 */
 	public JWPListenInterface[] getJWPListenInterfaces(Method m, Class<?> c, String url) {
 		Set<JWPListenInterface> list = new LinkedHashSet<JWPListenInterface>();
-		Class<? extends JWPListenInterface> listen;
+		Class<? extends JWPListenInterface> listen[];
 
 // 类与方法上的监听，是相融合的。与表达式上的是排斥的
 		
 		// 如果方法不为null，检查方法上有没有监听器。如果有，则注册
 		if (null != (listen = null != m ? this.inMethod.get(m) : null)) {
-			list.add(JWPListenPool.getIURLListenMethod(listen));
+			for(Class<? extends JWPListenInterface> listenClass:listen) {
+				list.add(JWPListenPool.getIURLListenMethod(listenClass));
+			}
+			
 		}
 		// 如果类不为null，检查类上有不有监听器。
 		if (null != (listen = null != c ? this.inClass.get(c) : null)) {
-			list.add(JWPListenPool.getIURLListenMethod(listen));
+			for(Class<? extends JWPListenInterface> listenClass:listen) {
+				list.add(JWPListenPool.getIURLListenMethod(listenClass));
+			}
 		}
 		if(list.size()>0) {
 			return list.toArray(new JWPListenInterface[list.size()]);

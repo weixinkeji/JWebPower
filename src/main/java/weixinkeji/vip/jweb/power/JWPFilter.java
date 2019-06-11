@@ -446,33 +446,16 @@ public class JWPFilter implements Filter {
 		}else {
 			urltype = "监控外";
 		}
-		
-//		System.out.println("[" + urltype + "]：" 
-//				+ "放行区="+(null != powerModel?(powerModel.isCommon?"是":"否"):"未知")
-//				+ "，会话区="+(null != powerModel?(powerModel.isSession?"是":"否"):"未知")
-//				+ "，权限等级="+(null != powerModel?Arrays.deepToString(powerModel.grades):"未知")
-//				+ "，权限编号="+(null != powerModel?Arrays.deepToString(powerModel.code):"未知")
-//				+" ，监听="+(null != powerModel?(powerModel.isHasListen?powerModel.listen.getClass().getName():"否"):"未知")
-//				+" ，路径="+requestURL
-//				+ "\n  ，用户权限等级="+(null != userPower ? Arrays.deepToString(userPower.grades) : null)
-//				+ "，用户权限编号="+(null != userPower ? Arrays.deepToString(userPower.code) : null)
-//		);
 		StringBuilder sb=new StringBuilder();
 		int messageHead;
 		sb.append("[权限模型-").append(urltype).append("]：");
 		
 		if(null!=powerModel) {
 			messageHead=sb.length();
-	//		if(model.urlType==JWPType.common||model.urlType==JWPType.session||model.urlType==JWPType.unknow||model.urlType==JWPType.onlyListen) {
-	//			//sb.append("放行区=").append(model.isCommon ? "是" : "否");
-	//		}
-			if(powerModel.urlType==JWPType.session) {
-				//sb.append(messageHead==sb.length()?"":"，").append("会话区=").append(model.isSession ? "是" : "否");
-			}
-			else if(powerModel.urlType==JWPType.grades||powerModel.urlType==JWPType.gradesAndCode) {
+			if(powerModel.urlType==JWPType.grades||powerModel.urlType==JWPType.gradesAndCode) {
 				sb.append(messageHead==sb.length()?"":"，").append("权限等级=").append(null != powerModel.grades ? Arrays.deepToString(powerModel.grades) : null);
 			}
-			else if(powerModel.urlType==JWPType.code||powerModel.urlType==JWPType.gradesAndCode) {
+			if(powerModel.urlType==JWPType.code||powerModel.urlType==JWPType.gradesAndCode) {
 				sb.append(messageHead==sb.length()?"":"，").append("权限编号=").append(null != powerModel.code ? Arrays.deepToString(powerModel.code) : null);
 			}
 			sb.append(messageHead==sb.length()?"":"，").append("路径=").append(requestURL);
@@ -492,7 +475,6 @@ public class JWPFilter implements Filter {
 		System.out.print("[系统对接-用户区]: 权限等级="+(null != userPower ? Arrays.deepToString(userPower.grades) : null));
 		System.out.println("， 权限编号="+(null != userPower ? Arrays.deepToString(userPower.code) : null));
 		System.out.println();
-		
 		
 		
 	}

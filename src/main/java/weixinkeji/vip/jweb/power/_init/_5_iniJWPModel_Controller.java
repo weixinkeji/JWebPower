@@ -63,13 +63,13 @@ public class _5_iniJWPModel_Controller extends __InitTool {
 //				if(model.urlType==JWPType.common||model.urlType==JWPType.session||model.urlType==JWPType.unknow||model.urlType==JWPType.onlyListen) {
 //					//sb.append("放行区=").append(model.isCommon ? "是" : "否");
 //				}
-				if(model.urlType==JWPType.session) {
+//				if(model.urlType==JWPType.session) {
 					//sb.append(messageHead==sb.length()?"":"，").append("会话区=").append(model.isSession ? "是" : "否");
-				}
-				else if(model.urlType==JWPType.grades||model.urlType==JWPType.gradesAndCode) {
+//				}
+				if(model.urlType==JWPType.grades||model.urlType==JWPType.gradesAndCode) {
 					sb.append(messageHead==sb.length()?"":"，").append("权限等级=").append(null != model.grades ? Arrays.deepToString(model.grades) : null);
 				}
-				else if(model.urlType==JWPType.code||model.urlType==JWPType.gradesAndCode) {
+				if(model.urlType==JWPType.code||model.urlType==JWPType.gradesAndCode) {
 					sb.append(messageHead==sb.length()?"":"，").append("权限编号=").append(null != model.code ? Arrays.deepToString(model.code) : null);
 				}
 				
