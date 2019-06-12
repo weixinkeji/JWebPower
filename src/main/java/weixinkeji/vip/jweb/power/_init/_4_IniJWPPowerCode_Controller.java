@@ -55,7 +55,7 @@ public class _4_IniJWPPowerCode_Controller extends __InitTool {
 		this._2_initExcpressPower();// 表达式上的所有权限。
 	}
 
-	public void _1_initCMPower() {
+	private void _1_initCMPower() {
 		String headUrl;
 		String methodUrl;
 		String requestUrl;
@@ -85,7 +85,7 @@ public class _4_IniJWPPowerCode_Controller extends __InitTool {
 	}
 
 	// 处理表达式权限
-	public void _0_initExcpressPower() {
+	private void _0_initExcpressPower() {
 		// Controller表达式
 		JWPExpressConfigVO vo = this.express.getJWPControllerURLExpresstion();
 		JWPExpressionTool tool = this.express.getJWPExpressionTool();
@@ -93,7 +93,7 @@ public class _4_IniJWPPowerCode_Controller extends __InitTool {
 	}
 
 	// 处理表达式权限
-	public void _2_initExcpressPower() {
+	private void _2_initExcpressPower() {
 		// Controller表达式
 		JWPExpressConfigVO vo = this.express.getJWPControllerURLExpresstion();
 		JWPExpressionTool tool = this.express.getJWPExpressionTool();
