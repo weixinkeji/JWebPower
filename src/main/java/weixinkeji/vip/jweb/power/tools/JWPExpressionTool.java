@@ -167,6 +167,11 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 		}
 		// 对权限的表达式（表达式 [[权限编号]] ）进行切割 。 分成 匹配表达式，与等级
 		JWPExpressVO expressionVO = super.splitExpressStr(expression.trim());
+		if(expressionVO.getValues().length==0) {
+			System.err.println("检测到 没有带编号的 表达式（系统已经无视此表达式）："+expressionVO.getExpress());
+			return null;
+		}
+		
 		expression = expressionVO.getExpress();
 		// 表示采用正则表达检验
 		if (expression.startsWith(REGEX_COMPLETE)) {
