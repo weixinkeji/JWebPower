@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import weixinkeji.vip.jweb.power.ann.JWPGrades;
 import weixinkeji.vip.jweb.power.ann.JWPCode;
 import weixinkeji.vip.jweb.power.ann.JWPCommon;
+import weixinkeji.vip.jweb.power.ann.JWPDecorate;
+import weixinkeji.vip.jweb.power.ann.JWPGrades;
+import weixinkeji.vip.jweb.power.ann.JWPIgnoreDecorate;
 import weixinkeji.vip.jweb.power.ann.JWPSession;
 import weixinkeji.vip.jweb.power.config.JWPSystemInterfaceConfig;
 import weixinkeji.vip.jweb.power.model.DUrlPools;
@@ -61,6 +63,10 @@ public class _4_IniJWPPowerCode_Controller extends __InitTool {
 		String requestUrl;
 		char[] requestUrl2;
 		for (Class<?> c : list) {
+			
+			mp.setMyClass(c);
+			
+			
 			if (null != (headUrl = siConfig.getURLByClass(c))) {
 				cp.main(c);// 注解在类上的权限
 				this.urlAndClass.put(headUrl, c);// 记录下注解在类上的 请求路径
@@ -150,13 +156,81 @@ class MethodAndClass {
 	}
 }
 
+abstract class ClassAndMethodFather{
+	protected Class<?> c;
+	private  String codePrefix;//会自动在编号前，加入此值
+	private  String codeSffix;//会自动在编号后，加入此值
+	private  String gradesPrefix;//会自动在等级前，加入此值
+	private  String gradesSffix;//会自动在等级后，加入此值
+	
+	protected  void  setClass(Class<?> c) {
+		this.c=c;
+		JWPDecorate jdc=c.getAnnotation(JWPDecorate.class);
+		if(null!=jdc) {
+			this.codePrefix=jdc.codePrefix();
+			this.codeSffix=jdc.codeSffix();
+			this.gradesPrefix=jdc.gradesPrefix();
+			this.gradesSffix=jdc.gradesSffix();
+		}else {
+			this.codePrefix="";
+			this.codeSffix="";
+			this.gradesPrefix="";
+			this.gradesSffix="";
+		}
+	}
+	/**
+	 * 取得JWPCode 实例里的编号
+	 * @param code 注解类
+	 * @param m   方法
+	 * @return  String[]
+	 */
+	protected String[] getCode(JWPCode code) {
+		return JWPTool.formatMyArray(code.value(),this.codePrefix, this.codeSffix);
+	}
+	/**
+	 * 取得JWPCode 实例里的编号，同时会根据方法，自动判读是否要无视 装饰配置
+	 * @param code 注解类
+	 * @param m   方法
+	 * @return  String[]
+	 */
+	protected String[] getCode(JWPCode code,Method m) {
+		return null==m.getAnnotation(JWPIgnoreDecorate.class)?
+				JWPTool.formatMyArray(code.value(),this.codePrefix, this.codeSffix)
+				:JWPTool.formatMyArray(code.value());
+	}
+	
+	/**
+	 * 取得JWPCode 实例里的等级
+	 * @param grades 注解类
+	 * @param m   方法
+	 * @return  String[]
+	 */
+	protected String[] getGrades(JWPGrades grades) {
+		return JWPTool.formatMyArray(grades.value(),this.gradesPrefix, this.gradesSffix);
+	}
+	/**
+	 * 取得JWPCode 实例里的等级，同时会根据方法，自动判读是否要无视 装饰配置
+	 * @param grades 注解类
+	 * @param m   方法
+	 * @return  String[]
+	 */
+	protected String[] getGrades(JWPGrades grades,Method m) {
+		return null==m.getAnnotation(JWPIgnoreDecorate.class)?
+				JWPTool.formatMyArray(grades.value(),this.gradesPrefix, this.gradesSffix)
+				:JWPTool.formatMyArray(grades.value());
+	}
+	
+	
+	
+}
+
 /**
  * 传入一个方法，自动找所有注解在此方法上的权限 。
  * 
  * @author wangchunzi
  *
  */
-class InMethodPowerCode {
+class InMethodPowerCode extends ClassAndMethodFather{
 	// 在方法上的 权限编号--Controller
 	private Map<Method, String[]> inCode = new HashMap<>();
 	// 在方法上的 权限等级--Controller
@@ -165,7 +239,11 @@ class InMethodPowerCode {
 	private Map<Method, Boolean> inSession = new HashMap<>();
 	// 在方法上的 放行区--Controller
 	private Map<Method, Boolean> inCommon = new HashMap<>();
-
+	
+	
+	void setMyClass(Class<?> c) {
+		super.setClass(c);
+	}
 	/**
 	 * 分析 注解在方法上的权限
 	 * 
@@ -173,17 +251,17 @@ class InMethodPowerCode {
 	 * 
 	 * @return boolean true:找到方法上的权限；false：没找到方法上的权限
 	 */
-	public boolean main(Method m) {
+	boolean main(Method m) {
 		int count = 0;
-		JWPCode identifiter = m.getAnnotation(JWPCode.class);
-		if (null != identifiter) {
+		JWPCode code = m.getAnnotation(JWPCode.class);
+		if (null != code) {
 			count++;
-			inCode.put(m, JWPTool.formatMyArray(identifiter.value()));
+			inCode.put(m, super.getCode(code, m));
 		}
 		JWPGrades grades = m.getAnnotation(JWPGrades.class);
 		if (null != grades) {
 			count++;
-			inGrades.put(m, JWPTool.formatMyArray(grades.value()));
+			inGrades.put(m,super.getGrades(grades, m));
 		}
 		JWPSession session = m.getAnnotation(JWPSession.class);
 		if (null != session) {
@@ -210,7 +288,7 @@ class InMethodPowerCode {
 	}
 }
 
-class InClassPowerCode {
+class InClassPowerCode extends ClassAndMethodFather {
 	// 在类上的 权限编号--Controller
 	private Map<Class<?>, String[]> inCode = new HashMap<>();
 	// 在类上的 权限等级--Controller
@@ -219,15 +297,17 @@ class InClassPowerCode {
 	private Map<Class<?>, Boolean> inSession = new HashMap<>();
 	// 在类上的 放行区--Controller
 	private Map<Class<?>, Boolean> inCommon = new HashMap<>();
-
+	
 	public void main(Class<?> c) {
-		JWPCode identifiter = c.getAnnotation(JWPCode.class);
-		if (null != identifiter) {
-			inCode.put(c, JWPTool.formatMyArray(identifiter.value()));
+		super.setClass(c);
+		
+		JWPCode code = c.getAnnotation(JWPCode.class);
+		if (null != code) {
+			inCode.put(c,super.getCode(code));
 		}
 		JWPGrades grades = c.getAnnotation(JWPGrades.class);
 		if (null != grades) {
-			inGrades.put(c, JWPTool.formatMyArray(grades.value()));
+			inGrades.put(c,super.getGrades(grades));
 		}
 		JWPSession session = c.getAnnotation(JWPSession.class);
 		inSession.put(c, null != session);

@@ -95,4 +95,30 @@ public class JWPTool {
 		String[] mypower = new String[set.size()];
 		return set.toArray(mypower);
 	}
+	
+	
+	/**
+	 * 把 {"a,a1","b"} 变成 {"a","a1","b"}
+	 * 
+	 * @param powers String[] 权限数据
+	 * @param prefix 每个权限的前缀
+	 * @param suffix 每个权限的后缀
+	 * @return  String[]
+	 */
+	public static String[] formatMyArray(String[] powers,String prefix,String suffix) {
+		Set<String> set = new HashSet<>();
+		String[] sonPower;
+		for (String p : powers) {
+			if (p.contains(",")) {
+				sonPower = p.split(",");
+				for (String son : sonPower) {
+					set.add(prefix+son+suffix);
+				}
+			} else {
+				set.add(prefix+p+suffix);
+			}
+		}
+		String[] mypower = new String[set.size()];
+		return set.toArray(mypower);
+	}
 }
