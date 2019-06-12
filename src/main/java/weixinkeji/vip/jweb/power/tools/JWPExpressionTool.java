@@ -15,7 +15,7 @@ import weixinkeji.vip.jweb.power.vo.JWPExpressVO;
 public class JWPExpressionTool extends JWPExpressToolFather {
 	private final static String SIMPLE_REGEX_ALL = "[./a-zA-Z0-9_-}{?=&]";
 	private final static String SIMPLE_REGEX_AREA = "[.}{a-zA-Z0-9_-?=&]";
-	public final static String REGEX_SIMPLE="simple:";
+	public final static String REGEX_SIMPLE=":";
 	public final static String REGEX_COMPLETE="regex:";
 	
 	/**

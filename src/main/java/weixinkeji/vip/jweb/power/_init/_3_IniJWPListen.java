@@ -2,6 +2,8 @@ package weixinkeji.vip.jweb.power._init;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -46,6 +48,10 @@ public class _3_IniJWPListen extends __InitTool {
 		super(list);
 		this.iniCMListen();
 		this.iniScanListen();
+		
+		//排序
+		this.sortListen_express(inJWPRegListenUrl_Controller,1);
+		this.sortListen_express(inJWPRegListenUrl_static,0);
 	}
 
 	/**
@@ -91,6 +97,31 @@ public class _3_IniJWPListen extends __InitTool {
 			}
 		}
 		return list.size()>0?list.toArray(new JWPListenInterface[list.size()]):null;
+	}
+	
+	//表达式中的 集合的元素，进行排序-升
+	//sytle=1:controller  sytle=0:static
+	private void sortListen_express(List<JWPListenClassVO> list,int sytle) {
+		Collections.sort(list, new Comparator<JWPListenClassVO>() {
+            @Override
+            public int compare(JWPListenClassVO o1, JWPListenClassVO o2) {
+            	if(sytle==1) {
+            		return this.getSort_controller(o1.jwpListenClass)-this.getSort_controller(o2.jwpListenClass);
+            	}
+            	return this.getSort_static(o1.jwpListenClass)-this.getSort_static(o2.jwpListenClass);
+            }
+            
+        	private int getSort_static(Class<?extends JWPListenInterface> c) {
+        		JWPRegListenUrl reg=c.getAnnotation(JWPRegListenUrl.class);
+        		if(null==reg) {return 0;}
+        		return reg.staticSort();
+        	}
+        	private int getSort_controller(Class<?extends JWPListenInterface> c) {
+        		JWPRegListenUrl reg=c.getAnnotation(JWPRegListenUrl.class);
+        		if(null==reg) {return 0;}
+        		return reg.controllerSort();
+        	}
+        });
 	}
 
 	/**

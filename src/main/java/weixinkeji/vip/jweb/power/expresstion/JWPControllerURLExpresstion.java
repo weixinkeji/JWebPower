@@ -26,11 +26,11 @@ public interface JWPControllerURLExpresstion {
 	 * <br>
 	 * 假设请求的路径是 /jweb/adf/abc.jw <br>
 	 * <br>
-	 * 凡是.jw后缀的，我们可以设置：set.add("**+.jw"); <br>
+	 * 凡是.jw后缀的，我们可以设置：set.add(":**+.jw"); <br>
 	 * <br>
-	 * 凡是/jweb/adf/前缀的，我们可以设置：set.add("/jweb/adf/**+"); <br>
+	 * 凡是/jweb/adf/前缀的，我们可以设置：set.add(":/jweb/adf/**+"); <br>
 	 * <br>
-	 * 凡是/jweb/adf/前缀，.jw后缀的，我们可以设置：set.add("/jweb/adf/**+.jw"); <br>
+	 * 凡是/jweb/adf/前缀，.jw后缀的，我们可以设置：set.add(":/jweb/adf/**+.jw"); <br>
 	 * <p>
 	 * 使用非常复杂的，我们可以使用正则表达式：set.add("regex:正则表达式"); 注regex:前缀是必需的 <br>
 	 * </p>
@@ -38,7 +38,7 @@ public interface JWPControllerURLExpresstion {
 	 * 
 	 * 【 总结】<br>
 	 * 路径选择器的手段1：直接写完整的路径 <br>
-	 * 路径选择器的手段2：简单表达式<br>
+	 * 路径选择器的手段2：             :简单表达式<br>
 	 * 路径选择器的手段3：regex:正则表达式
 	 * <br>
 	 * 
@@ -51,18 +51,18 @@ public interface JWPControllerURLExpresstion {
 	 * <br>
 	 * 假设请求的路径是 /jweb/adf/abc.jw <br>
 	 * <br>
-	 * 凡是.jw后缀的，我们可以设置：set.add("**+.jw"); <br>
+	 * 凡是.jw后缀的，我们可以设置：set.add(":**+.jw"); <br>
 	 * <br>
-	 * 凡是/jweb/adf/前缀的，我们可以设置：set.add("/jweb/adf/**+"); <br>
+	 * 凡是/jweb/adf/前缀的，我们可以设置：set.add(":/jweb/adf/**+"); <br>
 	 * <br>
-	 * 凡是/jweb/adf/前缀，.jw后缀的，我们可以设置：set.add("/jweb/adf/**+.jw"); <br>
+	 * 凡是/jweb/adf/前缀，.jw后缀的，我们可以设置：set.add(":/jweb/adf/**+.jw"); <br>
 	 * <p>
 	 * 使用非常复杂的，我们可以使用正则表达式：set.add("regex:正则表达式"); 注regex:前缀是必需的 <br>
 	 * </p>
 	 * 
 	 * 【 总结】<br>
 	 * 路径选择器的手段1：直接写完整的路径 <br>
-	 * 路径选择器的手段2：简单表达式 <br>
+	 * 路径选择器的手段2：             :简单表达式 <br>
 	 * 路径选择器的手段3：regex:正则表达式
 	 * 
 	 * <br>
@@ -77,18 +77,18 @@ public interface JWPControllerURLExpresstion {
 	 * 假设请求的路径是 /jweb/adf/abc.jw；采用等级制。现在等级1,2,3,4,5,6 <br>
 	 * 
 	 * <br>
-	 * 拥有1、2、3、4 等级权限的用户，都可以访问.jw后缀的路径 ，我们可以设置：set.add("**+.jw [[1,2,3,4]]"); <br>
+	 * 拥有1、2、3、4 等级权限的用户，都可以访问.jw后缀的路径 ，我们可以设置：set.add(":**+.jw [[1,2,3,4]]"); <br>
 	 * <br>
-	 * 凡是/jweb/adf/前缀的所有等级，我们可以设置：set.add("/jweb/adf/**+"); <br>
+	 * 凡是/jweb/adf/前缀的所有等级，我们可以设置：set.add(":/jweb/adf/**+"); <br>
 	 * <br>
-	 * 凡是/jweb/adf/前缀，.jw后缀的，我们可以设置：set.add("/jweb/adf/**+.jw"); <br>
+	 * 凡是/jweb/adf/前缀，.jw后缀的，我们可以设置：set.add(":/jweb/adf/**+.jw"); <br>
 	 * <br>
 	 * 使用非常复杂的，我们可以使用正则表达式：set.add("regex:正则表达式 [[会员等级]] "); 注regex:前缀是必需的
 	 * 
 	 * <p>
 	 * 【 总结】<br>
 	 * 路径选择器的手段1：直接写完整的路径  [[会员等级]] <br>
-	 * 路径选择器的手段2：简单表达式  [[会员等级]] <br>
+	 * 路径选择器的手段2：             :简单表达式  [[会员等级]] <br>
 	 * 路径选择器的手段3：regex:正则表达式  [[会员等级]]<br>
 	 * 
 	 * 注：其中，权限等级 可以省略不写。不写，表示任意的等级
@@ -102,17 +102,17 @@ public interface JWPControllerURLExpresstion {
 	 * <br>
 	 * 假设请求的路径是 /jweb/adf/abc.jw；绑定的编号是1,2,3,4,5,6 <br>
 	 * <br>
-	 * 我们可以设置：set.add("**+.jw [[1,2,3,4,5,6]]"); <br>
+	 * 我们可以设置：set.add(":**+.jw [[1,2,3,4,5,6]]"); <br>
 	 * <br>
-	 * 凡是/jweb/adf/前缀的，我们可以设置：set.add("/jweb/adf/**+ [[1,2,3,4,5,6]]"); <br>
+	 * 凡是/jweb/adf/前缀的，我们可以设置：set.add(":/jweb/adf/**+ [[1,2,3,4,5,6]]"); <br>
 	 * <br>
-	 * 凡是/jweb/adf/前缀，.jw后缀的，我们可以设置：set.add("/jweb/adf/**+.jw [[1,2,3,4,5,6]]"); <br>
+	 * 凡是/jweb/adf/前缀，.jw后缀的，我们可以设置：set.add(":/jweb/adf/**+.jw [[1,2,3,4,5,6]]"); <br>
 	 * <br>
-	 * 使用非常复杂的，我们可以使用正则表达式：set.add("regex:正则表达式 [[编号]] "); 注regex:前缀是必需的 <br>
+	 * 使用非常复杂的，我们可以使用正则表达式：set.add(":regex:正则表达式 [[编号]] "); 注regex:前缀是必需的 <br>
 	 * <br>
 	 * 【 总结】<br>
 	 * 路径选择器的手段1：直接写完整的路径 [[编号]] <br>
-	 * 路径选择器的手段2：简单表达式 [[编号]]  <br>
+	 * 路径选择器的手段2：             :简单表达式 [[编号]]  <br>
 	 * 路径选择器的手段3：regex:正则表达式 [[编号]]<br>
 	 * 其中，编号是必不可少的
 	 *  

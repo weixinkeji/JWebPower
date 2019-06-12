@@ -19,11 +19,12 @@ public @interface JWPRegListenUrl {
 	 * @return String[]
 	 */
 	public String[] controllerUrl() default {};
+	public int controllerSort() default 0;
 	
 	/**
 	 * 静态资源 前缀路径（注意 前缀。使用前缀比较与匹配）
 	 * @return String[]
 	 */
 	public String[] staticUrl() default {};
-	
+	public int staticSort() default 0;
 }
