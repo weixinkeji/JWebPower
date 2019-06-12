@@ -15,7 +15,9 @@ import weixinkeji.vip.jweb.power.vo.JWPExpressVO;
 public class JWPExpressionTool extends JWPExpressToolFather {
 	private final static String SIMPLE_REGEX_ALL = "[./a-zA-Z0-9_-}{?=&]";
 	private final static String SIMPLE_REGEX_AREA = "[.}{a-zA-Z0-9_-?=&]";
-
+	public final static String REGEX_SIMPLE="simple:";
+	public final static String REGEX_COMPLETE="regex:";
+	
 	/**
 	 * 把简化正则表达式，变成正真的正则表达式
 	 * 
@@ -41,7 +43,7 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 		}
 		Set<String> myFormatExpression=new HashSet<>();
 		for(String str:yourExpress) {
-			myFormatExpression.add(str.contains("*") && !str.startsWith("regex:")?formatSimpleRegexExpression(str):str);
+			myFormatExpression.add(str.startsWith(REGEX_SIMPLE)?formatSimpleRegexExpression(str):str);
 		}
 		return myFormatExpression;
 	}
@@ -58,14 +60,14 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 		if (expression.contains("[[")) {// 如果字符中包含[[，表达有权限等级或权限编号 权限控制。分割 路径 与其权限
 			vo = super.splitExpressStr(expression);
 			// 判断表达式是否包含指定*或regex:,没有，则表示 此路径是完整的路径。可以直接加入权限模型
-			if (!vo.getExpress().contains("[") && !vo.getExpress().startsWith("regex:")) {
+			if (!vo.getExpress().startsWith(REGEX_SIMPLE) && !vo.getExpress().startsWith(REGEX_COMPLETE)) {
 				return vo;
 			} else {// 包含了指定的字符，表示不是完整路径
 				return null;
 			}
 		}
 		
-		if (!expression.contains("[") && !expression.startsWith("regex:")) {
+		if (!expression.startsWith(REGEX_SIMPLE) && !expression.startsWith(REGEX_COMPLETE)) {
 			vo = new JWPExpressVO();
 			vo.setExpress(expression);
 			return vo;
@@ -86,15 +88,13 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 			return false;
 		}
 		expression = expression.trim();
-		String regexStr;
 		// 表示采用正则表达检验
-		if (expression.startsWith("regex:")) {
-			regexStr = toRemoveStr(expression);
-			return toRegexStr(regexStr, requestURL);
+		if (expression.startsWith(REGEX_COMPLETE)) {
+			return toRegexStr(toRemoveStr(expression), requestURL);
 		}
 		// 表示采用简化正则表达式
-		if (expression.contains("[")) {
-			return requestURL.matches(expression);
+		if (expression.startsWith(REGEX_SIMPLE)) {
+			return requestURL.matches(toRemoveStr(expression));
 		}
 		// 表示 完整路径，直接比较（无视大小写字符）
 		return requestURL.equalsIgnoreCase(expression);
@@ -112,15 +112,13 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 			return false;
 		}
 		expression = expression.trim();
-		String regexStr;
 		// 表示采用正则表达检验
-		if (expression.startsWith("regex:")) {
-			regexStr = toRemoveStr(expression);
-			return toRegexStr(regexStr, requestURL);
+		if (expression.startsWith(REGEX_COMPLETE)) {
+			return toRegexStr(toRemoveStr(expression), requestURL);
 		}
 		// 表示采用简化正则表达式
-		if (expression.contains("[")) {
-			return requestURL.matches(expression);
+		if (expression.startsWith(REGEX_SIMPLE)) {
+			return requestURL.matches(toRemoveStr(expression));
 		}
 		return requestURL.equalsIgnoreCase(expression);
 	}
@@ -142,15 +140,15 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 		expression = expressionVO.getExpress();
 
 		// 表示采用正则表达检验
-		if (expression.startsWith("regex:")) {
+		if (expression.startsWith(REGEX_COMPLETE)) {
 			// 对表达式的 装饰符 regex: 进行切除
 			// 通过检验，返回权限等级
-			return toRegexStr(toRemoveStr(expressionVO.getExpress()), requestURL) ? expressionVO.getValues() : null;
+			return toRegexStr(toRemoveStr(expression), requestURL) ? expressionVO.getValues() : null;
 		}
 		// 表示采用简化正则表达式
-		if (expression.contains("[")) {
+		if (expression.startsWith(REGEX_SIMPLE)) {
 			// 通过检验，返回权限等级
-			return requestURL.matches(expression) ? expressionVO.getValues() : null;
+			return requestURL.matches(toRemoveStr(expression)) ? expressionVO.getValues() : null;
 		}
 		// 通过检验，返回权限等级
 		return requestURL.matches(expression) ? expressionVO.getValues() : null;
@@ -171,15 +169,15 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 		JWPExpressVO expressionVO = super.splitExpressStr(expression.trim());
 		expression = expressionVO.getExpress();
 		// 表示采用正则表达检验
-		if (expression.startsWith("regex:")) {
+		if (expression.startsWith(REGEX_COMPLETE)) {
 			// 对表达式的 装饰符 regex: 进行切除
 			// 通过检验，返回权限编号
-			return toRegexStr(toRemoveStr(expressionVO.getExpress()), requestURL) ? expressionVO.getValues() : null;
+			return toRegexStr(toRemoveStr(expression), requestURL) ? expressionVO.getValues() : null;
 		}
 		// 表示采用简化正则表达式
-		if (expression.contains("[")) {
+		if (expression.startsWith(REGEX_SIMPLE)) {
 			// 通过检验，返回权限编号
-			return requestURL.matches(expression) ? expressionVO.getValues() : null;
+			return requestURL.matches(toRemoveStr(expression)) ? expressionVO.getValues() : null;
 		}
 		// 通过检验，返回权限编号
 		return requestURL.matches(expression) ? expressionVO.getValues() : null;
@@ -198,24 +196,25 @@ public class JWPExpressionTool extends JWPExpressToolFather {
 		url = url.trim();
 		String regexStr;
 		// listenRegexExpress 表示采用正则表达检验
-		if (listenRegexExpress.startsWith("regex:")) {
+		if (listenRegexExpress.startsWith(REGEX_COMPLETE)) {
 			regexStr = toRemoveStr(listenRegexExpress);
 			return toRegexStr(regexStr, url);
 		}
 		// 表示采用简化正则表达式
-		if (listenRegexExpress.contains("[")) {
-			return url.matches(listenRegexExpress);
+		if (listenRegexExpress.startsWith(REGEX_SIMPLE)) {
+			regexStr = toRemoveStr(listenRegexExpress);
+			return url.matches(regexStr);
 		}
 		// 表示 完整路径，直接比较（无视大小写字符）
 		return url.equalsIgnoreCase(listenRegexExpress);
 	}
 	
 	public boolean isRegexExpression(String url) {
-		return url.startsWith("regex:");
+		return url.startsWith(REGEX_COMPLETE);
 	}
 	public boolean isSimpleRegexExpression(String url) {
 		// 表示采用简化正则表达式
-		return url.contains("*")||url.contains("**");
+		return url.startsWith(REGEX_SIMPLE);
 	}
 	
 	

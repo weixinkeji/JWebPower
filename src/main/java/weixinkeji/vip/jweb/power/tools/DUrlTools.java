@@ -99,7 +99,8 @@ public class DUrlTools extends DUrlPools {
 	}
 
 	public static String formatURLAndCacheUrl(String url) {
-		if (url.contains("{")) {
+		if (!url.startsWith(JWPExpressionTool.REGEX_COMPLETE)
+				&&!url.startsWith(JWPExpressionTool.REGEX_SIMPLE)&&url.contains("{")) {
 			char[] url2 = formatURL(url);
 			DUrlPools.addDUrl(url2);
 			return new String(url2);
