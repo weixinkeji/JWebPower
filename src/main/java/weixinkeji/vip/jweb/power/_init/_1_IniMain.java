@@ -21,7 +21,7 @@ final public class _1_IniMain extends __InitTool {
 		_2_IniAbutment abutmentUrl=new _2_IniAbutment(super.list);
 		
 		//工具
-		_3_IniJWPTool tool=new _3_IniJWPTool(super.list,config.webContextPath,abutmentUrl.getJWPSystemInterfaceConfig().getRequestUrlSuffix());
+		_3_IniJWPTool tool=new _3_IniJWPTool(config.webContextPath,abutmentUrl.getJWPSystemInterfaceConfig().getRequestUrlSuffix());
 		rs.setRequestUrlTool(tool.getRequestURLTool());
 		
 		//表达式
