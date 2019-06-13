@@ -14,19 +14,7 @@ final public class JWPUserConfigVO {
 	public final boolean jwp_print_console;
 	
 	public final String webContextPath;
-	// {c1}：表示权限所在类的 类名
-	// {c2}：表示权限所在类的 类名(并强制小写类名的首字母)
-	// {c3}：表示权限所在类的 类名(并强制小写类名的所有字母)
-	// {c4}：表示权限所在类的 类名(并强制大写类名的所有字母)
-	public final boolean jwp_decorate_auto_map;
-	//会自动在编号前，加入此值
-	public final String jwp_decorate_codePrefix;
-	// 会自动在编号后，加入此值
-	public final String jwp_decorate_codeSffix;
-	//会自动在等级前，加入此值
-	public final String jwp_decorate_gradesPrefix;
-	//会自动在等级后，加入此值
-	public final String jwp_decorate_gradesSffix;
+
 	
 	public JWPUserConfigVO(
 			String[] jwp_scan_package
@@ -34,11 +22,6 @@ final public class JWPUserConfigVO {
 			, boolean jwp_controller_free_url
 			, boolean jwp_controller_dynamics_url
 			, boolean jwp_print_console
-			, boolean jwp_decorate_auto_map
-			,String jwp_decorate_codePrefix
-			,String jwp_decorate_codeSffix
-			,String jwp_decorate_gradesPrefix
-			,String jwp_decorate_gradesSffix
 			,String webContextPath
 			) {
 		this.jwp_scan_package = jwp_scan_package;
@@ -46,12 +29,6 @@ final public class JWPUserConfigVO {
 		this.jwp_controller_free_url = jwp_controller_free_url;
 		this.jwp_controller_dynamics_url = jwp_controller_dynamics_url;
 		this.jwp_print_console = jwp_print_console;
-		this.jwp_decorate_auto_map=jwp_decorate_auto_map;
-		this.jwp_decorate_codePrefix=jwp_decorate_codePrefix;
-		this.jwp_decorate_codeSffix=jwp_decorate_codeSffix;
-		this.jwp_decorate_gradesPrefix=jwp_decorate_gradesPrefix;
-		this.jwp_decorate_gradesSffix=jwp_decorate_gradesSffix;
-		
 		this.webContextPath=webContextPath;
 	}
 

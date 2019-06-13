@@ -1,6 +1,7 @@
 package weixinkeji.vip.jweb.power._init;
 
 import weixinkeji.vip.jweb.power.config.DefaultJWPUserInterface;
+import weixinkeji.vip.jweb.power.config.JWPDecorateConfig;
 import weixinkeji.vip.jweb.power.config.JWPUserInterface;
 import weixinkeji.vip.jweb.power.vo.JWPUserConfigVO;
 import weixinkeji.vip.jweb.scan.JWPScanClassFactory;
@@ -19,6 +20,8 @@ final public class _1_IniMain extends __InitTool {
 		
 		//系统请求路径对接
 		_2_IniAbutment abutmentUrl=new _2_IniAbutment(super.list);
+		//加载用户 对权限字符装饰的配置
+		_2_IniJWPDecorateConfig decorateConfig=new _2_IniJWPDecorateConfig(super.list);
 		
 		//工具
 		_3_IniJWPTool tool=new _3_IniJWPTool(config.webContextPath,abutmentUrl.getJWPSystemInterfaceConfig().getRequestUrlSuffix());
@@ -28,7 +31,8 @@ final public class _1_IniMain extends __InitTool {
 		_3_IniJWPExpress express=new _3_IniJWPExpress(super.list);
 		//监听
 		_3_IniJWPListen listen=new _3_IniJWPListen(super.list);
-		_3_IniJWPDecorate decorate=new _3_IniJWPDecorate(config);
+		//权限字符 装饰处理
+		_3_IniJWPDecorate decorate=new _3_IniJWPDecorate(decorateConfig.getJWPDecorateConfig());
 		
 		//权限
 		_4_IniJWPPowerCode_Controller controllerPower=new _4_IniJWPPowerCode_Controller(super.list,abutmentUrl.getJWPSystemInterfaceConfig(),express ,decorate);

@@ -42,22 +42,6 @@ public class _0_LoadJWPConfig {
 		boolean jwp_controller_dynamics_url=true;
 		// 在控制台输出框架启动信息（默认为false)
 		boolean jwp_print_console=false;
-		
-		//---------开启自动编号、等级 的装饰（在编号或等级前，自动加入一些前缀或后缀）
-		// {CcC}  大写C,小写c,大写C   ：表示权限所在类的 类名
-		// {ccC}  小写c,小写c,大写C   ：表示权限所在类的 类名(并强制小写类名的首字母)
-		// {ccc}  小写c,小写c,小写c   ：表示权限所在类的 类名(并强制小写类名的所有字母)
-		// {CCC}  大写C,大写C,大写C   ：表示权限所在类的 类名(并强制大写类名的所有字母)
-		boolean jwp_decorate_auto_map=false;
-		//#会自动在编号前，加入此值
-		String jwp_decorate_codePrefix="{CcC}";
-		//会自动在编号后，加入此值
-		String jwp_decorate_codeSffix="";
-		//会自动在等级前，加入此值
-		String jwp_decorate_gradesPrefix="";
-		//会自动在等级后，加入此值
-		String jwp_decorate_gradesSffix="";
-				
 		String ppv;
 //计算与附值		
 		if(null!=(ppv=this.configMap.get("jwp.scan.package"))) {
@@ -76,35 +60,12 @@ public class _0_LoadJWPConfig {
 		if(null!=(ppv=this.configMap.get("jwp.print.console"))) {
 			jwp_print_console=Boolean.parseBoolean(ppv);
 		}
-		
-//---------开启自动编号、等级 的装饰
-		if(null!=(ppv=this.configMap.get("jwp.decorate.auto.map"))) {
-			jwp_decorate_auto_map=Boolean.parseBoolean(ppv);
-		}
-		if(null!=(ppv=this.configMap.get("jwp.decorate.codePrefix"))) {
-			jwp_decorate_codePrefix=ppv;
-		}
-		if(null!=(ppv=this.configMap.get("jwp.decorate.codeSffix"))) {
-			jwp_decorate_codeSffix=ppv;
-		}
-		if(null!=(ppv=this.configMap.get("jwp.decorate.gradesPrefix"))) {
-			jwp_decorate_gradesPrefix=ppv;
-		}
-		if(null!=(ppv=this.configMap.get("jwp.decorate.gradesSffix"))) {
-			jwp_decorate_gradesSffix=ppv;
-		}
-		
 		return new JWPUserConfigVO(
 				jwp_scan_package
 				,jwp_static_resources_prefix
 				,jwp_controller_free_url
 				,jwp_controller_dynamics_url
 				,jwp_print_console
-				,jwp_decorate_auto_map
-				,jwp_decorate_codePrefix
-				,jwp_decorate_codeSffix
-				,jwp_decorate_gradesPrefix
-				,jwp_decorate_gradesSffix
 				,ContextPath
 				);
 	}
