@@ -1,7 +1,6 @@
 package weixinkeji.vip.jweb.power._init;
 
 import weixinkeji.vip.jweb.power.config.DefaultJWPUserInterface;
-import weixinkeji.vip.jweb.power.config.JWPDecorateConfig;
 import weixinkeji.vip.jweb.power.config.JWPUserInterface;
 import weixinkeji.vip.jweb.power.vo.JWPUserConfigVO;
 import weixinkeji.vip.jweb.scan.JWPScanClassFactory;

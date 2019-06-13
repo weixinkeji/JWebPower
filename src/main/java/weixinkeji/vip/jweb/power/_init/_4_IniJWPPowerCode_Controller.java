@@ -9,9 +9,7 @@ import java.util.Set;
 
 import weixinkeji.vip.jweb.power.ann.JWPCode;
 import weixinkeji.vip.jweb.power.ann.JWPCommon;
-import weixinkeji.vip.jweb.power.ann.JWPDecorate;
 import weixinkeji.vip.jweb.power.ann.JWPGrades;
-import weixinkeji.vip.jweb.power.ann.JWPIgnoreDecorate;
 import weixinkeji.vip.jweb.power.ann.JWPSession;
 import weixinkeji.vip.jweb.power.config.JWPSystemInterfaceConfig;
 import weixinkeji.vip.jweb.power.model.DUrlPools;
@@ -52,13 +50,14 @@ public class _4_IniJWPPowerCode_Controller extends __InitTool {
 		super(list);
 		this.siConfig = siConfig;
 		this.express = express;
+		this.mp = new InMethodPowerCode(decorate);
+		this.cp = new InClassPowerCode(decorate);
+		this.ep = new InExcpressPowerCode();
+		this.edp = new InExcpressDirectPowerCode();
+		
 		this._0_initExcpressPower();// 表达式上，所有 表达直接路径的权限
 		this._1_initCMPower();// 注解在方法、类上的所有路径的权限
 		this._2_initExcpressPower();// 表达式上的所有权限。
-		mp = new InMethodPowerCode(decorate);
-		cp = new InClassPowerCode(decorate);
-		ep = new InExcpressPowerCode();
-		edp = new InExcpressDirectPowerCode();
 	}
 
 	private void _1_initCMPower() {
