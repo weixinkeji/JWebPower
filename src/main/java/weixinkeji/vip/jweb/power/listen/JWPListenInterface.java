@@ -26,7 +26,7 @@ public interface JWPListenInterface {
 	 * @param requestURL 请求路径
 	 * @param powerModel 与请求路径关联的权限模型
 	 * @param powerCode 用户的权限
-	 * 
+	 * @param status    触发状态
 	 * @return boolean 返回true表示放行，返回 false表示 拦截下来。
 	 * 
 	 * @throws IOException  IO流异常
@@ -34,5 +34,5 @@ public interface JWPListenInterface {
 	 */
 	public boolean doMethod(FilterChain chain, HttpServletRequest req, HttpServletResponse resp, final String requestURL
 			,JWPControllerModel powerModel
-			,JWPUserPower powerCode)throws IOException, ServletException ;
+			,JWPUserPower powerCode,ListenStatus status)throws IOException, ServletException ;
 }

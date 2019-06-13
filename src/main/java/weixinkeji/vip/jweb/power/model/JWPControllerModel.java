@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
+import weixinkeji.vip.jweb.power.listen.ListenStatus;
 import weixinkeji.vip.jweb.power.tools.JWPTool;
 import weixinkeji.vip.jweb.power.vo.JWPCodeVO;
 import weixinkeji.vip.jweb.power.vo.JWPUserPower;
@@ -117,44 +118,44 @@ public class JWPControllerModel {
 	 */
 	public boolean doListen(FilterChain chain, HttpServletRequest req, HttpServletResponse resp, final String requestURL
 			,JWPControllerModel powerModel
-			,JWPUserPower powerCode)throws IOException, ServletException{
+			,JWPUserPower powerCode,ListenStatus status)throws IOException, ServletException{
 		switch(this.listenCount) {
 			case 0:return true;
-			case 1:return this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode);
+			case 1:return this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status);
 			case 2:
 				return 
-						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode);
+						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status);
 			case 3:
 				return 
-						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[2].doMethod(chain, req, resp, requestURL, powerModel, powerCode);
+						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[2].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status);
 			case 4:
 				return 
-						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[2].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[3].doMethod(chain, req, resp, requestURL, powerModel, powerCode);	
+						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[2].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[3].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status);	
 			case 5:
 				return 
-						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[2].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[3].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[4].doMethod(chain, req, resp, requestURL, powerModel, powerCode);
+						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[2].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[3].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[4].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status);
 			case 6:
 				return 
-						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[2].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[3].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[4].doMethod(chain, req, resp, requestURL, powerModel, powerCode)
-						&&this.listens[5].doMethod(chain, req, resp, requestURL, powerModel, powerCode);
+						this.listens[0].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[1].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[2].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[3].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[4].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)
+						&&this.listens[5].doMethod(chain, req, resp, requestURL, powerModel, powerCode,status);
 			default:{
 				for(JWPListenInterface listenObject:this.listens) {
 					//一旦发现监听结果是不通过，立马返回false，表示拦截
-					if(!listenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					if(!listenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 						return false;
 					}
 				}

@@ -19,12 +19,12 @@ public class JWPListenPool {
 	private static Map<String,JWPListenInterface> url=new HashMap<String,JWPListenInterface>();
 	
 	public static boolean doUrlListen(FilterChain chain, HttpServletRequest req, HttpServletResponse resp, final String requestURL
-			,JWPControllerModel powerModel,JWPUserPower powerCode ) throws IOException, ServletException {
+			,JWPControllerModel powerModel,JWPUserPower powerCode ,ListenStatus status ) throws IOException, ServletException {
 		JWPListenInterface obj=url.get(requestURL);
 		if(null==obj) {
 			return true;
 		}
-		return obj.doMethod(chain,req, resp, requestURL,powerModel,powerCode );
+		return obj.doMethod(chain,req, resp, requestURL,powerModel,powerCode,status);
 	}
 	
 	synchronized public static JWPListenInterface getIURLListenMethod(Class<? extends JWPListenInterface> c) {

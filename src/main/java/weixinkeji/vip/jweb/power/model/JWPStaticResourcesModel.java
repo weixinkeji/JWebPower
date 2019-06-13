@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import weixinkeji.vip.jweb.power.listen.ListenStatus;
 import weixinkeji.vip.jweb.power.vo.JWPStaticUrlAndListenVO;
 import weixinkeji.vip.jweb.power.vo.JWPUserPower;
 
@@ -47,175 +48,175 @@ public class JWPStaticResourcesModel {
 	 * @throws ServletException javax.servlet.ServletException
 	 */
 	public boolean doListen(FilterChain chain, HttpServletRequest req, HttpServletResponse resp,
-			final String requestURL, JWPControllerModel powerModel, JWPUserPower powerCode)
+			final String requestURL, JWPControllerModel powerModel, JWPUserPower powerCode,ListenStatus status)
 			throws IOException, ServletException {
 		switch (this.listenCount) {
 		case 0:
 			return true;
 		case 1:
 			if (requestURL.startsWith(this.listenMode[0].url)) {
-				return this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode);
+				return this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status);
 			}
 			return true;
 
 		case 2:
 			if (requestURL.startsWith(this.listenMode[0].url)
-					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[1].url)
-					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			return true;
 		case 3:
 			if (requestURL.startsWith(this.listenMode[0].url)
-					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[1].url)
-					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[2].url)
-					&&!this.listenMode[2].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[2].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			return true;
 		case 4:
 			if (requestURL.startsWith(this.listenMode[0].url)
-					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[1].url)
-					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[2].url)
-					&&!this.listenMode[2].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[2].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[3].url)
-					&&!this.listenMode[3].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[3].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			return true;
 		case 5:
 			if (requestURL.startsWith(this.listenMode[0].url)
-					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[1].url)
-					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[2].url)
-					&&!this.listenMode[2].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[2].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[3].url)
-					&&!this.listenMode[3].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[3].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[4].url)
-					&&!this.listenMode[4].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[4].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			return true;
 		case 6:
 			if (requestURL.startsWith(this.listenMode[0].url)
-					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[1].url)
-					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[2].url)
-					&&!this.listenMode[2].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[2].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[3].url)
-					&&!this.listenMode[3].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[3].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[4].url)
-					&&!this.listenMode[4].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[4].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[5].url)
-					&&!this.listenMode[5].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[5].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			return true;
 		case 7:
 			if (requestURL.startsWith(this.listenMode[0].url)
-					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[1].url)
-					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[2].url)
-					&&!this.listenMode[2].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[2].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[3].url)
-					&&!this.listenMode[3].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[3].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[4].url)
-					&&!this.listenMode[4].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[4].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[5].url)
-					&&!this.listenMode[5].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[5].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[6].url)
-					&&!this.listenMode[6].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[6].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			return true;
 		case 8:
 			if (requestURL.startsWith(this.listenMode[0].url)
-					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[0].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[1].url)
-					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[1].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[2].url)
-					&&!this.listenMode[2].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[2].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[3].url)
-					&&!this.listenMode[3].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[3].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[4].url)
-					&&!this.listenMode[4].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[4].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[5].url)
-					&&!this.listenMode[5].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[5].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[6].url)
-					&&!this.listenMode[6].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[6].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			if (requestURL.startsWith(this.listenMode[7].url)
-					&&!this.listenMode[7].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+					&&!this.listenMode[7].jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 				return false;
 			}
 			return true;
 		default: {
 			for (JWPStaticUrlAndListenVO mobj : this.listenMode) {
 				if (requestURL.startsWith(mobj.url)
-						&&!mobj.jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode)) {
+						&&!mobj.jwpListenObject.doMethod(chain, req, resp, requestURL, powerModel, powerCode,status)) {
 					return false;
 				}
 			}

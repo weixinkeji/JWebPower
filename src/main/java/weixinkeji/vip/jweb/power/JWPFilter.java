@@ -21,6 +21,7 @@ import weixinkeji.vip.jweb.power.config.JWPUserInterface;
 import weixinkeji.vip.jweb.power.event.JWPControllerURLPowerEvent;
 import weixinkeji.vip.jweb.power.event.JWPGlobalEvent;
 import weixinkeji.vip.jweb.power.listen.JWPListenInterface;
+import weixinkeji.vip.jweb.power.listen.ListenStatus;
 import weixinkeji.vip.jweb.power.model.JWPControllerModel;
 import weixinkeji.vip.jweb.power.model.JWPStaticResourcesModel;
 import weixinkeji.vip.jweb.power.model.JWPType;
@@ -158,7 +159,7 @@ public class JWPFilter implements Filter {
 	private void doStaticRequestURLLiseten(final HttpServletRequest request, final HttpServletResponse response,
 			final FilterChain chain, final String url, final JWPUserPower powerCode) throws IOException, ServletException {
 		String requestURL = this.requestUrlTool.formatStaticRequestURL(url);
-		if (staticResourcesModel.doListen(chain, request, response, requestURL, null, powerCode)) {
+		if (staticResourcesModel.doListen(chain, request, response, requestURL, null, powerCode,ListenStatus.onlyListen)) {
 			chain.doFilter(request, response);
 		}
 	}
@@ -199,14 +200,12 @@ public class JWPFilter implements Filter {
 			}
 			return;
 		}
-		// 触发监听，并且监听结果不为true时，中断请求。
-		if (!powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode)) {
-			return;
-		}
+		
 		switch (powerModel.urlType) {
 		case common:
-			// 公共路径，得到用户的许可后，执行放行。
-			if (controllerUrlPowerEvent.doCommonPower_success(request, response, requestURL, powerModel, powerCode)) {
+			// 公共路径，得到用户的许可后，执行放行。 // 触发监听，并且监听结果不为true时，中断请求。
+			if (controllerUrlPowerEvent.doCommonPower_success(request, response, requestURL, powerModel, powerCode)
+					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.common_success)) {
 				chain.doFilter(request, response);
 			}
 			return;
@@ -214,65 +213,66 @@ public class JWPFilter implements Filter {
 			//会话区。
 			if(null==powerCode) {//取不到用户权限。执行【会话区】失败事件
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
-			}else {
-				//执行用户的【会话区】成功事件
-				if (controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL, powerModel, powerCode)) {
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
+			}else if (controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL, powerModel, powerCode)
+					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_success)) {
 					chain.doFilter(request, response);
-				}
 			}
 			return;
 		}
 		case grades:// 等级区
 			if (null == powerCode || null == powerCode.grades) {
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
 				return;
 			}
-			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限
-			if (powerModel.isInGrades(powerCode.grades)) {
-				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doGradesPower_success(request, response, requestURL, powerModel,
-						powerCode)) {
-					chain.doFilter(request, response);
-				}
+			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限  // 有权限。调用定义的方法。
+			if (powerModel.isInGrades(powerCode.grades)
+					&&controllerUrlPowerEvent.doGradesPower_success(request, response, requestURL, powerModel,powerCode)
+					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_success)) {
+				chain.doFilter(request, response);
 			} else {
 				controllerUrlPowerEvent.doGradesPower_fail(request, response, requestURL, powerModel, powerCode);
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_fail);
 			}
 			return;
 		case code:// 编号区
 			if (null == powerCode || null == powerCode.code) {
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
 				return;
 			}
-			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限
-			if (powerModel.isCode(powerCode.code)) {
-				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,
-						powerCode)) {
+			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限 // 有权限。调用定义的方法。
+			if (powerModel.isCode(powerCode.code)
+					&&controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,powerCode)
+					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_success)) {
 					chain.doFilter(request, response);
-				}
 			} else {
 				controllerUrlPowerEvent.doCodePower_fail(request, response, requestURL, powerModel, powerCode);
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_fail);
 			}
 			return;
 		case gradesAndCode:// 等级+编号
 			if (null == powerCode || null == powerCode.grades || null == powerCode.code) {
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
 				return;
 			}
-			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
-			if (powerModel.isInGrades(powerCode.grades) && powerModel.isCode(powerCode.code)) {
-				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doGradesAndCodePower_success(request, response, requestURL,
-						powerModel, powerCode)) {
+			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限	// 有权限。调用定义的方法。
+			if (powerModel.isInGrades(powerCode.grades) && powerModel.isCode(powerCode.code)
+					&&controllerUrlPowerEvent.doGradesAndCodePower_success(request, response, requestURL,powerModel, powerCode)
+					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_success)
+					) {
 					chain.doFilter(request, response);
-				}
 			} else {
-				controllerUrlPowerEvent.doGradesAndCodePower_fail(request, response, requestURL, powerModel,
-						powerCode);
+				controllerUrlPowerEvent.doGradesAndCodePower_fail(request, response, requestURL, powerModel,powerCode);
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_fail);
 			}
 			return;
 		case onlyListen:
-			chain.doFilter(request, response);
+			if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.onlyListen)) {
+				chain.doFilter(request, response);
+			}
 			return;
 		default:
 			return;
@@ -308,106 +308,105 @@ public class JWPFilter implements Filter {
 		this.println(requestURL, powerModel, powerCode);//打印
 		//先执行一次全局事件。这个事件如果返回false，直接中止程序继续往下走
 		if (!controllerUrlPowerEvent.jWebPower_start(chain, request, response, requestURL, powerModel, powerCode)) {
-			System.err.println("【全局事件】未通过，路径="+requestURL);
+			System.out.println("【全局事件】未通过，路径="+requestURL);
 			return;
 		}
 		
 		//如果没有与它相关联的权限模型，只有一种可能，它不在权限框架监控范围内。执行 其他事件（不在监控范围内事件）
 		if (null == powerModel) { // 不受控制的路径
 			if (free_url_open&&controllerUrlPowerEvent.doOther_noController(request, response, requestURL, powerCode)) {
-				System.err.println("【异常】请求路径不在监控范围内，但用户强制放行！，路径="+requestURL);
+				System.out.println("【异常】请求路径不在监控范围内，但用户强制放行！，路径="+requestURL);
 				chain.doFilter(request, response);
 			}else {
-				System.err.println("【异常】请求路径不在监控范围内！，路径="+requestURL);
+				System.out.println("【异常】请求路径不在监控范围内！，路径="+requestURL);
 			}
 			return;
 		}
 		
-		// 触发监听，并且监听结果不为true时，中断请求。
-		if (!powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode)) {
-			System.err.println("【监听事件】未通过用户检验，路径="+requestURL);
-			return;
-		}
 		switch (powerModel.urlType) {
 		case common:
-			// 公共路径，得到用户的许可后，执行放行。
-			if (controllerUrlPowerEvent.doCommonPower_success(request, response, requestURL, powerModel, powerCode)) {
+			// 公共路径，得到用户的许可后，执行放行。 // 触发监听，并且监听结果不为true时，中断请求。
+			if (controllerUrlPowerEvent.doCommonPower_success(request, response, requestURL, powerModel, powerCode)
+					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.common_success)) {
 				chain.doFilter(request, response);
 			}else {
-				System.err.println("【放行区】未通过用户事件，路径="+requestURL);
+				System.out.println("【放行区】未通过用户事件，路径="+requestURL);
 			}
 			return;
 		case session:{
 			//会话区。
 			if(null==powerCode) {//取不到用户权限。执行【会话区】失败事件
-				System.err.println("【会话事件】未通过，路径="+requestURL);
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
-			}else {
-				//执行用户的【会话区】成功事件
-				if (controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL, powerModel, powerCode)) {
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
+				System.out.println("【会话事件】未通过，路径="+requestURL);
+				
+			}else if (controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL, powerModel, powerCode)
+					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_success)) {
 					chain.doFilter(request, response);
-				}
 			}
 			return;
 		}
-		case grades:// 权限等级区
+		case grades:// 等级区
 			if (null == powerCode || null == powerCode.grades) {
-				System.err.println("【权限等级】未通过，路径="+requestURL);
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
+				System.out.println("【会话事件】未通过，路径="+requestURL);
 				return;
 			}
-			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限
-			if (powerModel.isInGrades(powerCode.grades)) {
-				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doGradesPower_success(request, response, requestURL, powerModel,
-						powerCode)) {
-					chain.doFilter(request, response);
-				}
+			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限  // 有权限。调用定义的方法。
+			if (powerModel.isInGrades(powerCode.grades)
+					&&controllerUrlPowerEvent.doGradesPower_success(request, response, requestURL, powerModel,powerCode)
+					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_success)) {
+				chain.doFilter(request, response);
 			} else {
-				System.err.println("【权限等级】未通过，路径="+requestURL);
 				controllerUrlPowerEvent.doGradesPower_fail(request, response, requestURL, powerModel, powerCode);
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_fail);
+				System.out.println("【权限等级】检验或监听结果 未通过，路径="+requestURL);
 			}
 			return;
 		case code:// 编号区
 			if (null == powerCode || null == powerCode.code) {
-				System.err.println("【权限编号】未通过，路径="+requestURL);
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
+				System.out.println("【会话事件】未通过，路径="+requestURL);
 				return;
 			}
-			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限
-			if (powerModel.isCode(powerCode.code)) {
-				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,
-						powerCode)) {
+			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限 // 有权限。调用定义的方法。
+			if (powerModel.isCode(powerCode.code)
+					&&controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,powerCode)
+					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_success)) {
 					chain.doFilter(request, response);
-				}
 			} else {
-				System.err.println("【权限编号】未通过，路径="+requestURL);
 				controllerUrlPowerEvent.doCodePower_fail(request, response, requestURL, powerModel, powerCode);
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_fail);
+				System.out.println("【权限编号】检验或监听结果 未通过，路径="+requestURL);
 			}
 			return;
 		case gradesAndCode:// 等级+编号
 			if (null == powerCode || null == powerCode.grades || null == powerCode.code) {
-				System.err.println("【权限等级+编号】未通过，路径="+requestURL);
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
+				System.out.println("【会话事件】未通过，路径="+requestURL);
 				return;
 			}
-			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限
-			if (powerModel.isInGrades(powerCode.grades) && powerModel.isCode(powerCode.code)) {
-				// 有权限。调用定义的方法。
-				if (controllerUrlPowerEvent.doGradesAndCodePower_success(request, response, requestURL,
-						powerModel, powerCode)) {
+			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限	// 有权限。调用定义的方法。
+			if (powerModel.isInGrades(powerCode.grades) && powerModel.isCode(powerCode.code)
+					&&controllerUrlPowerEvent.doGradesAndCodePower_success(request, response, requestURL,powerModel, powerCode)
+					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_success)
+					) {
 					chain.doFilter(request, response);
-				}
 			} else {
-				System.err.println("【权限等级+编号】未通过，路径="+requestURL);
-				controllerUrlPowerEvent.doGradesAndCodePower_fail(request, response, requestURL, powerModel,
-						powerCode);
+				controllerUrlPowerEvent.doGradesAndCodePower_fail(request, response, requestURL, powerModel,powerCode);
+				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_fail);
+				System.out.println("【权限等级+编号】检验或监听结果 未通过，路径="+requestURL);
 			}
 			return;
 		case onlyListen:
-			System.err.println("【仅监听】通过，路径="+requestURL);
-			chain.doFilter(request, response);
+			if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.onlyListen)) {
+				chain.doFilter(request, response);
+			}else {
+				System.out.println("【仅监听】未通过，路径="+requestURL);
+			}
 			return;
 		default:
 			return;
@@ -474,8 +473,6 @@ public class JWPFilter implements Filter {
 		System.out.println(sb.toString());
 		System.out.print("[系统对接-用户区]: 权限等级="+(null != userPower ? Arrays.deepToString(userPower.grades) : null));
 		System.out.println("， 权限编号="+(null != userPower ? Arrays.deepToString(userPower.code) : null));
-		System.out.println();
-		
 		
 	}
 }
