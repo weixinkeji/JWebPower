@@ -32,45 +32,79 @@ public class _0_LoadJWPConfig {
 	 */
 	public JWPUserConfigVO getJWPUserConfigVO(String ContextPath) {
 		// 扫描的包
-		String scan_package[]=null;
+		String jwp_scan_package[]=null;
 		// 静态资源
-		String static_resources_prefix;
+		String jwp_static_resources_prefix;
 		// true：不在管理范围内的游离路径，允许任何人访问
 		// false: 不在管控范围的游离路径，不允许任何人访问！（默认）
-		boolean free_url_open=false;
+		boolean jwp_controller_free_url=false;
 		// 默认是支持动态路径（路径即参数的意思）
-		boolean dynamics_controller_url=true;
+		boolean jwp_controller_dynamics_url=true;
 		// 在控制台输出框架启动信息（默认为false)
-		boolean console_print=false;
+		boolean jwp_print_console=false;
 		
+		//---------开启自动编号、等级 的装饰（在编号或等级前，自动加入一些前缀或后缀）
+		// {CcC}  大写C,小写c,大写C   ：表示权限所在类的 类名
+		// {ccC}  小写c,小写c,大写C   ：表示权限所在类的 类名(并强制小写类名的首字母)
+		// {ccc}  小写c,小写c,小写c   ：表示权限所在类的 类名(并强制小写类名的所有字母)
+		// {CCC}  大写C,大写C,大写C   ：表示权限所在类的 类名(并强制大写类名的所有字母)
+		boolean jwp_decorate_auto_map=false;
+		//#会自动在编号前，加入此值
+		String jwp_decorate_codePrefix="{CcC}";
+		//会自动在编号后，加入此值
+		String jwp_decorate_codeSffix="";
+		//会自动在等级前，加入此值
+		String jwp_decorate_gradesPrefix="";
+		//会自动在等级后，加入此值
+		String jwp_decorate_gradesSffix="";
+				
 		String ppv;
 //计算与附值		
-		if(null!=(ppv=this.configMap.get("scan_package"))) {
-			scan_package=ppv.split("[,，]{1}");
+		if(null!=(ppv=this.configMap.get("jwp.scan.package"))) {
+			jwp_scan_package=ppv.split("[,，]{1}");
 		}else {
 			return null;
 		}
 		
-		static_resources_prefix=this.initStaticUrl(ContextPath, this.configMap.get("static_resources_prefix"));
-		if(null!=(ppv=this.configMap.get("static_resources_prefix"))) {
-			static_resources_prefix=ppv;
+		jwp_static_resources_prefix=this.initStaticUrl(ContextPath, this.configMap.get("jwp.static.resources.prefix"));
+		if(null!=(ppv=this.configMap.get("jwp.controller.free.url"))) {
+			jwp_controller_free_url=Boolean.parseBoolean(ppv);
 		}
-		if(null!=(ppv=this.configMap.get("free_url_open"))) {
-			free_url_open=Boolean.parseBoolean(ppv);
+		if(null!=(ppv=this.configMap.get("jwp.controller.dynamics.url"))) {
+			jwp_controller_dynamics_url=Boolean.parseBoolean(ppv);
 		}
-		if(null!=(ppv=this.configMap.get("console_print"))) {
-			console_print=Boolean.parseBoolean(ppv);
+		if(null!=(ppv=this.configMap.get("jwp.print.console"))) {
+			jwp_print_console=Boolean.parseBoolean(ppv);
 		}
 		
-		if(null!=(ppv=this.configMap.get("dynamics_controller_url"))) {
-			dynamics_controller_url=Boolean.parseBoolean(ppv);
+//---------开启自动编号、等级 的装饰
+		if(null!=(ppv=this.configMap.get("jwp.decorate.auto.map"))) {
+			jwp_decorate_auto_map=Boolean.parseBoolean(ppv);
 		}
+		if(null!=(ppv=this.configMap.get("jwp.decorate.codePrefix"))) {
+			jwp_decorate_codePrefix=ppv;
+		}
+		if(null!=(ppv=this.configMap.get("jwp.decorate.codeSffix"))) {
+			jwp_decorate_codeSffix=ppv;
+		}
+		if(null!=(ppv=this.configMap.get("jwp.decorate.gradesPrefix"))) {
+			jwp_decorate_gradesPrefix=ppv;
+		}
+		if(null!=(ppv=this.configMap.get("jwp.decorate.gradesSffix"))) {
+			jwp_decorate_gradesSffix=ppv;
+		}
+		
 		return new JWPUserConfigVO(
-				scan_package
-				,static_resources_prefix
-				,free_url_open
-				,dynamics_controller_url
-				,console_print
+				jwp_scan_package
+				,jwp_static_resources_prefix
+				,jwp_controller_free_url
+				,jwp_controller_dynamics_url
+				,jwp_print_console
+				,jwp_decorate_auto_map
+				,jwp_decorate_codePrefix
+				,jwp_decorate_codeSffix
+				,jwp_decorate_gradesPrefix
+				,jwp_decorate_gradesSffix
 				,ContextPath
 				);
 	}

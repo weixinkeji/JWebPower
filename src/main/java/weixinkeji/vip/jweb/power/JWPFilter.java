@@ -83,12 +83,12 @@ public class JWPFilter implements Filter {
 		_0_LoadJWPConfig config=new _0_LoadJWPConfig("JWP.properties",pr);
 		JWPUserConfigVO configVo=config.getJWPUserConfigVO(fConfig.getServletContext().getContextPath());
 		
-		this.dynamics_controller_url =configVo.dynamics_controller_url;
-		this.console_print =configVo.console_print;
-		this.static_resources_prefix=configVo.static_resources_prefix;
-		this.free_url_open=configVo.free_url_open;
+		this.dynamics_controller_url =configVo.jwp_controller_dynamics_url;
+		this.console_print =configVo.jwp_print_console;
+		this.static_resources_prefix=configVo.jwp_static_resources_prefix;
+		this.free_url_open=configVo.jwp_controller_free_url;
 		
-		if (null == configVo.scan_package || configVo.scan_package.length==0) {
+		if (null == configVo.jwp_scan_package || configVo.jwp_scan_package.length==0) {
 			pr.addErrorMessage(
 					"JWebPower启动失败，没有配置扫描路径。请在类路径下，创建属性文件【JWP.properties】，并设置一个键值对【scan_package=扫描的路径】", 1);
 			return null;

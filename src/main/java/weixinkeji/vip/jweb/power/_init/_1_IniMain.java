@@ -15,7 +15,7 @@ final public class _1_IniMain extends __InitTool {
 	
 	public _1_IniMain(JWPUserConfigVO config,ReturnResultObject rs,JWPControllePrint pr) {
 		
-		super(JWPScanClassFactory.getClassByFilePath(config.scan_package));
+		super(JWPScanClassFactory.getClassByFilePath(config.jwp_scan_package));
 		
 		//系统请求路径对接
 		_2_IniAbutment abutmentUrl=new _2_IniAbutment(super.list);
@@ -28,9 +28,10 @@ final public class _1_IniMain extends __InitTool {
 		_3_IniJWPExpress express=new _3_IniJWPExpress(super.list);
 		//监听
 		_3_IniJWPListen listen=new _3_IniJWPListen(super.list);
+		_3_IniJWPDecorate decorate=new _3_IniJWPDecorate(config);
 		
 		//权限
-		_4_IniJWPPowerCode_Controller controllerPower=new _4_IniJWPPowerCode_Controller(super.list,abutmentUrl.getJWPSystemInterfaceConfig(),express);
+		_4_IniJWPPowerCode_Controller controllerPower=new _4_IniJWPPowerCode_Controller(super.list,abutmentUrl.getJWPSystemInterfaceConfig(),express ,decorate);
 		
 		//业务处理模型
 		_5_iniJWPModel_Static model_static=new _5_iniJWPModel_Static(listen,pr);//静态
