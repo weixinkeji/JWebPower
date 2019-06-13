@@ -14,11 +14,10 @@ final public class JWPUserConfigVO {
 	public final boolean jwp_print_console;
 	
 	public final String webContextPath;
-	//---------开启自动编号、等级 的装饰（在编号或等级前，自动加入一些前缀或后缀）
-	// {CcC}  大写C,小写c,大写C   ：表示权限所在类的 类名
-	// {ccC}  小写c,小写c,大写C   ：表示权限所在类的 类名(并强制小写类名的首字母)
-	// {ccc}  小写c,小写c,小写c   ：表示权限所在类的 类名(并强制小写类名的所有字母)
-	// {CCC}  大写C,大写C,大写C   ：表示权限所在类的 类名(并强制大写类名的所有字母)
+	// {c1}：表示权限所在类的 类名
+	// {c2}：表示权限所在类的 类名(并强制小写类名的首字母)
+	// {c3}：表示权限所在类的 类名(并强制小写类名的所有字母)
+	// {c4}：表示权限所在类的 类名(并强制大写类名的所有字母)
 	public final boolean jwp_decorate_auto_map;
 	//会自动在编号前，加入此值
 	public final String jwp_decorate_codePrefix;
