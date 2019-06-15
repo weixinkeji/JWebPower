@@ -34,10 +34,10 @@ import weixinkeji.vip.jweb.tools.JWPControllePrint;
 public class JWPFilter implements Filter {
 	
 	
-	private String static_resources_prefix;
-	private boolean console_print;
-	private boolean dynamics_controller_url;
-	private boolean free_url_open;
+	private String jwp_static_resources_prefix;
+	private boolean jwp_print_console;
+	private boolean jwp_controller_dynamics_url;
+	private boolean jwp_controller_free_url;
 	
 	/**
 	 * 路径 - 与权限模型
@@ -64,7 +64,7 @@ public class JWPFilter implements Filter {
 		if(null==config) {
 			return;
 		}
-		pr.setPrintInController(console_print);
+		pr.setPrintInController(jwp_print_console);
 		
 		//开始执行初始化操作
 		this._2_toStartInit(config,pr);
@@ -83,10 +83,10 @@ public class JWPFilter implements Filter {
 		_0_LoadJWPConfig config=new _0_LoadJWPConfig("JWP.properties",pr);
 		JWPUserConfigVO configVo=config.getJWPUserConfigVO(fConfig.getServletContext().getContextPath());
 		
-		this.dynamics_controller_url =configVo.jwp_controller_dynamics_url;
-		this.console_print =configVo.jwp_print_console;
-		this.static_resources_prefix=configVo.jwp_static_resources_prefix;
-		this.free_url_open=configVo.jwp_controller_free_url;
+		this.jwp_controller_dynamics_url =configVo.jwp_controller_dynamics_url;
+		this.jwp_print_console =configVo.jwp_print_console;
+		this.jwp_static_resources_prefix=configVo.jwp_static_resources_prefix;
+		this.jwp_controller_free_url=configVo.jwp_controller_free_url;
 		
 		if (null == configVo.jwp_scan_package || configVo.jwp_scan_package.length==0) {
 			pr.addErrorMessage(
@@ -144,10 +144,10 @@ public class JWPFilter implements Filter {
 		}
 		JWPUserPower powerCode = userPower.getUserPowerCode(httpRequest, httpResponse);
 		// 静态资源处理
-		if (requestURL.startsWith(this.static_resources_prefix)) {
+		if (requestURL.startsWith(this.jwp_static_resources_prefix)) {
 			this.doStaticRequestURLLiseten(httpRequest, httpResponse, chain, requestURL, powerCode);
 		} else {
-			if (console_print) {
+			if (jwp_print_console) {
 				this.doServerRequestURLLiseten_print(httpRequest, httpResponse, chain, requestURL, powerCode);
 			} else {
 				this.doServerRequestURLLiseten(httpRequest, httpResponse, chain, requestURL, powerCode);
@@ -182,7 +182,7 @@ public class JWPFilter implements Filter {
 		JWPControllerModel powerModel = jwebPowerControllerModel.get(requestURL);
 		//如果请求路径不为null,并且用户开启了动态路径的支持（默认开启），并且请求路径取不到与它关联的权限模型
 		//那么，有可能是动态路径。即，需要得出 去除动态参数后的请求路径。再来找一次关联的权限模型。
-		if (null != requestURL && this.dynamics_controller_url && null == powerModel) {
+		if (null != requestURL && this.jwp_controller_dynamics_url && null == powerModel) {
 			durl = DUrlTools.getUserURL(requestURL);
 			if (null != durl) {
 				requestURL = durl;
@@ -195,7 +195,7 @@ public class JWPFilter implements Filter {
 		}
 		//如果没有与它相关联的权限模型，只有一种可能，它不在权限框架监控范围内。执行 其他事件（不在监控范围内事件）
 		if (null == powerModel) { // 不受控制的路径
-			if (free_url_open&&controllerUrlPowerEvent.doOther_noController(request, response, requestURL, powerCode)) {
+			if (jwp_controller_free_url&&controllerUrlPowerEvent.doOther_noController(request, response, requestURL, powerCode)) {
 				chain.doFilter(request, response);
 			}
 			return;
@@ -226,11 +226,13 @@ public class JWPFilter implements Filter {
 				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
 				return;
 			}
-			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限  // 有权限。调用定义的方法。
-			if (powerModel.isInGrades(powerCode.grades)
-					&&controllerUrlPowerEvent.doGradesPower_success(request, response, requestURL, powerModel,powerCode)
-					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_success)) {
-				chain.doFilter(request, response);
+			//校验权限
+			if (powerModel.isInGrades(powerCode.grades)) {
+				//执行用户事件+监听
+				if(controllerUrlPowerEvent.doGradesPower_success(request, response, requestURL, powerModel,powerCode)
+						&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_success)) {
+					chain.doFilter(request, response);
+				}
 			} else {
 				controllerUrlPowerEvent.doGradesPower_fail(request, response, requestURL, powerModel, powerCode);
 				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_fail);
@@ -242,29 +244,32 @@ public class JWPFilter implements Filter {
 				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
 				return;
 			}
-			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限 // 有权限。调用定义的方法。
-			if (powerModel.isCode(powerCode.code)
-					&&controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,powerCode)
-					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_success)) {
-					chain.doFilter(request, response);
-			} else {
+			//是否有权限
+			if (powerModel.isCode(powerCode.code)) {
+				// 用户事件 +监听
+					if(controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,powerCode)
+							&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_success)) {
+						chain.doFilter(request, response);
+					}
+			} else {//失败事件
 				controllerUrlPowerEvent.doCodePower_fail(request, response, requestURL, powerModel, powerCode);
 				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_fail);
 			}
 			return;
 		case gradesAndCode:// 等级+编号
-			if (null == powerCode || null == powerCode.grades || null == powerCode.code) {
+			if (null == powerCode) {
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
 				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
 				return;
 			}
-			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限	// 有权限。调用定义的方法。
-			if (powerModel.isInGrades(powerCode.grades) && powerModel.isCode(powerCode.code)
-					&&controllerUrlPowerEvent.doGradesAndCodePower_success(request, response, requestURL,powerModel, powerCode)
-					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_success)
-					) {
+			//是否有权限： 等级不为null,编号不为null, 等级检验成功，编号检验成功
+			if (null != powerCode.grades && null!= powerCode.code&&powerModel.isInGrades(powerCode.grades) && powerModel.isCode(powerCode.code)) {
+				// 用户事件 +监听
+				if(controllerUrlPowerEvent.doGradesAndCodePower_success(request, response, requestURL,powerModel, powerCode)
+						&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_success)) {
 					chain.doFilter(request, response);
-			} else {
+				}
+			} else {//没有权限，执行失败事件。执行监听（无论返回什么，都不起作用）
 				controllerUrlPowerEvent.doGradesAndCodePower_fail(request, response, requestURL, powerModel,powerCode);
 				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_fail);
 			}
@@ -298,7 +303,7 @@ public class JWPFilter implements Filter {
 		JWPControllerModel powerModel = jwebPowerControllerModel.get(requestURL);
 		//如果请求路径不为null,并且用户开启了动态路径的支持（默认开启），并且请求路径取不到与它关联的权限模型
 		//那么，有可能是动态路径。即，需要得出 去除动态参数后的请求路径。再来找一次关联的权限模型。
-		if (null != requestURL && this.dynamics_controller_url && null == powerModel) {
+		if (null != requestURL && this.jwp_controller_dynamics_url && null == powerModel) {
 			durl = DUrlTools.getUserURL(requestURL);
 			if (null != durl) {
 				requestURL = durl;
@@ -314,7 +319,7 @@ public class JWPFilter implements Filter {
 		
 		//如果没有与它相关联的权限模型，只有一种可能，它不在权限框架监控范围内。执行 其他事件（不在监控范围内事件）
 		if (null == powerModel) { // 不受控制的路径
-			if (free_url_open&&controllerUrlPowerEvent.doOther_noController(request, response, requestURL, powerCode)) {
+			if (jwp_controller_free_url&&controllerUrlPowerEvent.doOther_noController(request, response, requestURL, powerCode)) {
 				System.out.println("【异常】请求路径不在监控范围内，但用户强制放行！，路径="+requestURL);
 				chain.doFilter(request, response);
 			}else {
@@ -353,11 +358,13 @@ public class JWPFilter implements Filter {
 				System.out.println("【会话事件】未通过，路径="+requestURL);
 				return;
 			}
-			// 假设你的等级等级是1.判断 用户信息中，是否有相关的权限  // 有权限。调用定义的方法。
-			if (powerModel.isInGrades(powerCode.grades)
-					&&controllerUrlPowerEvent.doGradesPower_success(request, response, requestURL, powerModel,powerCode)
-					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_success)) {
-				chain.doFilter(request, response);
+			//校验权限
+			if (powerModel.isInGrades(powerCode.grades)){
+				//执行用户事件+监听
+				if(controllerUrlPowerEvent.doGradesPower_success(request, response, requestURL, powerModel,powerCode)
+						&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_success)) {
+					chain.doFilter(request, response);
+				}
 			} else {
 				controllerUrlPowerEvent.doGradesPower_fail(request, response, requestURL, powerModel, powerCode);
 				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_fail);
@@ -371,31 +378,34 @@ public class JWPFilter implements Filter {
 				System.out.println("【会话事件】未通过，路径="+requestURL);
 				return;
 			}
-			// 假设你的权限编号是1.判断 用户信息中，是否有相关的权限 // 有权限。调用定义的方法。
-			if (powerModel.isCode(powerCode.code)
-					&&controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,powerCode)
+			//是否有权限
+			if (powerModel.isCode(powerCode.code)) {
+				// 用户事件 +监听
+				if(controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,powerCode)
 					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_success)) {
-					chain.doFilter(request, response);
-			} else {
+						chain.doFilter(request, response);
+				}
+			} else {//失败事件
 				controllerUrlPowerEvent.doCodePower_fail(request, response, requestURL, powerModel, powerCode);
 				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_fail);
 				System.out.println("【权限编号】检验或监听结果 未通过，路径="+requestURL);
 			}
 			return;
 		case gradesAndCode:// 等级+编号
-			if (null == powerCode || null == powerCode.grades || null == powerCode.code) {
+			if (null == powerCode) {
 				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
 				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
 				System.out.println("【会话事件】未通过，路径="+requestURL);
 				return;
 			}
-			// 假设你的等级等级是1、权限编号是2。判断 用户信息中，是否有相关的权限	// 有权限。调用定义的方法。
-			if (powerModel.isInGrades(powerCode.grades) && powerModel.isCode(powerCode.code)
-					&&controllerUrlPowerEvent.doGradesAndCodePower_success(request, response, requestURL,powerModel, powerCode)
-					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_success)
-					) {
+			//是否有权限： 等级不为null,编号不为null, 等级检验成功，编号检验成功
+			if (null != powerCode.grades && null!= powerCode.code&&powerModel.isInGrades(powerCode.grades) && powerModel.isCode(powerCode.code)) {
+				// 用户事件 +监听
+				if(controllerUrlPowerEvent.doGradesAndCodePower_success(request, response, requestURL,powerModel, powerCode)
+					&&powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_success)) {
 					chain.doFilter(request, response);
-			} else {
+				}
+			} else {//没有权限，执行失败事件。执行监听（无论返回什么，都不起作用）
 				controllerUrlPowerEvent.doGradesAndCodePower_fail(request, response, requestURL, powerModel,powerCode);
 				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_fail);
 				System.out.println("【权限等级+编号】检验或监听结果 未通过，路径="+requestURL);
