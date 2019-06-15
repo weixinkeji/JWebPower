@@ -188,9 +188,11 @@ public class _5_iniJWPModel_Controller extends __InitTool {
 		if (powerCode.isMethodUrl()) {
 			for (Map.Entry<String, MethodAndClass> kv : powerCode.getUrlAndMethodAndClass().entrySet()) {
 				// 合并方法和类上的权限
-				vo = JWPCodeVO.merge(mp.getPowerCode(kv.getValue().m)// 方法上的权限
-						, cp.getPowerCode(kv.getValue().c)// 类上的权限
-				);
+				vo = mp.getPowerCode(kv.getValue().m);// 方法上的权限
+				if(vo.type==JWPType.unknow) {
+					vo=cp.getPowerCode(kv.getValue().c);// 类上的权限
+				}
+				
 				if (vo.type == JWPType.unknow && modelMap.get(kv.getKey()) != null) {
 					continue;// 没有权限注解在方法、类上。那么，采用表达式的权限。
 				}
