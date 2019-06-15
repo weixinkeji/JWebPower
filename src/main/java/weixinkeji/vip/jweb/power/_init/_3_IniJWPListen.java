@@ -169,6 +169,7 @@ public class _3_IniJWPListen extends __InitTool {
 	@SuppressWarnings("unchecked")
 	public void iniScanListen() {
 		JWPRegListenUrl reg;
+		boolean hasRegStaticListen=false;
 		for (Class<?> c : super.list) {
 			reg = c.getAnnotation(JWPRegListenUrl.class);
 			// 首先需要有@JWPRegListenUrl，次需此类实现了JWPListenInterface接口
@@ -194,8 +195,17 @@ public class _3_IniJWPListen extends __InitTool {
 				}
 				// 如果绑定了静态资源路径
 				if (null != reg.staticUrl() && reg.staticUrl().length > 0) {
+					hasRegStaticListen=false;
 					for (String url : reg.staticUrl()) {
-						this.inJWPRegListenUrl_static.add(new JWPListenClassVO(url, (Class<? extends JWPListenInterface>) c));
+						for(JWPListenClassVO staticVo:inJWPRegListenUrl_static) {
+							if(staticVo.url.equals(url)&&staticVo.jwpListenClass==c) {
+								hasRegStaticListen=true;
+								break;//结束此循环,表示同样的路径，已经注册同样的类
+							}
+						}
+						if(!hasRegStaticListen) {
+							this.inJWPRegListenUrl_static.add(new JWPListenClassVO(url, (Class<? extends JWPListenInterface>) c));	
+						}
 					}
 				}
 			}
