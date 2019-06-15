@@ -41,6 +41,7 @@ public class JWPStaticResourcesModel {
 	 * @param requestURL 请求路径
 	 * @param powerModel 与请求路径关联的权限模型
 	 * @param powerCode  用户的权限
+	 * @param status 状态码（什么情况下 调用监听。通过此状态码可以知道）
 	 * 
 	 * @return boolean 返回true表示放行，返回 false表示 拦截下来。
 	 * 

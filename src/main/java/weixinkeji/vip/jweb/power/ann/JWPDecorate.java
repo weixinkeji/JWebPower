@@ -13,25 +13,13 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target(TYPE)
 public @interface JWPDecorate {
-	/**
-	 * 会自动在编号前，加入此值
-	 * @return  String
-	 */
+	//会自动在编号前，加入此值
 	public String codePrefix() default "";
 	
-	/**
-	 * 会自动在编号后，加入此值
-	 * @return
-	 */
+	// 会自动在编号后，加入此值
 	public String codeSffix() default "";
-	/**
-	 * 会自动在等级前，加入此值
-	 * @return  String
-	 */
+	// 会自动在等级前，加入此值
 	public String gradesPrefix() default "";
-	/**
-	 * 会自动在等级后，加入此值
-	 * @return  String
-	 */
+	//会自动在等级后，加入此值
 	public String gradesSffix() default "";
 }
