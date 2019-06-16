@@ -232,15 +232,15 @@ public class JWPControllerModel {
 	/**
 	 * 判断权限编号 code 是否符合 url绑定的权限编号
 	 * 
-	 * @param yourCode String[] 你的权限编号集合
+	 * @param code String[] 你的权限编号集合
 	 * @return boolean
 	 */
-	public boolean isCode(String[] yourCode) {
-		if (this.isCodeNull || null == yourCode || yourCode.length == 0) {
+	public boolean isCode(String[] code) {
+		if (this.isCodeNull || null == code || code.length == 0) {
 			return false;
 		}
 		for (String str : this.code) {
-			for (String yourStr : yourCode) {
+			for (String yourStr : code) {
 				if (str.equalsIgnoreCase(yourStr)) {
 					return true;
 				}
