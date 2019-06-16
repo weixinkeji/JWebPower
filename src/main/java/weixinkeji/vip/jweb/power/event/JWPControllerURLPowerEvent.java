@@ -58,7 +58,7 @@ public interface JWPControllerURLPowerEvent {
 	}
 
 	/**
-	 * 服务请求，通过【放行区】验证，执行此方法
+	 * 通过【公共区】验证，执行此方法
 	 * 
 	 * @param req        HttpServletRequest
 	 * @param resp       HttpServletResponse
@@ -78,7 +78,7 @@ public interface JWPControllerURLPowerEvent {
 	}
 
 	/**
-	 * 通过【会话区】，执行此方法
+	 * 通过【会话区】验证，执行此方法
 	 * 
 	 * @param req        HttpServletRequest
 	 * @param resp       ServletResponse
@@ -98,7 +98,7 @@ public interface JWPControllerURLPowerEvent {
 	}
 
 	/**
-	 * 未通过【会话区】，执行此方法
+	 * 未通过【会话区】验证，执行此方法
 	 * 
 	 * @param req        HttpServletRequest
 	 * @param resp       ServletResponse
