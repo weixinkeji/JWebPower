@@ -74,7 +74,7 @@ public class _4_IniJWPPowerCode_Controller extends __InitTool {
 					//检查用户是否传入视图路径，如果是视图路径，直接加入容器
 					if(null!=(methodUrls=siConfig.getViewByMethod(c, m))) {
 						for(String myUrl:methodUrls) {
-							this._1_1_initCMPower(c, m, null, myUrl);//加入容器
+							this._1_1_initCMPower(c, m, "", myUrl);//加入容器
 						}
 					}
 					//检查用户的方法是否绑定了权限
