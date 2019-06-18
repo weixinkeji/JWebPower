@@ -1,5 +1,6 @@
 package weixinkeji.vip.jweb.power._init;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import weixinkeji.vip.jweb.power.config.DefaultJWPSystemInterfaceConfig;
@@ -54,8 +55,27 @@ public class _2_IniAbutment extends __InitTool {
 			return headUrl + "/" + methodUrl;
 		}
 	}
-	
-	
+	/**
+	 * 拼接标注在类与方法的url
+	 * 
+	 * @param headUrl   标注在类的url
+	 * @param methodUrl 标注在方法的url
+	 * @return String 拼接后的请求路径
+	 */
+	String[] getURLByClassUrlAndMethodUrls(String headUrl, String[] methodUrl) {
+		List<String> list=new ArrayList<>();
+		if(null==headUrl||null==methodUrl) {
+			return null;
+		}
+		String url;
+		for(String mUrl:methodUrl) {
+			url=this.getURLByClassUrlAndMethodUrl(headUrl, mUrl);
+			if(null!=url) {
+				list.add(url);
+			}
+		}
+		return list.isEmpty()?null:list.toArray(new String[list.size()]);
+	}
 	
 	
 }

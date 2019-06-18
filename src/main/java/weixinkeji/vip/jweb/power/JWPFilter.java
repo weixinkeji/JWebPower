@@ -212,8 +212,11 @@ public class JWPFilter implements Filter {
 		case session:{
 			//会话区。
 			if(null==powerCode) {//取不到用户权限。执行【会话区】失败事件
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
-				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				//当会话失败时，需要先看监听是否返回true,没有返回true,是不会执行失败事件的
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail)) {
+					controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				}
+				return;
 			}else if (powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_success)
 					&&controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL, powerModel, powerCode)) {
 				chain.doFilter(request, response);
@@ -221,58 +224,66 @@ public class JWPFilter implements Filter {
 			return;
 		}
 		case grades:// 等级区
-			if (null == powerCode || null == powerCode.grades) {
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
-				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+			if (null == powerCode) {
+				//当会话失败时，需要先看监听是否返回true,没有返回true,是不会执行失败事件的
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail)) {
+					controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				}
 				return;
 			}
 			//校验权限
-			if (powerModel.isInGrades(powerCode.grades)) {
+			if (null != powerCode.grades&&powerModel.isInGrades(powerCode.grades)) {
 				//执行用户事件+监听
 				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_success)
 						&&controllerUrlPowerEvent.doGradesPower_success(request, response, requestURL, powerModel,powerCode)) {
 					chain.doFilter(request, response);
 				}
-			} else {
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_fail);
-				controllerUrlPowerEvent.doGradesPower_fail(request, response, requestURL, powerModel, powerCode);
+			} else {//没有权限，执行执行监听-true-失败事件。
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_fail)) {
+					controllerUrlPowerEvent.doGradesPower_fail(request, response, requestURL, powerModel, powerCode);
+				}
 			}
 			return;
 		case code:// 编号区
-			if (null == powerCode || null == powerCode.code) {
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
-				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+			if (null == powerCode) {
+				//当会话失败时，需要先看监听是否返回true,没有返回true,是不会执行失败事件的
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail)) {
+					controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				}
 				return;
 			}
 			//是否有权限
-			if (powerModel.isCode(powerCode.code)) {
+			if (null != powerCode.code&&powerModel.isCode(powerCode.code)) {
 				// 用户事件 +监听
-					if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_success)
-							&&controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,powerCode)) {
-						chain.doFilter(request, response);
-					}
-			} else {//失败事件
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_fail);
-				controllerUrlPowerEvent.doCodePower_fail(request, response, requestURL, powerModel, powerCode);
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_success)
+						&&controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,powerCode)) {
+					chain.doFilter(request, response);
+				}
+			} else {//没有权限，执行执行监听-true-失败事件。
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_fail)) {
+					controllerUrlPowerEvent.doCodePower_fail(request, response, requestURL, powerModel, powerCode);
+				}
 			}
 			return;
 		case gradesAndCode:// 等级+编号
 			if (null == powerCode) {
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
-				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				//当会话失败时，需要先看监听是否返回true,没有返回true,是不会执行失败事件的
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail)) {
+					controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				}
 				return;
 			}
 			//是否有权限： 等级不为null,编号不为null, 等级检验成功，编号检验成功
 			if (null != powerCode.grades && null!= powerCode.code&&powerModel.isInGrades(powerCode.grades) && powerModel.isCode(powerCode.code)) {
 				// 用户事件 +监听
 				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_success)
-						&&controllerUrlPowerEvent.doGradesAndCodePower_success(request, response, requestURL,powerModel, powerCode)
-						) {
+						&&controllerUrlPowerEvent.doGradesAndCodePower_success(request, response, requestURL,powerModel, powerCode)) {
 					chain.doFilter(request, response);
 				}
-			} else {//没有权限，执行失败事件。执行监听（无论返回什么，都不起作用）
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_fail);
-				controllerUrlPowerEvent.doGradesAndCodePower_fail(request, response, requestURL, powerModel,powerCode);
+			} else {//没有权限，执行执行监听-true-失败事件。
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_fail)) {
+					controllerUrlPowerEvent.doGradesAndCodePower_fail(request, response, requestURL, powerModel,powerCode);
+				}
 			}
 			return;
 		case onlyListen:
@@ -342,8 +353,10 @@ public class JWPFilter implements Filter {
 		case session:{
 			//会话区。
 			if(null==powerCode) {//取不到用户权限。执行【会话区】失败事件
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
-				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);				
+				//当会话失败时，需要先看监听是否返回true,没有返回true,是不会执行失败事件的
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail)) {
+					controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				}			
 				System.out.println("【会话事件】未通过，路径="+requestURL);
 			}else if (powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_success)
 					&&controllerUrlPowerEvent.doSessionPower_success(request, response, requestURL, powerModel, powerCode)) {
@@ -352,49 +365,57 @@ public class JWPFilter implements Filter {
 			return;
 		}
 		case grades:// 等级区
-			if (null == powerCode || null == powerCode.grades) {
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
-				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+			if (null == powerCode) {
+				//当会话失败时，需要先看监听是否返回true,没有返回true,是不会执行失败事件的
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail)) {
+					controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				}
 				System.out.println("【会话事件】未通过，路径="+requestURL);
 				return;
 			}
 			//校验权限
-			if (powerModel.isInGrades(powerCode.grades)) {
+			if (null != powerCode.grades&&powerModel.isInGrades(powerCode.grades)) {
 				//执行用户事件+监听
 				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_success)
 						&&controllerUrlPowerEvent.doGradesPower_success(request, response, requestURL, powerModel,powerCode)) {
 					chain.doFilter(request, response);
 				}
-			} else {
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_fail);
-				controllerUrlPowerEvent.doGradesPower_fail(request, response, requestURL, powerModel, powerCode);
+			} else {//没有权限，执行执行监听-true-失败事件。
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.grades_fail)) {
+					controllerUrlPowerEvent.doGradesPower_fail(request, response, requestURL, powerModel, powerCode);
+				}
 				System.out.println("【权限等级】检验或监听结果 未通过，路径="+requestURL);
 			}
 			return;
 		case code:// 编号区
-			if (null == powerCode || null == powerCode.code) {
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
-				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+			if (null == powerCode) {
+				//当会话失败时，需要先看监听是否返回true,没有返回true,是不会执行失败事件的
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail)) {
+					controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				}
 				System.out.println("【会话事件】未通过，路径="+requestURL);
 				return;
 			}
 			//是否有权限
-			if (powerModel.isCode(powerCode.code)) {
+			if (null != powerCode.code&&powerModel.isCode(powerCode.code)) {
 				//监听+用户事件 
 				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_success)
 						&&controllerUrlPowerEvent.doCodePower_success(request, response, requestURL, powerModel,powerCode)) {
 					chain.doFilter(request, response);
 				}
-			} else {//失败事件
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_fail);
-				controllerUrlPowerEvent.doCodePower_fail(request, response, requestURL, powerModel, powerCode);
+			} else {//没有权限，执行执行监听-true-失败事件。
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.code_fail)) {
+					controllerUrlPowerEvent.doCodePower_fail(request, response, requestURL, powerModel, powerCode);
+				}
 				System.out.println("【权限编号】检验或监听结果 未通过，路径="+requestURL);
 			}
 			return;
 		case gradesAndCode:// 等级+编号
 			if (null == powerCode) {
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail);
-				controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				//当会话失败时，需要先看监听是否返回true,没有返回true,是不会执行失败事件的
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.session_fail)) {
+					controllerUrlPowerEvent.doSessionPower_fail(request, response, requestURL, powerModel);
+				}
 				System.out.println("【会话事件】未通过，路径="+requestURL);
 				return;
 			}
@@ -406,9 +427,10 @@ public class JWPFilter implements Filter {
 						) {
 					chain.doFilter(request, response);
 				}
-			} else {//没有权限，执行失败事件。执行监听（无论返回什么，都不起作用）
-				powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_fail);
-				controllerUrlPowerEvent.doGradesAndCodePower_fail(request, response, requestURL, powerModel,powerCode);
+			} else {//没有权限，执行执行监听-true-失败事件。
+				if(powerModel.doListen(chain, request, response, requestURL, powerModel, powerCode,ListenStatus.codeAndGrades_fail)) {
+					controllerUrlPowerEvent.doGradesAndCodePower_fail(request, response, requestURL, powerModel,powerCode);
+				}
 				System.out.println("【权限等级+编号】检验或监听结果 未通过，路径="+requestURL);
 			}
 			return;

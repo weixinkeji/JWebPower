@@ -26,7 +26,16 @@ public interface JWPSystemInterfaceConfig {
 	 * @return String
 	 */
 	public String getURLByMethod(Method method);
-
+	/**
+	 * 获取方法绑定的URL地址(有些框架，一个方法上 绑定了多个路径。如果想要此方法生效，，必须getURLByMethod方法返回null;
+	 * 
+	 * <p>
+	 * 此方法不是控制方法，请返回null
+	 * 
+	 * @param method 绑定了相关url的方法
+	 * @return String[]
+	 */
+	default public String[] getURLByMethod2(Method method) {return null;}
 	/**
 	 * 请求路径 默认后缀
 	 * <p>
@@ -39,18 +48,4 @@ public interface JWPSystemInterfaceConfig {
 	default String[] getRequestUrlSuffix() {
 		return null;
 	}
-//
-//	/**
-//	 * 直接建立 URL-权限模型
-//	 * 
-//	 * @param jwebPowerControllerModel 权限模型
-//	 */
-//	default void setControllerPowerModel(Map<String, JWPControllerModel> jwebPowerControllerModel) {
-//		// boolean isPublic, boolean isSession, String[] grades, String[] identifiter
-//		JWPCodeVO vo = new JWPCodeVO(true, false, null, null);
-//		JWPListenInterface listen=null;
-//		//默认放行首页
-//		jwebPowerControllerModel.put("/",new JWPControllerModel(vo,listen));
-//	}
-
 }

@@ -62,35 +62,39 @@ public class _4_IniJWPPowerCode_Controller extends __InitTool {
 
 	private void _1_initCMPower() {
 		String headUrl;
-		String methodUrl;
-		String requestUrl;
-		char[] requestUrl2;
+		String methodUrl;//一个方法 绑定 一个请求路径 
+		String methodUrls[];//一个方法 绑定 多个请求路径
 		for (Class<?> c : list) {
-			
 			mp.setMyClass(c);
-			
 			
 			if (null != (headUrl = siConfig.getURLByClass(c))) {
 				cp.main(c);// 注解在类上的权限
 				this.urlAndClass.put(headUrl, c);// 记录下注解在类上的 请求路径
 				for (Method m : c.getMethods()) {
-					if (null != (methodUrl = siConfig.getURLByMethod(m))) {
-						requestUrl = JWPPathTool.joinUrl(headUrl, methodUrl);
-						if (requestUrl.contains("{")) {// 表示动态路径
-							requestUrl2 = DUrlTools.formatURL(requestUrl);// 格式化路径
-							requestUrl = new String(requestUrl2);
-							DUrlPools.addDUrl(requestUrl2);// 加入请求路径的缓存池。方便框架校对路径
-						}
-						if (null != siConfig.getURLByMethod(m)) {// 注解在方法上路径
-							isMethodUrl = true;
-							// 记录下请求路径与方法的关联
-							mp.main(m);// 标注在方法上的权限
-							urlAndMethodAndClass.put(requestUrl, new MethodAndClass(m, c));// 拼接请求路径与缓存
+					if (null != (methodUrl = siConfig.getURLByMethod(m))) {// 注解在方法上路径
+						this._1_1_initCMPower(c, m, headUrl, methodUrl);//加入容器
+					}else if(null!=(methodUrls=siConfig.getURLByMethod2(m))&&methodUrls.length>0) {
+						for(String myUrl:methodUrls) {
+							this._1_1_initCMPower(c, m, headUrl, myUrl);//加入容器
 						}
 					}
 				}
 			}
 		}
+	}
+	//接上。分离出一个专门加入 方法路径的 方法 
+	//必须是有方法上的路径方可
+	private void _1_1_initCMPower(Class<?> c,Method m,String headUrl,String methodUrl) {
+		String requestUrl = JWPPathTool.joinUrl(headUrl, methodUrl);
+		if (requestUrl.contains("{")) {// 表示动态路径
+			char[] requestUrl2 = DUrlTools.formatURL(requestUrl);// 格式化路径
+			requestUrl = new String(requestUrl2);
+			DUrlPools.addDUrl(requestUrl2);// 加入请求路径的缓存池。方便框架校对路径
+		}
+		isMethodUrl = true;
+		// 记录下请求路径与方法的关联
+		mp.main(m);// 标注在方法上的权限
+		urlAndMethodAndClass.put(requestUrl, new MethodAndClass(m, c));// 拼接请求路径与缓存
 	}
 
 	// 处理表达式权限
