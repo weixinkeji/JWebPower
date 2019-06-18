@@ -27,7 +27,7 @@ public interface JWPSystemInterfaceConfig {
 	 */
 	public String getURLByMethod(Method method);
 	/**
-	 * 获取方法绑定的URL地址(有些框架，一个方法上 绑定了多个路径。如果想要此方法生效，，必须getURLByMethod方法返回null;
+	 * 获取方法绑定的URL地址(有些框架，一个方法上 绑定了多个路径。如果想要此方法生效，，必须getURLByMethod方法返回null;)
 	 * 
 	 * <p>
 	 * 此方法不是控制方法，请返回null
@@ -36,6 +36,22 @@ public interface JWPSystemInterfaceConfig {
 	 * @return String[]
 	 */
 	default public String[] getURLByMethod2(Method method) {return null;}
+	
+	/**
+	 * 获取方法绑定的视力url路径 <br>
+	 * 如果你希望，入口权限，与返回的视图路径的管理 权限是一样的，那么，可以在此传入你的视力路径。<br>
+	 * 注：视力路径，是不会自动追加注解在类上的任何东西<br>
+	 * 
+	 * <p>
+	 * 此方法不是控制方法，请返回null
+	 * 
+	 * @param method 绑定了相关url的方法
+	 * @return String[]
+	 */
+	default public String[] getViewByMethod(Class<?> c,Method method) {return null;}
+	
+	
+	
 	/**
 	 * 请求路径 默认后缀
 	 * <p>

@@ -71,6 +71,13 @@ public class _4_IniJWPPowerCode_Controller extends __InitTool {
 				cp.main(c);// 注解在类上的权限
 				this.urlAndClass.put(headUrl, c);// 记录下注解在类上的 请求路径
 				for (Method m : c.getMethods()) {
+					//检查用户是否传入视图路径，如果是视图路径，直接加入容器
+					if(null!=(methodUrls=siConfig.getViewByMethod(c, m))) {
+						for(String myUrl:methodUrls) {
+							this._1_1_initCMPower(c, m, null, myUrl);//加入容器
+						}
+					}
+					//检查用户的方法是否绑定了权限
 					if (null != (methodUrl = siConfig.getURLByMethod(m))) {// 注解在方法上路径
 						this._1_1_initCMPower(c, m, headUrl, methodUrl);//加入容器
 					}else if(null!=(methodUrls=siConfig.getURLByMethod2(m))&&methodUrls.length>0) {
