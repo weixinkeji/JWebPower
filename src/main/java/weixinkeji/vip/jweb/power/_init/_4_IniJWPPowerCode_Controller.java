@@ -10,6 +10,7 @@ import java.util.Set;
 import weixinkeji.vip.jweb.power.ann.JWPCode;
 import weixinkeji.vip.jweb.power.ann.JWPCommon;
 import weixinkeji.vip.jweb.power.ann.JWPGrades;
+import weixinkeji.vip.jweb.power.ann.JWPIgnoreCode;
 import weixinkeji.vip.jweb.power.ann.JWPSession;
 import weixinkeji.vip.jweb.power.config.JWPSystemInterfaceConfig;
 import weixinkeji.vip.jweb.power.model.DUrlPools;
@@ -50,7 +51,7 @@ public class _4_IniJWPPowerCode_Controller extends __InitTool {
 		super(list);
 		this.siConfig = siConfig;
 		this.express = express;
-		this.mp = new InMethodPowerCode(decorate);
+		this.mp = new InMethodPowerCode(decorate,this.siConfig.methodIsCode());
 		this.cp = new InClassPowerCode(decorate);
 		this.ep = new InExcpressPowerCode();
 		this.edp = new InExcpressDirectPowerCode();
@@ -186,11 +187,27 @@ class InMethodPowerCode{
 	// 在方法上的 放行区--Controller
 	private Map<Method, Boolean> inCommon = new HashMap<>();
 	private _3_IniJWPDecorate decorate;
-	public InMethodPowerCode(_3_IniJWPDecorate decorate){
+	private final boolean methodIsCode;
+	private boolean classNotJWPIgnoreCode;
+	private boolean classNotPower;
+	public InMethodPowerCode(_3_IniJWPDecorate decorate,boolean methodIsCode){
 		this.decorate=decorate;
+		this.methodIsCode=methodIsCode;
+		
 	}
 	void setMyClass(Class<?> c) {
+		
 		this.decorate.setClass(c);
+		//类上没有@JWPIgnoreCode注解 
+		classNotJWPIgnoreCode=null==c.getAnnotation(JWPIgnoreCode.class);
+		//类上没有其他的权限注解
+		classNotPower=
+				null==c.getAnnotation(JWPCommon.class)
+				&&null==c.getAnnotation(JWPSession.class)
+				&&null==c.getAnnotation(JWPCode.class)
+				&&null==c.getAnnotation(JWPGrades.class)
+				;
+				
 	}
 	/**
 	 * 分析 注解在方法上的权限
@@ -220,6 +237,16 @@ class InMethodPowerCode{
 		if (null != ppublic) {
 			count++;
 			inCommon.put(m, true);
+		}
+		//1.方法没有注解任何权限; 2.用户打开了【方法名即是编号】的开关;3.方法上没有注解@JWPIgnoreCode;4.类上没有注解@JWPIgnoreCode，5.类上没有任何权限注解
+		if(count==0
+				&&methodIsCode
+				&&null==m.getAnnotation(JWPIgnoreCode.class)
+				&&classNotJWPIgnoreCode
+				&&classNotPower
+				) {
+			count++;
+			inCode.put(m, decorate.getCodeByMethodName(m));
 		}
 		return count > 0;
 	}

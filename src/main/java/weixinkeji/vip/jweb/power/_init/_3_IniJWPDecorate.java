@@ -43,6 +43,8 @@ public class _3_IniJWPDecorate extends __InitTool{
 			this.gradesSuffix="";
 		}
 	}
+	
+	
 	/**
 	 * 取得JWPCode 实例里的编号
 	 * @param code 注解类
@@ -63,7 +65,16 @@ public class _3_IniJWPDecorate extends __InitTool{
 				JWPTool.formatMyArray(code.value(),this.codePrefix, this.codeSuffix)
 				:JWPTool.formatMyArray(code.value());
 	}
-	
+	/**
+	 * 以方法名，当作编号。并且，当方法名带有_时，会自动切割成多个编号
+	 * @param m   方法
+	 * @return  String[]
+	 */
+	String[] getCodeByMethodName(Method m) {
+		return null==m.getAnnotation(JWPIgnoreDecorate.class)?
+				JWPTool.formatMyArray(m.getName().split("_"),this.codePrefix, this.codeSuffix)
+				:JWPTool.formatMyArray(m.getName().split("_"));
+	}
 	/**
 	 * 取得JWPCode 实例里的等级
 	 * @param grades 注解类

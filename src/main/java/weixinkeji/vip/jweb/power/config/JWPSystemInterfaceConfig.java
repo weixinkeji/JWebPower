@@ -64,4 +64,16 @@ public interface JWPSystemInterfaceConfig {
 	default String[] getRequestUrlSuffix() {
 		return null;
 	}
+	
+	/**
+	 * 这是一个开关，返回true时，默认方法名即是编号（当此方法没有注解任何权限时）<br>
+	 * 默认是false<br>
+	 * 为什么不把此关开放到 JWP.properties里呢？主要是属性文件，容易修改，因为权限编号非常敏感，并且我们的权限开发时，就定死的。所以放到接口类来。<br>
+	 * 编译成class后，可一定程度上，防止sb，误操作修改了属性文件
+	 * 
+	 * @return boolean
+	 */
+	default boolean methodIsCode() {
+		return false;
+	}
 }
